@@ -1430,14 +1430,14 @@ k.lib.Cipher || function(I) {
     q[S + 1] = q[S + 3], q[S + 3] = x, this._doCryptBlock(q, S, this._invKeySchedule, z, $, B, A, V), x = q[S + 1], q[S + 1] = q[S + 3], q[S + 3] = x;
   }, _doCryptBlock: function(q, S, x, f, h, D, w, W) {
     for (var L = this._nRounds, j = q[S] ^ x[0], p = q[S + 1] ^ x[1], g = q[S + 2] ^ x[2], N = q[S + 3] ^ x[3], F = 4, G = 1;G < L; G++)
-      var v = f[j >>> 24] ^ h[p >>> 16 & 255] ^ D[g >>> 8 & 255] ^ w[N & 255] ^ x[F++], s = f[p >>> 24] ^ h[g >>> 16 & 255] ^ D[N >>> 8 & 255] ^ w[j & 255] ^ x[F++], t = f[g >>> 24] ^ h[N >>> 16 & 255] ^ D[j >>> 8 & 255] ^ w[p & 255] ^ x[F++], N = f[N >>> 24] ^ h[j >>> 16 & 255] ^ D[p >>> 8 & 255] ^ w[g & 255] ^ x[F++], j = v, p = s, g = t;
-    v = (W[j >>> 24] << 24 | W[p >>> 16 & 255] << 16 | W[g >>> 8 & 255] << 8 | W[N & 255]) ^ x[F++], s = (W[p >>> 24] << 24 | W[g >>> 16 & 255] << 16 | W[N >>> 8 & 255] << 8 | W[j & 255]) ^ x[F++], t = (W[g >>> 24] << 24 | W[N >>> 16 & 255] << 16 | W[j >>> 8 & 255] << 8 | W[p & 255]) ^ x[F++], N = (W[N >>> 24] << 24 | W[j >>> 16 & 255] << 16 | W[p >>> 8 & 255] << 8 | W[g & 255]) ^ x[F++], q[S] = v, q[S + 1] = s, q[S + 2] = t, q[S + 3] = N;
+      var b = f[j >>> 24] ^ h[p >>> 16 & 255] ^ D[g >>> 8 & 255] ^ w[N & 255] ^ x[F++], v = f[p >>> 24] ^ h[g >>> 16 & 255] ^ D[N >>> 8 & 255] ^ w[j & 255] ^ x[F++], s = f[g >>> 24] ^ h[N >>> 16 & 255] ^ D[j >>> 8 & 255] ^ w[p & 255] ^ x[F++], N = f[N >>> 24] ^ h[j >>> 16 & 255] ^ D[p >>> 8 & 255] ^ w[g & 255] ^ x[F++], j = b, p = v, g = s;
+    b = (W[j >>> 24] << 24 | W[p >>> 16 & 255] << 16 | W[g >>> 8 & 255] << 8 | W[N & 255]) ^ x[F++], v = (W[p >>> 24] << 24 | W[g >>> 16 & 255] << 16 | W[N >>> 8 & 255] << 8 | W[j & 255]) ^ x[F++], s = (W[g >>> 24] << 24 | W[N >>> 16 & 255] << 16 | W[j >>> 8 & 255] << 8 | W[p & 255]) ^ x[F++], N = (W[N >>> 24] << 24 | W[j >>> 16 & 255] << 16 | W[p >>> 8 & 255] << 8 | W[g & 255]) ^ x[F++], q[S] = b, q[S + 1] = v, q[S + 2] = s, q[S + 3] = N;
   }, keySize: 8 });
   I.AES = O._createHelper(u);
 })();
-var b = { game: "Divine Techno Run", url: "https://www.newgrounds.com/portal/view/628667", key: "34685:cxZQ5a1E", skey: "aBuRcFJLqDmPe3Gb0uultA==", audio: "sounds/ng-sound.ogg", audioOut: "sounds/ng-sound-out.ogg" };
+var n = { game: "Divine Techno Run", url: "https://www.newgrounds.com/portal/view/628667", key: "34685:cxZQ5a1E", skey: "aBuRcFJLqDmPe3Gb0uultA==" };
 
-class n {
+class t {
   #O;
   #M = {};
   #I;
@@ -1456,8 +1456,8 @@ class n {
   addUnlockListener(I) {
     this.#X.add(I);
   }
-  constructor(I = b) {
-    this.#O = new P.io.core(I.key, I.skey), this.#Q = I.debug, this.initSession(), this.audio = b.audio ? new Audio(b.audio) : undefined, this.audioOut = b.audioOut ? new Audio(b.audioOut) : undefined, this.gameUrl = I.url;
+  constructor(I = n) {
+    this.#O = new P.io.core(I.key, I.skey), this.#Q = I.debug, this.initSession(), this.audio = new Audio(I.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = new Audio(I.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound0out.ogg"), this.gameUrl = I.url;
   }
   get loggedIn() {
     return !!this.#O.user;
@@ -1566,10 +1566,10 @@ class n {
     const Y = O.appendChild(document.createElement("img"));
     Y.addEventListener("load", () => {
       if (O.style.display = "flex", O.style.opacity = "1", O.style.marginRight = "0", !window.mute)
-        this.audio?.play();
+        this.audio.play();
       this.#E = setTimeout(() => {
         if (!window.mute)
-          this.audioOut?.play();
+          this.audioOut.play();
         O.style.opacity = "0", this.#E = setTimeout(() => {
           O.style.display = "none", O.style.marginRight = "-300px", this.#E = undefined;
         }, 1000);
@@ -1593,5 +1593,5 @@ class n {
   }
 }
 export {
-  n as Newgrounds
+  t as Newgrounds
 };
