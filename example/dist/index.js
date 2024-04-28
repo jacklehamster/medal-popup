@@ -1574,7 +1574,7 @@ class n {
           O.style.display = "none", O.style.marginRight = "-300px", this.#E = undefined;
         }, 1000);
       }, 5000);
-    }), Y.style.width = "50px", Y.style.height = "50px", Y.style.backgroundColor = "black", Y.src = I.icon;
+    }), Y.style.width = "50px", Y.style.height = "50px", Y.style.backgroundColor = "black", Y.style.borderRadius = "3px", Y.src = I.icon;
     const V = O.appendChild(document.createElement("div"));
     V.style.marginLeft = "10px";
     const E = V.appendChild(document.createElement("div"));

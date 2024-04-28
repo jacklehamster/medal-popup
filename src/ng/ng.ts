@@ -311,6 +311,7 @@ export class NewgroundsWrapper {
     img.style.width = "50px";
     img.style.height = "50px";
     img.style.backgroundColor = "black";
+    img.style.borderRadius = "3px";
     img.src = medal.icon;
 
     const divDetails = medalDiv.appendChild(document.createElement("div"));

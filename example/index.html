@@ -8,6 +8,14 @@
     import { Newgrounds } from './dist/index.js';
 
     const ng = new Newgrounds();
+    {
+      const div = document.body.appendChild(document.createElement("div"));
+      const a = div.appendChild(document.createElement("a"));
+      a.href = ng.gameUrl;
+      a.target = "_blank";
+      a.textContent = ng.gameUrl;
+    }
+
     const button = document.body.appendChild(document.createElement("button"));
     button.textContent = "Log in newgrounds";
     button.addEventListener("click", () => {
@@ -45,7 +53,7 @@
           const  div =  document.body.appendChild(document.createElement("div"));
           {
             const button = div.appendChild(document.createElement("button"));
-            button.textContent = `${medal.name} - ${medal.unlocked ? "unlocked" : "locked"}`;
+            button.textContent = `unlockMedal("${medal.name}") - ${medal.unlocked ? "unlocked" : "locked"}`;
             medalButtons[medal.id] = button;
             button.addEventListener("click", () => {
               ng.unlockMedal(medal.name);
@@ -64,13 +72,27 @@
           div.style.whiteSpace = "pre";
           {
             const label = div.appendChild(document.createElement("div"));
+            label.textContent = `Scoreboards:`;
+          }
+          {
+            const label = div.appendChild(document.createElement("label"));
             label.textContent = `${scoreboard.name}`;
+            label.htmlFor = `button-${scoreboard.id}`;
+            const button = div.appendChild(document.createElement("button"));
+            button.textContent = `postScore(10, "${scoreboard.name}")`;
+            button.addEventListener("click", async () => {
+              const result = await ng.postScore(1000, scoreboard.name);
+              if (result) {
+                div.appendChild(document.createElement("span")).textContent = "Score posted.";                
+              }
+            });
+
           }
         }
       });
 
       ng.addUnlockListener(medal => {
-        medalButtons[medal.id].textContent = `${medal.name} - ${medal.unlocked ? "unlocked" : "locked"}`;
+        medalButtons[medal.id].textContent = `unlockMedal("${medal.name}") - ${medal.unlocked ? "unlocked" : "locked"}`;
       });
     });
 
