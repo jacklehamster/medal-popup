@@ -1,13 +1,79 @@
 <html>
   <head>
-    <title>Bun Template</title>
+    <title>Newgrounds API tester</title>
   </head>
   <body>
   </body>
   <script type="module">
-    import { Hello } from './dist/index.js';
+    import { Newgrounds } from './dist/index.js';
 
-    const h1 = document.body.appendChild(document.createElement("h1"));
-    h1.textContent = Hello.hello();
+    const ng = new Newgrounds();
+    const button = document.body.appendChild(document.createElement("button"));
+    button.textContent = "Log in newgrounds";
+    button.addEventListener("click", () => {
+      ng.requestLogin();
+    });
+    ng.addLoginListener(async () => {
+      button.disabled = true;
+      {
+        const  div =  document.body.appendChild(document.createElement("div"));
+        {
+          const img = div.appendChild(document.createElement("img"));
+          img.src = ng.icons.large;
+        }
+        {
+          const img = div.appendChild(document.createElement("img"));
+          img.src = ng.icons.medium;
+        }
+        {
+          const img = div.appendChild(document.createElement("img"));
+          img.src = ng.icons.small;
+        }
+      }
+      {
+        const  div =  document.body.appendChild(document.createElement("div"));
+        {
+          const text = div.appendChild(document.createElement("div"));
+          text.textContent = ng.user;
+        }
+      }
+
+      const medals = await ng.getMedals();
+      const medalButtons = {};
+      medals.forEach(medal => {
+        {
+          const  div =  document.body.appendChild(document.createElement("div"));
+          {
+            const button = div.appendChild(document.createElement("button"));
+            button.textContent = `${medal.name} - ${medal.unlocked ? "unlocked" : "locked"}`;
+            medalButtons[medal.id] = button;
+            button.addEventListener("click", () => {
+              ng.unlockMedal(medal.name);
+            });
+          }
+        }
+      });
+
+      const scoreboards = await ng.getScoreboards();
+      const scoreDiv = {};
+      scoreboards.forEach(scoreboard => {
+        {
+          console.log(scoreboard);
+          const  div =  document.body.appendChild(document.createElement("div"));
+          div.style.fontFamily = "Courier";
+          div.style.whiteSpace = "pre";
+          {
+            const label = div.appendChild(document.createElement("div"));
+            label.textContent = `${scoreboard.name}`;
+          }
+        }
+      });
+
+      ng.addUnlockListener(medal => {
+        medalButtons[medal.id].textContent = `${medal.name} - ${medal.unlocked ? "unlocked" : "locked"}`;
+      });
+    });
+
+    window.ng = ng;
   </script>
 </html>

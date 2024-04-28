@@ -1,10 +1,11 @@
-# bun-template
+# medal-popup
 
-[![npm version](https://badge.fury.io/js/bun-template.svg)](https://www.npmjs.com/package/bun-template)
+[![npm version](https://badge.fury.io/js/medal-popup.svg)](https://www.npmjs.com/package/medal-popup)
 
-Bun template for creating projects using bunjs
+Package for showing medals and saving scores in Newgrounds
 
-![](https://jacklehamster.github.io/bun-template/icon.png)
+![](https://jacklehamster.github.io/medal-popup/icon.png)
+
 ## Install bun
 
 https://bun.sh/
@@ -20,8 +21,8 @@ curl -fsSL https://bun.sh/install | bash
 
 ## Run example
 
-[https://jacklehamster.github.io/bun-template/example/](https://jacklehamster.github.io/bun-template/example/)
+[https://jacklehamster.github.io/medal-popup/example/](https://jacklehamster.github.io/medal-popup/example/)
 
 ## Github Source
 
-[https://github.com/jacklehamster/bun-template/](https://github.com/jacklehamster/bun-template/)
+[https://github.com/jacklehamster/medal-popup/](https://github.com/jacklehamster/medal-popup/)

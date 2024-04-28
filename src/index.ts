@@ -1,5 +1,4 @@
-export class Hello {
-  static hello() {
-    return "Hello World!";
-  }
-}
+import { NewgroundsWrapper } from "./ng/ng";
+
+
+export { NewgroundsWrapper as Newgrounds };

@@ -1,3 +1,3 @@
-import { Hello } from "bun-template";
+import { Newgrounds } from "medal-popup";
 
-export { Hello };
+export { Newgrounds };
