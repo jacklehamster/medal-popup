@@ -1457,7 +1457,7 @@ class t {
     this.#X.add(I);
   }
   constructor(I = n) {
-    this.#O = new P.io.core(I.key, I.skey), this.#Q = I.debug, this.initSession(), this.audio = new Audio(I.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = new Audio(I.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound0out.ogg"), this.gameUrl = I.url;
+    this.#O = new P.io.core(I.key, I.skey), this.#Q = I.debug, this.initSession(), this.audio = new Audio(I.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = new Audio(I.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg"), this.gameUrl = I.url;
   }
   get loggedIn() {
     return !!this.#O.user;

@@ -88,7 +88,7 @@ export class NewgroundsWrapper {
     this.#debug = config.debug;
     this.initSession();
     this.audio = new Audio(config.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg");
-    this.audioOut = new Audio(config.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound0out.ogg");
+    this.audioOut = new Audio(config.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg");
     this.gameUrl = config.url;
   }
 
