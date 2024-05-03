@@ -115,9 +115,11 @@ export class NewgroundsWrapper {
         this.#ngio.callComponent("ScoreBoard.getBoards", {}, (result) => {
           if (result.success) {
             this.#scoreboards = result.scoreboards;
-            this.#scoreboards.forEach((scoreboard) => console.log("Scoreboard:", scoreboard.name, scoreboard.id));
+            const boards: Record<string, string> = {};
+            this.#scoreboards.forEach((scoreboard) => boards[scoreboard.id] = scoreboard.name);
             this.#scoreBoardsCallback?.forEach((callback) => callback?.(this.#scoreboards ?? []));
             this.#scoreBoardsCallback = undefined;
+            console.log(boards);
           }
         });
       }

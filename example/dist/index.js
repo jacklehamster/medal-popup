@@ -1476,8 +1476,11 @@ class t {
         this.#P.push(I);
       else
         this.#P = [I], this.#O.callComponent("ScoreBoard.getBoards", {}, (O) => {
-          if (O.success)
-            this.#Y = O.scoreboards, this.#Y.forEach((Y) => console.log("Scoreboard:", Y.name, Y.id)), this.#P?.forEach((Y) => Y?.(this.#Y ?? [])), this.#P = undefined;
+          if (O.success) {
+            this.#Y = O.scoreboards;
+            const Y = {};
+            this.#Y.forEach((V) => Y[V.id] = V.name), this.#P?.forEach((V) => V?.(this.#Y ?? [])), this.#P = undefined, console.log(Y);
+          }
         });
     });
   }
