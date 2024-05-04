@@ -37,6 +37,8 @@ interface NGIO {
     payload: {
       id?: string;
       value?: number;
+      host?: string;
+      event_name?: string;
     },
     callback: (result: {
       medal?: Medal;
@@ -340,5 +342,17 @@ export class NewgroundsWrapper {
         });
       });
     }
+  }
+
+  async logView() {
+    this.#ngio.callComponent("App.logView", { host: location.host }, response => {
+      console.log(response);
+    });
+  }
+
+  async logEvent(name: string) {
+    this.#ngio.callComponent("Event.logEvent", { event_name: name, host: location.host }, response => {
+      console.log(response);
+    });
   }
 }

@@ -94,6 +94,18 @@
       ng.addUnlockListener(medal => {
         medalButtons[medal.id].textContent = `unlockMedal("${medal.name}") - ${medal.unlocked ? "unlocked" : "locked"}`;
       });
+
+      {
+        const button = document.body.appendChild(document.createElement("button"));
+        button.textContent = `logEvent('test_event')`;
+        button.addEventListener("click", async () => {
+        const result = await ng.logEvent('test_event');
+        if (result) {
+          console.log(result);
+        }
+      });
+
+      }
     });
 
     window.ng = ng;

@@ -1594,6 +1594,16 @@ class t {
         });
       });
   }
+  async logView() {
+    this.#O.callComponent("App.logView", { host: location.host }, (I) => {
+      console.log(I);
+    });
+  }
+  async logEvent(I) {
+    this.#O.callComponent("Event.logEvent", { event_name: I, host: location.host }, (O) => {
+      console.log(O);
+    });
+  }
 }
 export {
   t as Newgrounds
