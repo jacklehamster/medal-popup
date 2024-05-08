@@ -167,7 +167,7 @@ export class NewgroundsWrapper {
   async unlockMedal(medal_name: string): Promise<Medal | undefined> {
     /* If there is no user attached to our ngio object, it means the user isn't logged in and we can't unlock anything */
     if (!this.#ngio.user) return;
-    console.log("unlocking", medal_name, "for", this.#ngio.user);
+    console.log("unlocking", medal_name, "for", this.#ngio.user.name);
     const medals = await this.getMedals();
     const medal = medals.filter((medal) => medal.name === medal_name)[0];
     if (medal) {

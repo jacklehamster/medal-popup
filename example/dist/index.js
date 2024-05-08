@@ -1503,7 +1503,7 @@ class t {
   async unlockMedal(I) {
     if (!this.#O.user)
       return;
-    console.log("unlocking", I, "for", this.#O.user);
+    console.log("unlocking", I, "for", this.#O.user.name);
     const O = await this.getMedals(), Y = O.filter((V) => V.name === I)[0];
     if (Y)
       return new Promise((V) => {
