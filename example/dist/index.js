@@ -1543,11 +1543,13 @@ class t {
   }
   initSession() {
     this.#O.getValidSession(() => {
-      const I = document.body.appendChild(document.createElement("button"));
-      if (I.id = "newgrounds-login", I.style.display = this.#Q ? "" : "none", I.style.position = "absolute", I.style.top = "5px", I.style.right = "5px", I.style.height = "24px", I.style.fontSize = "10pt", I.style.zIndex = "1000", I.classList.add("button"), I.innerText = "login newgrounds", I.addEventListener("click", (O) => {
-        this.requestLogin(), O.stopPropagation();
-      }), this.#O.user)
-        I.style.display = "none", this.onLoggedIn();
+      const I = !this.#Q ? undefined : document.body.appendChild(document.createElement("button"));
+      if (I)
+        I.id = "newgrounds-login", I.style.position = "absolute", I.style.top = "5px", I.style.right = "5px", I.style.height = "24px", I.style.fontSize = "10pt", I.style.zIndex = "1000", I.classList.add("button"), I.innerText = "login newgrounds", I.addEventListener("click", (O) => {
+          this.requestLogin(), O.stopPropagation();
+        });
+      if (this.#O.user)
+        I?.parentElement?.removeChild(I), this.onLoggedIn();
     });
   }
   onLoggedIn() {
