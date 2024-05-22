@@ -224,24 +224,25 @@ export class NewgroundsWrapper {
 
   initSession() {
     this.#ngio.getValidSession(() => {
-      const button = document.body.appendChild(document.createElement("button"));
-      button.id = "newgrounds-login";
-      button.style.display = this.#debug ? "" : "none";
-      button.style.position = "absolute";
-      button.style.top = "5px";
-      button.style.right = "5px";
-      button.style.height = "24px";
-      button.style.fontSize = "10pt";
-      button.style.zIndex = "1000";
-      button.classList.add("button");
-      button.innerText = "login newgrounds";
-      button.addEventListener("click", (e) => {
-        this.requestLogin();
-        e.stopPropagation();
-      });
+      const button = !this.#debug ? undefined : document.body.appendChild(document.createElement("button"));
+      if (button) {
+        button.id = "newgrounds-login";
+        button.style.position = "absolute";
+        button.style.top = "5px";
+        button.style.right = "5px";
+        button.style.height = "24px";
+        button.style.fontSize = "10pt";
+        button.style.zIndex = "1000";
+        button.classList.add("button");
+        button.innerText = "login newgrounds";
+        button.addEventListener("click", (e) => {
+          this.requestLogin();
+          e.stopPropagation();
+        });  
+      }
 
       if (this.#ngio.user) {
-        button.style.display = "none";
+        button?.parentElement?.removeChild(button);
         this.onLoggedIn();
       } else {
         // console.log("Not logged in Newgrounds.");
