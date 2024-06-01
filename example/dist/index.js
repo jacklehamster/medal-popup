@@ -1479,7 +1479,7 @@ class t {
           if (O.success) {
             this.#Y = O.scoreboards;
             const Y = {};
-            this.#Y.forEach((V) => Y[V.id] = V.name), this.#P?.forEach((V) => V?.(this.#Y ?? [])), this.#P = undefined, console.log(Y);
+            this.#Y.forEach((V) => Y[V.id] = V.name), this.#P?.forEach((V) => V?.(this.#Y ?? [])), this.#P = undefined;
           }
         });
     });

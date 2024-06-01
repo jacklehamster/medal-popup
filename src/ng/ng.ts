@@ -121,7 +121,6 @@ export class NewgroundsWrapper {
             this.#scoreboards.forEach((scoreboard) => boards[scoreboard.id] = scoreboard.name);
             this.#scoreBoardsCallback?.forEach((callback) => callback?.(this.#scoreboards ?? []));
             this.#scoreBoardsCallback = undefined;
-            console.log(boards);
           }
         });
       }
