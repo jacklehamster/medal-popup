@@ -4,11 +4,11 @@
 
 Package for showing medals and saving scores in Newgrounds
 
-![](https://jacklehamster.github.io/medal-popup/icon.png)
+![icon](https://jacklehamster.github.io/medal-popup/icon.png)
 
 ## Install bun
 
-https://bun.sh/
+<https://bun.sh/>
 
 ```bash
 curl -fsSL https://bun.sh/install | bash
