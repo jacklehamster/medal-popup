@@ -33,6 +33,8 @@ interface NGIO {
   login_error?: {
     message: string;
   };
+  session_id?: string;
+  checkSession(callback: (e: any) => void): void;
   callComponent(command: string,
     payload: {
       id?: string;
@@ -46,7 +48,7 @@ interface NGIO {
       success: boolean;
       scoreboards: Scoreboard[];
     }) => void): void;
-  getValidSession(callback: () => void): void;
+  getValidSession(callback: (e?: any) => void): void;
   requestLogin(onLoggedIn: () => void, onLoginFailed: () => void, onLoginCancelled: () => void): void;
 }
 
@@ -65,6 +67,7 @@ interface Scoreboard {
 
 export class NewgroundsWrapper {
   #ngio: NGIO;
+  #config;
   #cacheUnlocked: Record<string, boolean> = {};
   #medals?: Medal[];
   #medalCallbacks?: ((medals: Medal[]) => void)[];
@@ -77,6 +80,20 @@ export class NewgroundsWrapper {
   audioOut: HTMLAudioElement;
   gameUrl: string;
 
+  static async validateSession(session: string, config: Config = testConfig) {
+    const ngio = new Newgrounds.io.core(config.key, config.skey);
+    ngio.session_id = session;
+    return new Promise((resolve) => {
+      ngio.callComponent("App.checkSession", {}, (result: any) => {
+        resolve(result.success);
+      })
+    });
+  }
+
+  validateSession(session: string) {
+    return NewgroundsWrapper.validateSession(session, this.#config);
+  }
+
   addLoginListener(listener: () => void) {
     this.#loginListeners.add(listener);
   }
@@ -86,6 +103,7 @@ export class NewgroundsWrapper {
   }
 
   constructor(config: Config = testConfig) {
+    this.#config = config;
     this.#ngio = new Newgrounds.io.core(config.key, config.skey);
     this.#debug = config.debug;
     this.initSession();
@@ -222,7 +240,7 @@ export class NewgroundsWrapper {
 
 
   initSession() {
-    this.#ngio.getValidSession(() => {
+    this.#ngio.getValidSession((e) => {
       const button = !this.#debug ? undefined : document.body.appendChild(document.createElement("button"));
       if (button) {
         button.id = "newgrounds-login";
