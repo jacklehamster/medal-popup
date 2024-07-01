@@ -80,12 +80,12 @@ export class NewgroundsWrapper {
   audioOut: HTMLAudioElement;
   gameUrl: string;
 
-  static async validateSession(session: string, config: Config = testConfig): Promise<boolean> {
+  static async validateSession(session: string, config: Config = testConfig): Promise<string | undefined> {
     const ngio = new Newgrounds.io.core(config.key, config.skey);
     ngio.session_id = session;
     return new Promise((resolve) => {
       ngio.callComponent("App.checkSession", {}, (result: any) => {
-        resolve(!!result?.success);
+        resolve(result?.success ? result.session?.user?.name : undefined);
       })
     });
   }
@@ -240,7 +240,9 @@ export class NewgroundsWrapper {
 
 
   initSession() {
-    this.#ngio.getValidSession((e) => {
+    this.#ngio.getValidSession(() => {
+      this.validateSession(this.#ngio.session_id!);
+
       const button = !this.#debug ? undefined : document.body.appendChild(document.createElement("button"));
       if (button) {
         button.id = "newgrounds-login";
