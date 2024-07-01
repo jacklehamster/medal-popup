@@ -1455,7 +1455,7 @@ class H {
     const n = new o.io.core(e.key, e.skey);
     return n.session_id = r, new Promise((t) => {
       n.callComponent("App.checkSession", {}, (s) => {
-        t(s.success);
+        t(!!s?.success);
       });
     });
   }

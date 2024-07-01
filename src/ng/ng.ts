@@ -80,12 +80,12 @@ export class NewgroundsWrapper {
   audioOut: HTMLAudioElement;
   gameUrl: string;
 
-  static async validateSession(session: string, config: Config = testConfig) {
+  static async validateSession(session: string, config: Config = testConfig): Promise<boolean> {
     const ngio = new Newgrounds.io.core(config.key, config.skey);
     ngio.session_id = session;
     return new Promise((resolve) => {
       ngio.callComponent("App.checkSession", {}, (result: any) => {
-        resolve(result.success);
+        resolve(!!result?.success);
       })
     });
   }
