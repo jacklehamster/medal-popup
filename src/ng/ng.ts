@@ -107,8 +107,10 @@ export class NewgroundsWrapper {
     this.#ngio = new Newgrounds.io.core(config.key, config.skey);
     this.#debug = config.debug;
     this.initSession();
-    this.audio = new Audio(config.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg");
-    this.audioOut = new Audio(config.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg");
+    this.audio = document.createElement("audio");
+    this.audio.src = config.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg";
+    this.audioOut = document.createElement("audio");
+    this.audioOut.src = config.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg";
     this.gameUrl = config.url;
   }
 
