@@ -12,6 +12,7 @@ export interface Config {
   debug?: boolean;
   audioIn?: string;
   audioOut?: string;
+  noAudio?: boolean;
 }
 
 const testConfig = {
@@ -76,8 +77,8 @@ export class NewgroundsWrapper {
   #scoreBoardsCallback?: ((scoreboards: Scoreboard[]) => void)[];
   #loginListeners = new Set<() => void>();
   #medalListeners = new Set<(medal: Medal) => void>();
-  audio: HTMLAudioElement;
-  audioOut: HTMLAudioElement;
+  audio?: HTMLAudioElement;
+  audioOut?: HTMLAudioElement;
   gameUrl?: string;
 
   static async validateSession(session: string, config: Config = testConfig): Promise<string | undefined> {
@@ -107,10 +108,8 @@ export class NewgroundsWrapper {
     this.#ngio = new Newgrounds.io.core(config.key, config.skey);
     this.#debug = config.debug;
     this.initSession();
-    this.audio = document.createElement("audio");
-    this.audio.src = config.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg";
-    this.audioOut = document.createElement("audio");
-    this.audioOut.src = config.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg";
+    this.audio = config.noAudio ? undefined : new Audio(config.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg");
+    this.audioOut = config.noAudio ? undefined : new Audio(config.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg");
     this.gameUrl = config.url;
   }
 
@@ -318,11 +317,11 @@ export class NewgroundsWrapper {
       medalDiv.style.opacity = "1";
       medalDiv.style.marginRight = "0";
       if (!(window as any).mute) {
-        this.audio.play();
+        this.audio?.play();
       }
       this.#medalTimeout = setTimeout(() => {
         if (!(window as any).mute) {
-          this.audioOut.play();
+          this.audioOut?.play();
         }
         medalDiv.style.opacity = "0";
         this.#medalTimeout = setTimeout(() => {

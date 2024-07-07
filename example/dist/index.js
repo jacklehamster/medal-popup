@@ -1469,7 +1469,7 @@ class z {
     this.#c.add(t);
   }
   constructor(t = X) {
-    this.config = t, this.#e = new o.io.core(t.key, t.skey), this.#l = t.debug, this.initSession(), this.audio = document.createElement("audio"), this.audio.src = t.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg", this.audioOut = document.createElement("audio"), this.audioOut.src = t.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg", this.gameUrl = t.url;
+    this.config = t, this.#e = new o.io.core(t.key, t.skey), this.#l = t.debug, this.initSession(), this.audio = t.noAudio ? undefined : new Audio(t.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = t.noAudio ? undefined : new Audio(t.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg"), this.gameUrl = t.url;
   }
   get loggedIn() {
     return !!this.#e.user;
@@ -1584,10 +1584,10 @@ class z {
     const n = e.appendChild(document.createElement("img"));
     n.addEventListener("load", () => {
       if (e.style.display = "flex", e.style.opacity = "1", e.style.marginRight = "0", !window.mute)
-        this.audio.play();
+        this.audio?.play();
       this.#i = setTimeout(() => {
         if (!window.mute)
-          this.audioOut.play();
+          this.audioOut?.play();
         e.style.opacity = "0", this.#i = setTimeout(() => {
           e.style.display = "none", e.style.marginRight = "-300px", this.#i = undefined;
         }, 1000);
