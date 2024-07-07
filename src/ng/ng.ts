@@ -5,8 +5,8 @@
 import { Newgrounds } from "../external/newgrounds/newgroundsio.min"
 
 export interface Config {
-  game: string;
-  url: string;
+  game?: string;
+  url?: string;
   key: string;
   skey: string;
   debug?: boolean;
@@ -67,7 +67,7 @@ interface Scoreboard {
 
 export class NewgroundsWrapper {
   #ngio: NGIO;
-  #config;
+  config;
   #cacheUnlocked: Record<string, boolean> = {};
   #medals?: Medal[];
   #medalCallbacks?: ((medals: Medal[]) => void)[];
@@ -78,7 +78,7 @@ export class NewgroundsWrapper {
   #medalListeners = new Set<(medal: Medal) => void>();
   audio: HTMLAudioElement;
   audioOut: HTMLAudioElement;
-  gameUrl: string;
+  gameUrl?: string;
 
   static async validateSession(session: string, config: Config = testConfig): Promise<string | undefined> {
     const ngio = new Newgrounds.io.core(config.key, config.skey);
@@ -91,7 +91,7 @@ export class NewgroundsWrapper {
   }
 
   validateSession(session: string) {
-    return NewgroundsWrapper.validateSession(session, this.#config);
+    return NewgroundsWrapper.validateSession(session, this.config);
   }
 
   addLoginListener(listener: () => void) {
@@ -103,7 +103,7 @@ export class NewgroundsWrapper {
   }
 
   constructor(config: Config = testConfig) {
-    this.#config = config;
+    this.config = config;
     this.#ngio = new Newgrounds.io.core(config.key, config.skey);
     this.#debug = config.debug;
     this.initSession();

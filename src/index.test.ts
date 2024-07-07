@@ -1,5 +1,4 @@
-import { expect, it, describe } from 'bun:test';
-import { Newgrounds } from './index';
+import { it, describe } from 'bun:test';
 
 describe('hello', () => {
     it('shows Hello World', () => {

@@ -101,7 +101,7 @@ o.io.core = function(t, e) {
   if (typeof t != "string")
     throw new Error("\'app_id\' must be a string value in Newgrounds.io.core constructor");
   if (n = t, e)
-    h = b.enc.Base64.parse(e);
+    h = R.enc.Base64.parse(e);
   else
     console.warn("You did not set an encryption key. Some calls may not work without this.");
   var d = "Newgrounds-io-app_session-" + n.split(":").join("-");
@@ -144,7 +144,7 @@ o.io.core = function(t, e) {
   }), this._encryptCall = function(f) {
     if (!f || !f.constructor == o.io.model.call_model)
       throw new Error("Attempted to encrypt a non \'call\' object");
-    var u = b.lib.WordArray.random(16), p = b.AES.encrypt(JSON.stringify(f.toObject()), h, { iv: u }), _ = b.enc.Base64.stringify(u.concat(p.ciphertext));
+    var u = R.lib.WordArray.random(16), p = R.AES.encrypt(JSON.stringify(f.toObject()), h, { iv: u }), _ = R.enc.Base64.stringify(u.concat(p.ciphertext));
     return f.secure = _, f.parameters = null, f;
   };
 };
@@ -1119,7 +1119,7 @@ o.io.SessionLoader.prototype = { _event_listeners: {}, last_error: null, passpor
   return this.passport_window && this.passport_window.parent ? true : false;
 } };
 o.io.SessionLoader.prototype.constructor = o.io.SessionLoader;
-var b = b || function(t, e) {
+var R = R || function(t, e) {
   var n = {}, r = n.lib = {}, s = function() {
   }, a = r.Base = { extend: function(l) {
     s.prototype = this;
@@ -1229,7 +1229,7 @@ var b = b || function(t, e) {
   return n;
 }(Math);
 (function() {
-  var t = b, e = t.lib.WordArray;
+  var t = R, e = t.lib.WordArray;
   t.enc.Base64 = { stringify: function(n) {
     var { words: r, sigBytes: s } = n, a = this._map;
     n.clamp(), n = [];
@@ -1264,7 +1264,7 @@ var b = b || function(t, e) {
   function s(g, w, l, f, u, p, _) {
     return g = g + (l ^ (w | ~f)) + u + _, (g << p | g >>> 32 - p) + w;
   }
-  for (var a = b, x = a.lib, c = x.WordArray, h = x.Hasher, x = a.algo, d = [], E = 0;64 > E; E++)
+  for (var a = R, x = a.lib, c = x.WordArray, h = x.Hasher, x = a.algo, d = [], E = 0;64 > E; E++)
     d[E] = 4294967296 * t.abs(t.sin(E + 1)) | 0;
   x = x.MD5 = h.extend({ _doReset: function() {
     this._hash = new c.init([1732584193, 4023233417, 2562383102, 271733878]);
@@ -1273,7 +1273,7 @@ var b = b || function(t, e) {
       var f = w + l, u = g[f];
       g[f] = (u << 8 | u >>> 24) & 16711935 | (u << 24 | u >>> 8) & 4278255360;
     }
-    var l = this._hash.words, f = g[w + 0], u = g[w + 1], p = g[w + 2], _ = g[w + 3], O = g[w + 4], A = g[w + 5], V = g[w + 6], U = g[w + 7], M = g[w + 8], I = g[w + 9], P = g[w + 10], j = g[w + 11], L = g[w + 12], B = g[w + 13], N = g[w + 14], C = g[w + 15], m = l[0], v = l[1], y = l[2], S = l[3], m = e(m, v, y, S, f, 7, d[0]), S = e(S, m, v, y, u, 12, d[1]), y = e(y, S, m, v, p, 17, d[2]), v = e(v, y, S, m, _, 22, d[3]), m = e(m, v, y, S, O, 7, d[4]), S = e(S, m, v, y, A, 12, d[5]), y = e(y, S, m, v, V, 17, d[6]), v = e(v, y, S, m, U, 22, d[7]), m = e(m, v, y, S, M, 7, d[8]), S = e(S, m, v, y, I, 12, d[9]), y = e(y, S, m, v, P, 17, d[10]), v = e(v, y, S, m, j, 22, d[11]), m = e(m, v, y, S, L, 7, d[12]), S = e(S, m, v, y, B, 12, d[13]), y = e(y, S, m, v, N, 17, d[14]), v = e(v, y, S, m, C, 22, d[15]), m = n(m, v, y, S, u, 5, d[16]), S = n(S, m, v, y, V, 9, d[17]), y = n(y, S, m, v, j, 14, d[18]), v = n(v, y, S, m, f, 20, d[19]), m = n(m, v, y, S, A, 5, d[20]), S = n(S, m, v, y, P, 9, d[21]), y = n(y, S, m, v, C, 14, d[22]), v = n(v, y, S, m, O, 20, d[23]), m = n(m, v, y, S, I, 5, d[24]), S = n(S, m, v, y, N, 9, d[25]), y = n(y, S, m, v, _, 14, d[26]), v = n(v, y, S, m, M, 20, d[27]), m = n(m, v, y, S, B, 5, d[28]), S = n(S, m, v, y, p, 9, d[29]), y = n(y, S, m, v, U, 14, d[30]), v = n(v, y, S, m, L, 20, d[31]), m = r(m, v, y, S, A, 4, d[32]), S = r(S, m, v, y, M, 11, d[33]), y = r(y, S, m, v, j, 16, d[34]), v = r(v, y, S, m, N, 23, d[35]), m = r(m, v, y, S, u, 4, d[36]), S = r(S, m, v, y, O, 11, d[37]), y = r(y, S, m, v, U, 16, d[38]), v = r(v, y, S, m, P, 23, d[39]), m = r(m, v, y, S, B, 4, d[40]), S = r(S, m, v, y, f, 11, d[41]), y = r(y, S, m, v, _, 16, d[42]), v = r(v, y, S, m, V, 23, d[43]), m = r(m, v, y, S, I, 4, d[44]), S = r(S, m, v, y, L, 11, d[45]), y = r(y, S, m, v, C, 16, d[46]), v = r(v, y, S, m, p, 23, d[47]), m = s(m, v, y, S, f, 6, d[48]), S = s(S, m, v, y, U, 10, d[49]), y = s(y, S, m, v, N, 15, d[50]), v = s(v, y, S, m, A, 21, d[51]), m = s(m, v, y, S, L, 6, d[52]), S = s(S, m, v, y, _, 10, d[53]), y = s(y, S, m, v, P, 15, d[54]), v = s(v, y, S, m, u, 21, d[55]), m = s(m, v, y, S, M, 6, d[56]), S = s(S, m, v, y, C, 10, d[57]), y = s(y, S, m, v, V, 15, d[58]), v = s(v, y, S, m, B, 21, d[59]), m = s(m, v, y, S, O, 6, d[60]), S = s(S, m, v, y, j, 10, d[61]), y = s(y, S, m, v, p, 15, d[62]), v = s(v, y, S, m, I, 21, d[63]);
+    var l = this._hash.words, f = g[w + 0], u = g[w + 1], p = g[w + 2], _ = g[w + 3], O = g[w + 4], A = g[w + 5], V = g[w + 6], U = g[w + 7], M = g[w + 8], I = g[w + 9], P = g[w + 10], j = g[w + 11], b = g[w + 12], B = g[w + 13], N = g[w + 14], C = g[w + 15], m = l[0], v = l[1], y = l[2], S = l[3], m = e(m, v, y, S, f, 7, d[0]), S = e(S, m, v, y, u, 12, d[1]), y = e(y, S, m, v, p, 17, d[2]), v = e(v, y, S, m, _, 22, d[3]), m = e(m, v, y, S, O, 7, d[4]), S = e(S, m, v, y, A, 12, d[5]), y = e(y, S, m, v, V, 17, d[6]), v = e(v, y, S, m, U, 22, d[7]), m = e(m, v, y, S, M, 7, d[8]), S = e(S, m, v, y, I, 12, d[9]), y = e(y, S, m, v, P, 17, d[10]), v = e(v, y, S, m, j, 22, d[11]), m = e(m, v, y, S, b, 7, d[12]), S = e(S, m, v, y, B, 12, d[13]), y = e(y, S, m, v, N, 17, d[14]), v = e(v, y, S, m, C, 22, d[15]), m = n(m, v, y, S, u, 5, d[16]), S = n(S, m, v, y, V, 9, d[17]), y = n(y, S, m, v, j, 14, d[18]), v = n(v, y, S, m, f, 20, d[19]), m = n(m, v, y, S, A, 5, d[20]), S = n(S, m, v, y, P, 9, d[21]), y = n(y, S, m, v, C, 14, d[22]), v = n(v, y, S, m, O, 20, d[23]), m = n(m, v, y, S, I, 5, d[24]), S = n(S, m, v, y, N, 9, d[25]), y = n(y, S, m, v, _, 14, d[26]), v = n(v, y, S, m, M, 20, d[27]), m = n(m, v, y, S, B, 5, d[28]), S = n(S, m, v, y, p, 9, d[29]), y = n(y, S, m, v, U, 14, d[30]), v = n(v, y, S, m, b, 20, d[31]), m = r(m, v, y, S, A, 4, d[32]), S = r(S, m, v, y, M, 11, d[33]), y = r(y, S, m, v, j, 16, d[34]), v = r(v, y, S, m, N, 23, d[35]), m = r(m, v, y, S, u, 4, d[36]), S = r(S, m, v, y, O, 11, d[37]), y = r(y, S, m, v, U, 16, d[38]), v = r(v, y, S, m, P, 23, d[39]), m = r(m, v, y, S, B, 4, d[40]), S = r(S, m, v, y, f, 11, d[41]), y = r(y, S, m, v, _, 16, d[42]), v = r(v, y, S, m, V, 23, d[43]), m = r(m, v, y, S, I, 4, d[44]), S = r(S, m, v, y, b, 11, d[45]), y = r(y, S, m, v, C, 16, d[46]), v = r(v, y, S, m, p, 23, d[47]), m = s(m, v, y, S, f, 6, d[48]), S = s(S, m, v, y, U, 10, d[49]), y = s(y, S, m, v, N, 15, d[50]), v = s(v, y, S, m, A, 21, d[51]), m = s(m, v, y, S, b, 6, d[52]), S = s(S, m, v, y, _, 10, d[53]), y = s(y, S, m, v, P, 15, d[54]), v = s(v, y, S, m, u, 21, d[55]), m = s(m, v, y, S, M, 6, d[56]), S = s(S, m, v, y, C, 10, d[57]), y = s(y, S, m, v, V, 15, d[58]), v = s(v, y, S, m, B, 21, d[59]), m = s(m, v, y, S, O, 6, d[60]), S = s(S, m, v, y, j, 10, d[61]), y = s(y, S, m, v, p, 15, d[62]), v = s(v, y, S, m, I, 21, d[63]);
     l[0] = l[0] + m | 0, l[1] = l[1] + v | 0, l[2] = l[2] + y | 0, l[3] = l[3] + S | 0;
   }, _doFinalize: function() {
     var g = this._data, w = g.words, l = 8 * this._nDataBytes, f = 8 * g.sigBytes;
@@ -1289,7 +1289,7 @@ var b = b || function(t, e) {
   } }), a.MD5 = h._createHelper(x), a.HmacMD5 = h._createHmacHelper(x);
 })(Math);
 (function() {
-  var t = b, r = t.lib, e = r.Base, n = r.WordArray, r = t.algo, s = r.EvpKDF = e.extend({ cfg: e.extend({ keySize: 4, hasher: r.MD5, iterations: 1 }), init: function(a) {
+  var t = R, r = t.lib, e = r.Base, n = r.WordArray, r = t.algo, s = r.EvpKDF = e.extend({ cfg: e.extend({ keySize: 4, hasher: r.MD5, iterations: 1 }), init: function(a) {
     this.cfg = this.cfg.extend(a);
   }, compute: function(a, c) {
     for (var g = this.cfg, h = g.hasher.create(), x = n.create(), d = x.words, E = g.keySize, g = g.iterations;d.length < E; ) {
@@ -1306,8 +1306,8 @@ var b = b || function(t, e) {
     return s.create(h).compute(a, c);
   };
 })();
-b.lib.Cipher || function(t) {
-  var l = b, e = l.lib, n = e.Base, r = e.WordArray, s = e.BufferedBlockAlgorithm, a = l.enc.Base64, c = l.algo.EvpKDF, h = e.Cipher = s.extend({ cfg: n.extend(), createEncryptor: function(u, p) {
+R.lib.Cipher || function(t) {
+  var l = R, e = l.lib, n = e.Base, r = e.WordArray, s = e.BufferedBlockAlgorithm, a = l.enc.Base64, c = l.algo.EvpKDF, h = e.Cipher = s.extend({ cfg: n.extend(), createEncryptor: function(u, p) {
     return this.create(this._ENC_XFORM_MODE, u, p);
   }, createDecryptor: function(u, p) {
     return this.create(this._DEC_XFORM_MODE, u, p);
@@ -1404,7 +1404,7 @@ b.lib.Cipher || function(t) {
   } });
 }();
 (function() {
-  for (var t = b, e = t.lib.BlockCipher, M = t.algo, n = [], r = [], s = [], a = [], c = [], h = [], x = [], d = [], E = [], g = [], w = [], l = 0;256 > l; l++)
+  for (var t = R, e = t.lib.BlockCipher, M = t.algo, n = [], r = [], s = [], a = [], c = [], h = [], x = [], d = [], E = [], g = [], w = [], l = 0;256 > l; l++)
     w[l] = 128 > l ? l << 1 : l << 1 ^ 283;
   for (var f = 0, u = 0, l = 0;256 > l; l++) {
     var p = u ^ u << 1 ^ u << 2 ^ u << 3 ^ u << 4, p = p >>> 8 ^ p & 255 ^ 99;
@@ -1413,45 +1413,45 @@ b.lib.Cipher || function(t) {
     s[f] = V << 24 | V >>> 8, a[f] = V << 16 | V >>> 16, c[f] = V << 8 | V >>> 24, h[f] = V, V = 16843009 * A ^ 65537 * O ^ 257 * _ ^ 16843008 * f, x[p] = V << 24 | V >>> 8, d[p] = V << 16 | V >>> 16, E[p] = V << 8 | V >>> 24, g[p] = V, f ? (f = _ ^ w[w[w[A ^ _]]], u ^= w[w[u]]) : f = u = 1;
   }
   var U = [0, 1, 2, 4, 8, 16, 32, 64, 128, 27, 54], M = M.AES = e.extend({ _doReset: function() {
-    for (var j = this._key, I = j.words, P = j.sigBytes / 4, j = 4 * ((this._nRounds = P + 6) + 1), L = this._keySchedule = [], B = 0;B < j; B++)
+    for (var j = this._key, I = j.words, P = j.sigBytes / 4, j = 4 * ((this._nRounds = P + 6) + 1), b = this._keySchedule = [], B = 0;B < j; B++)
       if (B < P)
-        L[B] = I[B];
+        b[B] = I[B];
       else {
-        var N = L[B - 1];
-        B % P ? 6 < P && B % P == 4 && (N = n[N >>> 24] << 24 | n[N >>> 16 & 255] << 16 | n[N >>> 8 & 255] << 8 | n[N & 255]) : (N = N << 8 | N >>> 24, N = n[N >>> 24] << 24 | n[N >>> 16 & 255] << 16 | n[N >>> 8 & 255] << 8 | n[N & 255], N ^= U[B / P | 0] << 24), L[B] = L[B - P] ^ N;
+        var N = b[B - 1];
+        B % P ? 6 < P && B % P == 4 && (N = n[N >>> 24] << 24 | n[N >>> 16 & 255] << 16 | n[N >>> 8 & 255] << 8 | n[N & 255]) : (N = N << 8 | N >>> 24, N = n[N >>> 24] << 24 | n[N >>> 16 & 255] << 16 | n[N >>> 8 & 255] << 8 | n[N & 255], N ^= U[B / P | 0] << 24), b[B] = b[B - P] ^ N;
       }
     I = this._invKeySchedule = [];
     for (P = 0;P < j; P++)
-      B = j - P, N = P % 4 ? L[B] : L[B - 4], I[P] = 4 > P || 4 >= B ? N : x[n[N >>> 24]] ^ d[n[N >>> 16 & 255]] ^ E[n[N >>> 8 & 255]] ^ g[n[N & 255]];
+      B = j - P, N = P % 4 ? b[B] : b[B - 4], I[P] = 4 > P || 4 >= B ? N : x[n[N >>> 24]] ^ d[n[N >>> 16 & 255]] ^ E[n[N >>> 8 & 255]] ^ g[n[N & 255]];
   }, encryptBlock: function(I, P) {
     this._doCryptBlock(I, P, this._keySchedule, s, a, c, h, n);
   }, decryptBlock: function(I, P) {
     var j = I[P + 1];
     I[P + 1] = I[P + 3], I[P + 3] = j, this._doCryptBlock(I, P, this._invKeySchedule, x, d, E, g, r), j = I[P + 1], I[P + 1] = I[P + 3], I[P + 3] = j;
-  }, _doCryptBlock: function(I, P, j, L, B, N, C, m) {
-    for (var S = this._nRounds, q = I[P] ^ j[0], D = I[P + 1] ^ j[1], k = I[P + 2] ^ j[2], R = I[P + 3] ^ j[3], y = 4, v = 1;v < S; v++)
-      var z = L[q >>> 24] ^ B[D >>> 16 & 255] ^ N[k >>> 8 & 255] ^ C[R & 255] ^ j[y++], T = L[D >>> 24] ^ B[k >>> 16 & 255] ^ N[R >>> 8 & 255] ^ C[q & 255] ^ j[y++], F = L[k >>> 24] ^ B[R >>> 16 & 255] ^ N[q >>> 8 & 255] ^ C[D & 255] ^ j[y++], R = L[R >>> 24] ^ B[q >>> 16 & 255] ^ N[D >>> 8 & 255] ^ C[k & 255] ^ j[y++], q = z, D = T, k = F;
-    z = (m[q >>> 24] << 24 | m[D >>> 16 & 255] << 16 | m[k >>> 8 & 255] << 8 | m[R & 255]) ^ j[y++], T = (m[D >>> 24] << 24 | m[k >>> 16 & 255] << 16 | m[R >>> 8 & 255] << 8 | m[q & 255]) ^ j[y++], F = (m[k >>> 24] << 24 | m[R >>> 16 & 255] << 16 | m[q >>> 8 & 255] << 8 | m[D & 255]) ^ j[y++], R = (m[R >>> 24] << 24 | m[q >>> 16 & 255] << 16 | m[D >>> 8 & 255] << 8 | m[k & 255]) ^ j[y++], I[P] = z, I[P + 1] = T, I[P + 2] = F, I[P + 3] = R;
+  }, _doCryptBlock: function(I, P, j, b, B, N, C, m) {
+    for (var S = this._nRounds, q = I[P] ^ j[0], k = I[P + 1] ^ j[1], D = I[P + 2] ^ j[2], L = I[P + 3] ^ j[3], y = 4, v = 1;v < S; v++)
+      var F = b[q >>> 24] ^ B[k >>> 16 & 255] ^ N[D >>> 8 & 255] ^ C[L & 255] ^ j[y++], H = b[k >>> 24] ^ B[D >>> 16 & 255] ^ N[L >>> 8 & 255] ^ C[q & 255] ^ j[y++], X = b[D >>> 24] ^ B[L >>> 16 & 255] ^ N[q >>> 8 & 255] ^ C[k & 255] ^ j[y++], L = b[L >>> 24] ^ B[q >>> 16 & 255] ^ N[k >>> 8 & 255] ^ C[D & 255] ^ j[y++], q = F, k = H, D = X;
+    F = (m[q >>> 24] << 24 | m[k >>> 16 & 255] << 16 | m[D >>> 8 & 255] << 8 | m[L & 255]) ^ j[y++], H = (m[k >>> 24] << 24 | m[D >>> 16 & 255] << 16 | m[L >>> 8 & 255] << 8 | m[q & 255]) ^ j[y++], X = (m[D >>> 24] << 24 | m[L >>> 16 & 255] << 16 | m[q >>> 8 & 255] << 8 | m[k & 255]) ^ j[y++], L = (m[L >>> 24] << 24 | m[q >>> 16 & 255] << 16 | m[k >>> 8 & 255] << 8 | m[D & 255]) ^ j[y++], I[P] = F, I[P + 1] = H, I[P + 2] = X, I[P + 3] = L;
   }, keySize: 8 });
   t.AES = e._createHelper(M);
 })();
-var X = { game: "Divine Techno Run", url: "https://www.newgrounds.com/portal/view/628667", key: "34685:cxZQ5a1E", skey: "aBuRcFJLqDmPe3Gb0uultA==" };
+var J = { game: "Divine Techno Run", url: "https://www.newgrounds.com/portal/view/628667", key: "34685:cxZQ5a1E", skey: "aBuRcFJLqDmPe3Gb0uultA==" };
 
-class H {
+class z {
   #e;
-  #u;
-  #l = {};
+  config;
+  #u = {};
   #t;
   #r;
-  #a;
+  #l;
   #n;
   #o;
+  #a = new Set;
   #c = new Set;
-  #p = new Set;
   audio;
   audioOut;
   gameUrl;
-  static async validateSession(t, e = X) {
+  static async validateSession(t, e = J) {
     const n = new o.io.core(e.key, e.skey);
     return n.session_id = t, new Promise((r) => {
       n.callComponent("App.checkSession", {}, (s) => {
@@ -1460,16 +1460,16 @@ class H {
     });
   }
   validateSession(t) {
-    return H.validateSession(t, this.#u);
+    return z.validateSession(t, this.config);
   }
   addLoginListener(t) {
-    this.#c.add(t);
+    this.#a.add(t);
   }
   addUnlockListener(t) {
-    this.#p.add(t);
+    this.#c.add(t);
   }
-  constructor(t = X) {
-    this.#u = t, this.#e = new o.io.core(t.key, t.skey), this.#a = t.debug, this.initSession(), this.audio = new Audio(t.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = new Audio(t.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg"), this.gameUrl = t.url;
+  constructor(t = J) {
+    this.config = t, this.#e = new o.io.core(t.key, t.skey), this.#l = t.debug, this.initSession(), this.audio = new Audio(t.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = new Audio(t.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg"), this.gameUrl = t.url;
   }
   get loggedIn() {
     return !!this.#e.user;
@@ -1519,14 +1519,14 @@ class H {
     const e = await this.getMedals(), n = e.filter((r) => r.name === t)[0];
     if (n)
       return new Promise((r) => {
-        if (!n.unlocked && !this.#l[n.id])
+        if (!n.unlocked && !this.#u[n.id])
           this.#e.callComponent("Medal.unlock", { id: n.id }, (s) => {
             const a = s.medal;
             if (a) {
               for (let c = 0;c < e.length; c++)
                 if (e[c].id === a.id)
                   e[c] = a;
-              this.#l[a.id] = true, this.#p.forEach((c) => c(a)), this.showReceivedMedal(a), r(s.medal);
+              this.#u[a.id] = true, this.#c.forEach((c) => c(a)), this.showReceivedMedal(a), r(s.medal);
             }
           });
         else
@@ -1556,7 +1556,7 @@ class H {
   initSession() {
     this.#e.getValidSession(() => {
       this.validateSession(this.#e.session_id);
-      const t = !this.#a ? undefined : document.body.appendChild(document.createElement("button"));
+      const t = !this.#l ? undefined : document.body.appendChild(document.createElement("button"));
       if (t)
         t.id = "newgrounds-login", t.style.position = "absolute", t.style.top = "5px", t.style.right = "5px", t.style.height = "24px", t.style.fontSize = "10pt", t.style.zIndex = "1000", t.classList.add("button"), t.innerText = "login newgrounds", t.addEventListener("click", (e) => {
           this.requestLogin(), e.stopPropagation();
@@ -1566,10 +1566,10 @@ class H {
     });
   }
   onLoggedIn() {
-    console.log("Welcome ", this.#e.user?.name + "!"), this.#c.forEach((t) => t()), this.getMedals(), this.getScoreboards();
+    console.log("Welcome ", this.#e.user?.name + "!"), this.#a.forEach((t) => t()), this.getMedals(), this.getScoreboards();
   }
   #s;
-  #f() {
+  #p() {
     if (!this.#s) {
       const t = document.body.appendChild(document.createElement("div"));
       t.style.display = "none", t.style.position = "absolute", t.style.right = "10px", t.style.top = "10px", t.style.padding = "5px 10px", t.style.border = "2px solid #880", t.style.borderRadius = "5px", t.style.background = "linear-gradient(#884, #553)", t.style.boxShadow = "2px 2px black", t.style.flexDirection = "row", t.style.transition = "opacity .5s, margin-right .3s", t.style.opacity = "0", t.style.marginRight = "-300px", t.style.zIndex = "3000", t.style.fontFamily = "Papyrus, fantasy", this.#s = t;
@@ -1579,7 +1579,7 @@ class H {
   #i;
   showReceivedMedal(t) {
     clearTimeout(this.#i);
-    const e = this.#f();
+    const e = this.#p();
     e.style.display = "flex", e.innerText = "";
     const n = e.appendChild(document.createElement("img"));
     n.addEventListener("load", () => {
@@ -1621,5 +1621,5 @@ class H {
   }
 }
 export {
-  H as Newgrounds
+  z as Newgrounds
 };
