@@ -12,17 +12,22 @@ export function validateSession(session: string, config: Config): Promise<string
 
 let ngWrapper: NewgroundsWrapper | undefined;
 
-function getNg(config: Config): NewgroundsWrapper {
+async function getNg(config: Config): Promise<NewgroundsWrapper> {
   if (!ngWrapper || ngWrapper.config.key !== config.key || ngWrapper.config.skey !== config.skey) {
     ngWrapper = new NewgroundsWrapper(config);
+  }
+  if (!ngWrapper.loggedIn) {
+    await new Promise((resolve) => {
+      ngWrapper?.addLoginListener(() => resolve(undefined));
+    });
   }
   return ngWrapper;
 }
 
 export async function unlockMedal(name: string, config: Config): Promise<boolean> {
-  return !!(await getNg(config).unlockMedal(name));
+  return !!(await (await getNg(config)).unlockMedal(name));
 }
 
 export async function postScore(score: number, boardname: string, config: Config): Promise<boolean> {
-  return !!(await getNg(config).postScore(score, boardname));
+  return !!(await (await getNg(config)).postScore(score, boardname));
 }
