@@ -2,7 +2,7 @@
   "name": "medal-popup",
   "module": "src/index.ts",
   "description": "A library for showing Newgrounds medals.",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "keywords": [
     "bun",
     "bunjs",
