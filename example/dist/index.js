@@ -1480,6 +1480,9 @@ class z {
   get user() {
     return this.#e.user?.name;
   }
+  get session() {
+    return this.#e.session_id;
+  }
   async getScoreboards() {
     return new Promise((t) => {
       if (this.#n)

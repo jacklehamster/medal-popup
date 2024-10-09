@@ -125,6 +125,10 @@ export class NewgroundsWrapper {
     return this.#ngio.user?.name;
   }
 
+  get session() {
+    return this.#ngio.session_id;
+  }
+
   async getScoreboards(): Promise<Scoreboard[]> {
     return new Promise(resolve => {
       if (this.#scoreboards) {
@@ -258,7 +262,7 @@ export class NewgroundsWrapper {
         button.addEventListener("click", (e) => {
           this.requestLogin();
           e.stopPropagation();
-        });  
+        });
       }
 
       if (this.#ngio.user) {
