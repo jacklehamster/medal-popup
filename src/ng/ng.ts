@@ -223,7 +223,7 @@ export class NewgroundsWrapper {
   }
 
   requestLogin() {
-    this.#ngio.requestLogin(this.onLoggedIn, this.onLoginFailed, this.onLoginCancelled);
+    this.#ngio.requestLogin(() => this.onLoggedIn(), () => this.onLoginFailed(), () => this.onLoginCancelled());
     /* you should also draw a 'cancel login' buton here */
     const button = document.getElementById("newgrounds-login");
     if (button) {

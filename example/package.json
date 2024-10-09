@@ -17,6 +17,7 @@
   "dependencies": {
     "baojs": "^0.2.1",
     "png-to-ico": "^2.1.8",
-    "serve-static-bun": "^0.5.3"
+    "serve-static-bun": "^0.5.3",
+    "medal-poup": "link:medal-popup"
   }
 }

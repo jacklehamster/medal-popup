@@ -1,14 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en-US">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Newgrounds API tester</title>
   </head>
   <body>
+    <h1>Newgrounds API tester</h1>
+    This API uses the game "Divine techno run" for testing.
   </body>
   <script type="module">
-    import { Newgrounds } from './dist/index.js';
+    import { Newgrounds } from "./dist/index.js";
 
     const ng = new Newgrounds();
     {
@@ -19,15 +21,52 @@
       a.textContent = ng.gameUrl;
     }
 
-    const button = document.body.appendChild(document.createElement("button"));
-    button.textContent = "Log in newgrounds";
-    button.addEventListener("click", () => {
-      ng.requestLogin();
-    });
-    ng.addLoginListener(async () => {
+    const loginButton = (() => {
+      const button = document.body.appendChild(
+        document.createElement("button")
+      );
+      button.textContent = "Log in newgrounds";
+      button.addEventListener("click", () => {
+        ng.requestLogin();
+      });
+      return button;
+    })();
+
+    {
+      const button = document.body.appendChild(
+        document.createElement("button")
+      );
+      const resultDiv = document.body.appendChild(
+        document.createElement("div")
+      );
+      resultDiv.style.fontFamily = "Courier";
+      button.textContent = "Validate session";
+      button.addEventListener("click", async () => {
+        resultDiv.textContent = "Validating session...";
+        const session = ng.session;
+        const result = await fetch("/validate-session/" + session);
+        const text = await result.text();
+        resultDiv.textContent = text;
+      });
+    }
+    const clearButton = (() => {
+      const button = document.body.appendChild(
+        document.createElement("button")
+      );
+      button.textContent = "Clear session";
       button.disabled = true;
+      button.addEventListener("click", () => {
+        localStorage.clear();
+        location.reload();
+      });
+      return button;
+    })();
+
+    ng.addLoginListener(async () => {
+      loginButton.disabled = true;
+      clearButton.disabled = false;
       {
-        const  div =  document.body.appendChild(document.createElement("div"));
+        const div = document.body.appendChild(document.createElement("div"));
         {
           const img = div.appendChild(document.createElement("img"));
           img.src = ng.icons.large;
@@ -42,7 +81,7 @@
         }
       }
       {
-        const  div =  document.body.appendChild(document.createElement("div"));
+        const div = document.body.appendChild(document.createElement("div"));
         {
           const text = div.appendChild(document.createElement("div"));
           text.textContent = ng.user;
@@ -51,9 +90,9 @@
 
       const medals = await ng.getMedals();
       const medalButtons = {};
-      medals.forEach(medal => {
+      medals.forEach((medal) => {
         {
-          const  div =  document.body.appendChild(document.createElement("div"));
+          const div = document.body.appendChild(document.createElement("div"));
           {
             const button = div.appendChild(document.createElement("button"));
             button.textContent = `unlockMedal("${medal.name}") - ${medal.unlocked ? "unlocked" : "locked"}`;
@@ -67,10 +106,10 @@
 
       const scoreboards = await ng.getScoreboards();
       const scoreDiv = {};
-      scoreboards.forEach(scoreboard => {
+      scoreboards.forEach((scoreboard) => {
         {
           console.log(scoreboard);
-          const  div =  document.body.appendChild(document.createElement("div"));
+          const div = document.body.appendChild(document.createElement("div"));
           div.style.fontFamily = "Courier";
           div.style.whiteSpace = "pre";
           {
@@ -86,28 +125,30 @@
             button.addEventListener("click", async () => {
               const result = await ng.postScore(1000, scoreboard.name);
               if (result) {
-                div.appendChild(document.createElement("span")).textContent = "Score posted.";                
+                div.appendChild(document.createElement("span")).textContent =
+                  "Score posted.";
               }
             });
-
           }
         }
       });
 
-      ng.addUnlockListener(medal => {
-        medalButtons[medal.id].textContent = `unlockMedal("${medal.name}") - ${medal.unlocked ? "unlocked" : "locked"}`;
+      ng.addUnlockListener((medal) => {
+        medalButtons[medal.id].textContent =
+          `unlockMedal("${medal.name}") - ${medal.unlocked ? "unlocked" : "locked"}`;
       });
 
       {
-        const button = document.body.appendChild(document.createElement("button"));
+        const button = document.body.appendChild(
+          document.createElement("button")
+        );
         button.textContent = `logEvent('test_event')`;
         button.addEventListener("click", async () => {
-        const result = await ng.logEvent('test_event');
-        if (result) {
-          console.log(result);
-        }
-      });
-
+          const result = await ng.logEvent("test_event");
+          if (result) {
+            console.log(result);
+          }
+        });
       }
     });
 
