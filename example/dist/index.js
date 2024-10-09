@@ -1589,10 +1589,10 @@ class z {
     e.style.display = "flex", e.innerText = "";
     const n = e.appendChild(document.createElement("img"));
     n.addEventListener("load", () => {
-      if (e.style.display = "flex", e.style.opacity = "1", e.style.marginRight = "0", !window.mute)
+      if (e.style.display = "flex", e.style.opacity = "1", e.style.marginRight = "0", !globalThis.mute)
         this.audio?.play();
       this.#i = setTimeout(() => {
-        if (!window.mute)
+        if (!globalThis.mute)
           this.audioOut?.play();
         e.style.opacity = "0", this.#i = setTimeout(() => {
           e.style.display = "none", e.style.marginRight = "-300px", this.#i = undefined;

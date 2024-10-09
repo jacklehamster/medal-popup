@@ -324,11 +324,11 @@ export class NewgroundsWrapper {
       medalDiv.style.display = "flex";
       medalDiv.style.opacity = "1";
       medalDiv.style.marginRight = "0";
-      if (!(window as any).mute) {
+      if (!(globalThis as any).mute) {
         this.audio?.play();
       }
       this.#medalTimeout = setTimeout(() => {
-        if (!(window as any).mute) {
+        if (!(globalThis as any).mute) {
           this.audioOut?.play();
         }
         medalDiv.style.opacity = "0";
