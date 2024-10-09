@@ -113,6 +113,10 @@ export class NewgroundsWrapper {
     this.gameUrl = config.url;
   }
 
+  get key() {
+    return this.config.key;
+  }
+
   get loggedIn() {
     return !!this.#ngio.user;
   }

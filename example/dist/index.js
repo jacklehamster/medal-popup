@@ -1471,6 +1471,9 @@ class z {
   constructor(t = X) {
     this.config = t, this.#e = new o.io.core(t.key, t.skey), this.#l = t.debug, this.initSession(), this.audio = t.noAudio ? undefined : new Audio(t.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = t.noAudio ? undefined : new Audio(t.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg"), this.gameUrl = t.url;
   }
+  get key() {
+    return this.config.key;
+  }
   get loggedIn() {
     return !!this.#e.user;
   }
