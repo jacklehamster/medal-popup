@@ -111,7 +111,7 @@ X.io.core = function(O, K) {
     return false;
   }
   const G = {};
-  function B() {
+  function L() {
     if (T())
       return localStorage;
     return { getItem($) {
@@ -123,14 +123,14 @@ X.io.core = function(O, K) {
     } };
   }
   function I() {
-    var R = B().getItem(P);
+    var R = L().getItem(P);
     return R ? R : null;
   }
   function F($) {
-    B().setItem(P, $);
+    L().setItem(P, $);
   }
   function H() {
-    B().removeItem(P);
+    L().removeItem(P);
   }
   if (!Q && I())
     Q = I();
@@ -247,12 +247,12 @@ X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
       console.warn("Received empty data from '" + O.component + "'."), G = null;
   else
     G = P;
-  var B;
+  var L;
   if (G.constructor === Array)
     for (Z = 0;Z < G.length; Z++)
-      B = new X.io.events.OutputEvent(O.component, O[Z], G[Z]), this.dispatchEvent(B);
+      L = new X.io.events.OutputEvent(O.component, O[Z], G[Z]), this.dispatchEvent(L);
   else
-    B = new X.io.events.OutputEvent(O.component, O, G), this.dispatchEvent(B);
+    L = new X.io.events.OutputEvent(O.component, O, G), this.dispatchEvent(L);
   if (K && K.constructor === Function)
     K.call(Q, G);
 }, _formatResults: function(O, K) {
@@ -298,8 +298,8 @@ X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
     throw new Error("Attempted to call Newgrounds.io server without setting an app_id in Newgrounds.io.core instance.");
   var Q, Z = false, M = this;
   function Y(G) {
-    var B = X.io.call_validators.getValidator(G.component);
-    if (B.hasOwnProperty("redirect") && B.redirect) {
+    var L = X.io.call_validators.getValidator(G.component);
+    if (L.hasOwnProperty("redirect") && L.redirect) {
       var I = G.parameters;
       if (!I || !I.hasOwnProperty("redirect") || I.redirect)
         return true;
@@ -324,8 +324,8 @@ X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
     var T = document.createElement("input");
     T.type = "hidden", T.name = "input", P.appendChild(T), document.body.appendChild(P), T.value = JSON.stringify(W), P.submit(), document.body.removeChild(P);
   } else {
-    const G = this, B = X.io.GATEWAY_URI.startsWith("//") ? "https:" + X.io.GATEWAY_URI : X.io.GATEWAY_URI, I = new FormData;
-    I.append("input", JSON.stringify(W)), fetch(B, { method: "POST", body: I }).then((F) => F.json()).then((F) => {
+    const G = this, L = X.io.GATEWAY_URI.startsWith("//") ? "https:" + X.io.GATEWAY_URI : X.io.GATEWAY_URI, I = new FormData;
+    I.append("input", JSON.stringify(W)), fetch(L, { method: "POST", body: I }).then((F) => F.json()).then((F) => {
       G._doCallback(O, K, F.result, V);
     });
   }
@@ -1215,10 +1215,10 @@ var j = j || function(O, K) {
     };
   }, _createHmacHelper: function(I) {
     return function(F, H) {
-      return new B.HMAC.init(I, H).finalize(F);
+      return new L.HMAC.init(I, H).finalize(F);
     };
   } });
-  var B = V.algo = {};
+  var L = V.algo = {};
   return V;
 }(Math);
 (function() {
@@ -1245,36 +1245,36 @@ var j = j || function(O, K) {
   }, _map: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=" };
 })();
 (function(O) {
-  function K(G, B, I, F, H, $, R) {
-    return G = G + (B & I | ~B & F) + H + R, (G << $ | G >>> 32 - $) + B;
+  function K(G, L, I, F, H, $, R) {
+    return G = G + (L & I | ~L & F) + H + R, (G << $ | G >>> 32 - $) + L;
   }
-  function V(G, B, I, F, H, $, R) {
-    return G = G + (B & F | I & ~F) + H + R, (G << $ | G >>> 32 - $) + B;
+  function V(G, L, I, F, H, $, R) {
+    return G = G + (L & F | I & ~F) + H + R, (G << $ | G >>> 32 - $) + L;
   }
-  function Q(G, B, I, F, H, $, R) {
-    return G = G + (B ^ I ^ F) + H + R, (G << $ | G >>> 32 - $) + B;
+  function Q(G, L, I, F, H, $, R) {
+    return G = G + (L ^ I ^ F) + H + R, (G << $ | G >>> 32 - $) + L;
   }
-  function Z(G, B, I, F, H, $, R) {
-    return G = G + (I ^ (B | ~F)) + H + R, (G << $ | G >>> 32 - $) + B;
+  function Z(G, L, I, F, H, $, R) {
+    return G = G + (I ^ (L | ~F)) + H + R, (G << $ | G >>> 32 - $) + L;
   }
   for (var M = j, z = M.lib, Y = z.WordArray, W = z.Hasher, z = M.algo, P = [], T = 0;64 > T; T++)
     P[T] = 4294967296 * O.abs(O.sin(T + 1)) | 0;
   z = z.MD5 = W.extend({ _doReset: function() {
     this._hash = new Y.init([1732584193, 4023233417, 2562383102, 271733878]);
-  }, _doProcessBlock: function(G, B) {
+  }, _doProcessBlock: function(G, L) {
     for (var I = 0;16 > I; I++) {
-      var F = B + I, H = G[F];
+      var F = L + I, H = G[F];
       G[F] = (H << 8 | H >>> 24) & 16711935 | (H << 24 | H >>> 8) & 4278255360;
     }
-    var I = this._hash.words, F = G[B + 0], H = G[B + 1], $ = G[B + 2], R = G[B + 3], J = G[B + 4], S = G[B + 5], y = G[B + 6], u = G[B + 7], m = G[B + 8], x = G[B + 9], C = G[B + 10], q = G[B + 11], f = G[B + 12], h = G[B + 13], D = G[B + 14], k = G[B + 15], U = I[0], A = I[1], E = I[2], L = I[3], U = K(U, A, E, L, F, 7, P[0]), L = K(L, U, A, E, H, 12, P[1]), E = K(E, L, U, A, $, 17, P[2]), A = K(A, E, L, U, R, 22, P[3]), U = K(U, A, E, L, J, 7, P[4]), L = K(L, U, A, E, S, 12, P[5]), E = K(E, L, U, A, y, 17, P[6]), A = K(A, E, L, U, u, 22, P[7]), U = K(U, A, E, L, m, 7, P[8]), L = K(L, U, A, E, x, 12, P[9]), E = K(E, L, U, A, C, 17, P[10]), A = K(A, E, L, U, q, 22, P[11]), U = K(U, A, E, L, f, 7, P[12]), L = K(L, U, A, E, h, 12, P[13]), E = K(E, L, U, A, D, 17, P[14]), A = K(A, E, L, U, k, 22, P[15]), U = V(U, A, E, L, H, 5, P[16]), L = V(L, U, A, E, y, 9, P[17]), E = V(E, L, U, A, q, 14, P[18]), A = V(A, E, L, U, F, 20, P[19]), U = V(U, A, E, L, S, 5, P[20]), L = V(L, U, A, E, C, 9, P[21]), E = V(E, L, U, A, k, 14, P[22]), A = V(A, E, L, U, J, 20, P[23]), U = V(U, A, E, L, x, 5, P[24]), L = V(L, U, A, E, D, 9, P[25]), E = V(E, L, U, A, R, 14, P[26]), A = V(A, E, L, U, m, 20, P[27]), U = V(U, A, E, L, h, 5, P[28]), L = V(L, U, A, E, $, 9, P[29]), E = V(E, L, U, A, u, 14, P[30]), A = V(A, E, L, U, f, 20, P[31]), U = Q(U, A, E, L, S, 4, P[32]), L = Q(L, U, A, E, m, 11, P[33]), E = Q(E, L, U, A, q, 16, P[34]), A = Q(A, E, L, U, D, 23, P[35]), U = Q(U, A, E, L, H, 4, P[36]), L = Q(L, U, A, E, J, 11, P[37]), E = Q(E, L, U, A, u, 16, P[38]), A = Q(A, E, L, U, C, 23, P[39]), U = Q(U, A, E, L, h, 4, P[40]), L = Q(L, U, A, E, F, 11, P[41]), E = Q(E, L, U, A, R, 16, P[42]), A = Q(A, E, L, U, y, 23, P[43]), U = Q(U, A, E, L, x, 4, P[44]), L = Q(L, U, A, E, f, 11, P[45]), E = Q(E, L, U, A, k, 16, P[46]), A = Q(A, E, L, U, $, 23, P[47]), U = Z(U, A, E, L, F, 6, P[48]), L = Z(L, U, A, E, u, 10, P[49]), E = Z(E, L, U, A, D, 15, P[50]), A = Z(A, E, L, U, S, 21, P[51]), U = Z(U, A, E, L, f, 6, P[52]), L = Z(L, U, A, E, R, 10, P[53]), E = Z(E, L, U, A, C, 15, P[54]), A = Z(A, E, L, U, H, 21, P[55]), U = Z(U, A, E, L, m, 6, P[56]), L = Z(L, U, A, E, k, 10, P[57]), E = Z(E, L, U, A, y, 15, P[58]), A = Z(A, E, L, U, h, 21, P[59]), U = Z(U, A, E, L, J, 6, P[60]), L = Z(L, U, A, E, q, 10, P[61]), E = Z(E, L, U, A, $, 15, P[62]), A = Z(A, E, L, U, x, 21, P[63]);
-    I[0] = I[0] + U | 0, I[1] = I[1] + A | 0, I[2] = I[2] + E | 0, I[3] = I[3] + L | 0;
+    var I = this._hash.words, F = G[L + 0], H = G[L + 1], $ = G[L + 2], R = G[L + 3], J = G[L + 4], S = G[L + 5], y = G[L + 6], u = G[L + 7], m = G[L + 8], x = G[L + 9], C = G[L + 10], q = G[L + 11], f = G[L + 12], h = G[L + 13], D = G[L + 14], k = G[L + 15], U = I[0], A = I[1], E = I[2], B = I[3], U = K(U, A, E, B, F, 7, P[0]), B = K(B, U, A, E, H, 12, P[1]), E = K(E, B, U, A, $, 17, P[2]), A = K(A, E, B, U, R, 22, P[3]), U = K(U, A, E, B, J, 7, P[4]), B = K(B, U, A, E, S, 12, P[5]), E = K(E, B, U, A, y, 17, P[6]), A = K(A, E, B, U, u, 22, P[7]), U = K(U, A, E, B, m, 7, P[8]), B = K(B, U, A, E, x, 12, P[9]), E = K(E, B, U, A, C, 17, P[10]), A = K(A, E, B, U, q, 22, P[11]), U = K(U, A, E, B, f, 7, P[12]), B = K(B, U, A, E, h, 12, P[13]), E = K(E, B, U, A, D, 17, P[14]), A = K(A, E, B, U, k, 22, P[15]), U = V(U, A, E, B, H, 5, P[16]), B = V(B, U, A, E, y, 9, P[17]), E = V(E, B, U, A, q, 14, P[18]), A = V(A, E, B, U, F, 20, P[19]), U = V(U, A, E, B, S, 5, P[20]), B = V(B, U, A, E, C, 9, P[21]), E = V(E, B, U, A, k, 14, P[22]), A = V(A, E, B, U, J, 20, P[23]), U = V(U, A, E, B, x, 5, P[24]), B = V(B, U, A, E, D, 9, P[25]), E = V(E, B, U, A, R, 14, P[26]), A = V(A, E, B, U, m, 20, P[27]), U = V(U, A, E, B, h, 5, P[28]), B = V(B, U, A, E, $, 9, P[29]), E = V(E, B, U, A, u, 14, P[30]), A = V(A, E, B, U, f, 20, P[31]), U = Q(U, A, E, B, S, 4, P[32]), B = Q(B, U, A, E, m, 11, P[33]), E = Q(E, B, U, A, q, 16, P[34]), A = Q(A, E, B, U, D, 23, P[35]), U = Q(U, A, E, B, H, 4, P[36]), B = Q(B, U, A, E, J, 11, P[37]), E = Q(E, B, U, A, u, 16, P[38]), A = Q(A, E, B, U, C, 23, P[39]), U = Q(U, A, E, B, h, 4, P[40]), B = Q(B, U, A, E, F, 11, P[41]), E = Q(E, B, U, A, R, 16, P[42]), A = Q(A, E, B, U, y, 23, P[43]), U = Q(U, A, E, B, x, 4, P[44]), B = Q(B, U, A, E, f, 11, P[45]), E = Q(E, B, U, A, k, 16, P[46]), A = Q(A, E, B, U, $, 23, P[47]), U = Z(U, A, E, B, F, 6, P[48]), B = Z(B, U, A, E, u, 10, P[49]), E = Z(E, B, U, A, D, 15, P[50]), A = Z(A, E, B, U, S, 21, P[51]), U = Z(U, A, E, B, f, 6, P[52]), B = Z(B, U, A, E, R, 10, P[53]), E = Z(E, B, U, A, C, 15, P[54]), A = Z(A, E, B, U, H, 21, P[55]), U = Z(U, A, E, B, m, 6, P[56]), B = Z(B, U, A, E, k, 10, P[57]), E = Z(E, B, U, A, y, 15, P[58]), A = Z(A, E, B, U, h, 21, P[59]), U = Z(U, A, E, B, J, 6, P[60]), B = Z(B, U, A, E, q, 10, P[61]), E = Z(E, B, U, A, $, 15, P[62]), A = Z(A, E, B, U, x, 21, P[63]);
+    I[0] = I[0] + U | 0, I[1] = I[1] + A | 0, I[2] = I[2] + E | 0, I[3] = I[3] + B | 0;
   }, _doFinalize: function() {
-    var G = this._data, B = G.words, I = 8 * this._nDataBytes, F = 8 * G.sigBytes;
-    B[F >>> 5] |= 128 << 24 - F % 32;
+    var G = this._data, L = G.words, I = 8 * this._nDataBytes, F = 8 * G.sigBytes;
+    L[F >>> 5] |= 128 << 24 - F % 32;
     var H = O.floor(I / 4294967296);
-    B[(F + 64 >>> 9 << 4) + 15] = (H << 8 | H >>> 24) & 16711935 | (H << 24 | H >>> 8) & 4278255360, B[(F + 64 >>> 9 << 4) + 14] = (I << 8 | I >>> 24) & 16711935 | (I << 24 | I >>> 8) & 4278255360, G.sigBytes = 4 * (B.length + 1), this._process(), G = this._hash, B = G.words;
+    L[(F + 64 >>> 9 << 4) + 15] = (H << 8 | H >>> 24) & 16711935 | (H << 24 | H >>> 8) & 4278255360, L[(F + 64 >>> 9 << 4) + 14] = (I << 8 | I >>> 24) & 16711935 | (I << 24 | I >>> 8) & 4278255360, G.sigBytes = 4 * (L.length + 1), this._process(), G = this._hash, L = G.words;
     for (I = 0;4 > I; I++)
-      F = B[I], B[I] = (F << 8 | F >>> 24) & 16711935 | (F << 24 | F >>> 8) & 4278255360;
+      F = L[I], L[I] = (F << 8 | F >>> 24) & 16711935 | (F << 24 | F >>> 8) & 4278255360;
     return G;
   }, clone: function() {
     var G = W.clone.call(this);
@@ -1286,12 +1286,12 @@ var j = j || function(O, K) {
     this.cfg = this.cfg.extend(M);
   }, compute: function(M, Y) {
     for (var G = this.cfg, W = G.hasher.create(), z = V.create(), P = z.words, T = G.keySize, G = G.iterations;P.length < T; ) {
-      B && W.update(B);
-      var B = W.update(M).finalize(Y);
+      L && W.update(L);
+      var L = W.update(M).finalize(Y);
       W.reset();
       for (var I = 1;I < G; I++)
-        B = W.finalize(B), W.reset();
-      z.concat(B);
+        L = W.finalize(L), W.reset();
+      z.concat(L);
     }
     return z.sigBytes = 4 * T, z;
   } });
@@ -1314,9 +1314,9 @@ j.lib.Cipher || function(O) {
     return H && this._append(H), this._doFinalize();
   }, keySize: 4, ivSize: 4, _ENC_XFORM_MODE: 1, _DEC_XFORM_MODE: 2, _createHelper: function(H) {
     return { encrypt: function($, R, J) {
-      return (typeof R == "string" ? F : B).encrypt(H, $, R, J);
+      return (typeof R == "string" ? F : L).encrypt(H, $, R, J);
     }, decrypt: function($, R, J) {
-      return (typeof R == "string" ? F : B).decrypt(H, $, R, J);
+      return (typeof R == "string" ? F : L).decrypt(H, $, R, J);
     } };
   } });
   K.StreamCipher = W.extend({ _doFinalize: function() {
@@ -1380,7 +1380,7 @@ j.lib.Cipher || function(O) {
       $.splice(0, 4), H.sigBytes -= 16;
     }
     return T.create({ ciphertext: H, salt: R });
-  } }, B = K.SerializableCipher = V.extend({ cfg: V.extend({ format: G }), encrypt: function(H, $, R, J) {
+  } }, L = K.SerializableCipher = V.extend({ cfg: V.extend({ format: G }), encrypt: function(H, $, R, J) {
     J = this.cfg.extend(J);
     var S = H.createEncryptor(R, J);
     return $ = S.finalize($), S = S.cfg, T.create({ ciphertext: $, key: R, iv: S.iv, algorithm: H, mode: S.mode, padding: S.padding, blockSize: H.blockSize, formatter: J.format });
@@ -1390,20 +1390,20 @@ j.lib.Cipher || function(O) {
     return typeof H == "string" ? $.parse(H, this) : H;
   } }), I = (I.kdf = {}).OpenSSL = { execute: function(H, $, R, J) {
     return J || (J = Q.random(8)), H = Y.create({ keySize: $ + R }).compute(H, J), R = Q.create(H.words.slice($), 4 * R), H.sigBytes = 4 * $, T.create({ key: H, iv: R, salt: J });
-  } }, F = K.PasswordBasedCipher = B.extend({ cfg: B.cfg.extend({ kdf: I }), encrypt: function(H, $, R, J) {
-    return J = this.cfg.extend(J), R = J.kdf.execute(R, H.keySize, H.ivSize), J.iv = R.iv, H = B.encrypt.call(this, H, $, R.key, J), H.mixIn(R), H;
+  } }, F = K.PasswordBasedCipher = L.extend({ cfg: L.cfg.extend({ kdf: I }), encrypt: function(H, $, R, J) {
+    return J = this.cfg.extend(J), R = J.kdf.execute(R, H.keySize, H.ivSize), J.iv = R.iv, H = L.encrypt.call(this, H, $, R.key, J), H.mixIn(R), H;
   }, decrypt: function(H, $, R, J) {
-    return J = this.cfg.extend(J), $ = this._parse($, J.format), R = J.kdf.execute(R, H.keySize, H.ivSize, $.salt), J.iv = R.iv, B.decrypt.call(this, H, $, R.key, J);
+    return J = this.cfg.extend(J), $ = this._parse($, J.format), R = J.kdf.execute(R, H.keySize, H.ivSize, $.salt), J.iv = R.iv, L.decrypt.call(this, H, $, R.key, J);
   } });
 }();
 (function() {
-  for (var O = j, K = O.lib.BlockCipher, m = O.algo, V = [], Q = [], Z = [], M = [], Y = [], W = [], z = [], P = [], T = [], G = [], B = [], I = 0;256 > I; I++)
-    B[I] = 128 > I ? I << 1 : I << 1 ^ 283;
+  for (var O = j, K = O.lib.BlockCipher, m = O.algo, V = [], Q = [], Z = [], M = [], Y = [], W = [], z = [], P = [], T = [], G = [], L = [], I = 0;256 > I; I++)
+    L[I] = 128 > I ? I << 1 : I << 1 ^ 283;
   for (var F = 0, H = 0, I = 0;256 > I; I++) {
     var $ = H ^ H << 1 ^ H << 2 ^ H << 3 ^ H << 4, $ = $ >>> 8 ^ $ & 255 ^ 99;
     V[F] = $, Q[$] = F;
-    var R = B[F], J = B[R], S = B[J], y = 257 * B[$] ^ 16843008 * $;
-    Z[F] = y << 24 | y >>> 8, M[F] = y << 16 | y >>> 16, Y[F] = y << 8 | y >>> 24, W[F] = y, y = 16843009 * S ^ 65537 * J ^ 257 * R ^ 16843008 * F, z[$] = y << 24 | y >>> 8, P[$] = y << 16 | y >>> 16, T[$] = y << 8 | y >>> 24, G[$] = y, F ? (F = R ^ B[B[B[S ^ R]]], H ^= B[B[H]]) : F = H = 1;
+    var R = L[F], J = L[R], S = L[J], y = 257 * L[$] ^ 16843008 * $;
+    Z[F] = y << 24 | y >>> 8, M[F] = y << 16 | y >>> 16, Y[F] = y << 8 | y >>> 24, W[F] = y, y = 16843009 * S ^ 65537 * J ^ 257 * R ^ 16843008 * F, z[$] = y << 24 | y >>> 8, P[$] = y << 16 | y >>> 16, T[$] = y << 8 | y >>> 24, G[$] = y, F ? (F = R ^ L[L[L[S ^ R]]], H ^= L[L[H]]) : F = H = 1;
   }
   var u = [0, 1, 2, 4, 8, 16, 32, 64, 128, 27, 54], m = m.AES = K.extend({ _doReset: function() {
     for (var q = this._key, x = q.words, C = q.sigBytes / 4, q = 4 * ((this._nRounds = C + 6) + 1), f = this._keySchedule = [], h = 0;h < q; h++)
@@ -1422,7 +1422,7 @@ j.lib.Cipher || function(O) {
     var q = x[C + 1];
     x[C + 1] = x[C + 3], x[C + 3] = q, this._doCryptBlock(x, C, this._invKeySchedule, z, P, T, G, Q), q = x[C + 1], x[C + 1] = x[C + 3], x[C + 3] = q;
   }, _doCryptBlock: function(x, C, q, f, h, D, k, U) {
-    for (var L = this._nRounds, w = x[C] ^ q[0], p = x[C + 1] ^ q[1], g = x[C + 2] ^ q[2], N = x[C + 3] ^ q[3], E = 4, A = 1;A < L; A++)
+    for (var B = this._nRounds, w = x[C] ^ q[0], p = x[C + 1] ^ q[1], g = x[C + 2] ^ q[2], N = x[C + 3] ^ q[3], E = 4, A = 1;A < B; A++)
       var v = f[w >>> 24] ^ h[p >>> 16 & 255] ^ D[g >>> 8 & 255] ^ k[N & 255] ^ q[E++], s = f[p >>> 24] ^ h[g >>> 16 & 255] ^ D[N >>> 8 & 255] ^ k[w & 255] ^ q[E++], t = f[g >>> 24] ^ h[N >>> 16 & 255] ^ D[w >>> 8 & 255] ^ k[p & 255] ^ q[E++], N = f[N >>> 24] ^ h[w >>> 16 & 255] ^ D[p >>> 8 & 255] ^ k[g & 255] ^ q[E++], w = v, p = s, g = t;
     v = (U[w >>> 24] << 24 | U[p >>> 16 & 255] << 16 | U[g >>> 8 & 255] << 8 | U[N & 255]) ^ q[E++], s = (U[p >>> 24] << 24 | U[g >>> 16 & 255] << 16 | U[N >>> 8 & 255] << 8 | U[w & 255]) ^ q[E++], t = (U[g >>> 24] << 24 | U[N >>> 16 & 255] << 16 | U[w >>> 8 & 255] << 8 | U[p & 255]) ^ q[E++], N = (U[N >>> 24] << 24 | U[w >>> 16 & 255] << 16 | U[p >>> 8 & 255] << 8 | U[g & 255]) ^ q[E++], x[C] = v, x[C + 1] = s, x[C + 2] = t, x[C + 3] = N;
   }, keySize: 8 });
@@ -1433,14 +1433,14 @@ var c = { game: "Divine Techno Run", url: "https://www.newgrounds.com/portal/vie
 class b {
   #K;
   config;
-  #H = {};
+  #M = {};
   #O;
   #Q;
-  #I;
+  #Y;
   #V;
   #X;
-  #M = new Set;
-  #Y = new Set;
+  #$ = new Set;
+  #H = new Set;
   audio;
   audioOut;
   gameUrl;
@@ -1456,13 +1456,19 @@ class b {
     return b.validateSession(O, this.config);
   }
   addLoginListener(O) {
-    this.#M.add(O);
+    this.#$.add(O);
   }
   addUnlockListener(O) {
-    this.#Y.add(O);
+    this.#H.add(O);
+  }
+  removeLoginListener(O) {
+    this.#$.delete(O);
+  }
+  removeUnlockListener(O) {
+    this.#H.delete(O);
   }
   constructor(O = c) {
-    this.config = O, this.#K = new X.io.core(O.key, O.skey), this.#I = O.debug, this.initSession(), this.audio = O.noAudio ? undefined : new Audio(O.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = O.noAudio ? undefined : new Audio(O.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg"), this.gameUrl = O.url;
+    this.config = O, this.#K = new X.io.core(O.key, O.skey), this.#Y = O.debug, this.initSession(), this.audio = O.noAudio ? undefined : new Audio(O.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = O.noAudio ? undefined : new Audio(O.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg"), this.gameUrl = O.url;
   }
   get key() {
     return this.config.key;
@@ -1518,14 +1524,14 @@ class b {
     const K = await this.getMedals(), V = K.filter((Q) => Q.name === O)[0];
     if (V)
       return new Promise((Q) => {
-        if (!V.unlocked && !this.#H[V.id])
+        if (!V.unlocked && !this.#M[V.id])
           this.#K.callComponent("Medal.unlock", { id: V.id }, (Z) => {
             const M = Z.medal;
             if (M) {
               for (let Y = 0;Y < K.length; Y++)
                 if (K[Y].id === M.id)
                   K[Y] = M;
-              this.#H[M.id] = true, this.#Y.forEach((Y) => Y(M)), this.showReceivedMedal(M), Q(Z.medal);
+              this.#M[M.id] = true, this.#H.forEach((Y) => Y(M)), this.showReceivedMedal(M), Q(Z.medal);
             }
           });
         else
@@ -1555,7 +1561,7 @@ class b {
   initSession() {
     this.#K.getValidSession(() => {
       this.validateSession(this.#K.session_id);
-      const O = !this.#I ? undefined : document.body.appendChild(document.createElement("button"));
+      const O = !this.#Y ? undefined : document.body.appendChild(document.createElement("button"));
       if (O)
         O.id = "newgrounds-login", O.style.position = "absolute", O.style.top = "5px", O.style.right = "5px", O.style.height = "24px", O.style.fontSize = "10pt", O.style.zIndex = "1000", O.classList.add("button"), O.innerText = "login newgrounds", O.addEventListener("click", (K) => {
           this.requestLogin(), K.stopPropagation();
@@ -1565,15 +1571,15 @@ class b {
     });
   }
   onLoggedIn() {
-    console.log("Welcome ", this.#K.user?.name + "!"), this.#M.forEach((O) => O()), this.getMedals(), this.getScoreboards();
+    console.log("Welcome ", this.#K.user?.name + "!"), this.#$.forEach((O) => O()), this.getMedals(), this.getScoreboards();
   }
-  #$;
+  #I;
   #P() {
-    if (!this.#$) {
+    if (!this.#I) {
       const O = document.body.appendChild(document.createElement("div"));
-      O.style.display = "none", O.style.position = "absolute", O.style.right = "10px", O.style.top = "10px", O.style.padding = "5px 10px", O.style.border = "2px solid #880", O.style.borderRadius = "5px", O.style.background = "linear-gradient(#884, #553)", O.style.boxShadow = "2px 2px black", O.style.flexDirection = "row", O.style.transition = "opacity .5s, margin-right .3s", O.style.opacity = "0", O.style.marginRight = "-300px", O.style.zIndex = "3000", O.style.fontFamily = "Papyrus, fantasy", this.#$ = O;
+      O.style.display = "none", O.style.position = "absolute", O.style.right = "10px", O.style.top = "10px", O.style.padding = "5px 10px", O.style.border = "2px solid #880", O.style.borderRadius = "5px", O.style.background = "linear-gradient(#884, #553)", O.style.boxShadow = "2px 2px black", O.style.flexDirection = "row", O.style.transition = "opacity .5s, margin-right .3s", O.style.opacity = "0", O.style.marginRight = "-300px", O.style.zIndex = "3000", O.style.fontFamily = "Papyrus, fantasy", this.#I = O;
     }
-    return this.#$;
+    return this.#I;
   }
   #Z;
   showReceivedMedal(O) {

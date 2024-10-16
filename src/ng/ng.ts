@@ -103,6 +103,14 @@ export class NewgroundsWrapper {
     this.#medalListeners.add(listener);
   }
 
+  removeLoginListener(listener: () => void) {
+    this.#loginListeners.delete(listener);
+  }
+
+  removeUnlockListener(listener: (medal: Medal) => void) {
+    this.#medalListeners.delete(listener);
+  }
+
   constructor(config: Config = testConfig) {
     this.config = config;
     this.#ngio = new Newgrounds.io.core(config.key, config.skey);
