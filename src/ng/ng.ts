@@ -250,9 +250,12 @@ export class NewgroundsWrapper {
   }
 
   requestLogout() {
-    console.log(`Logging out ${this.#ngio.user?.name}...`);
-    this.#ngio.logOut(() => {
-      this.#logoutListeners.forEach(listener => listener());
+    return new Promise<void>((resolve) => {
+      console.log(`Logging out ${this.#ngio.user?.name}...`);
+      this.#ngio.logOut(() => {
+        this.#logoutListeners.forEach(listener => listener());
+        resolve();
+      });
     });
   }
 

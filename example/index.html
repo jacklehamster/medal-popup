@@ -51,22 +51,23 @@
         resultDiv.textContent = text;
       });
     }
-    const clearButton = (() => {
+    const logout = (() => {
       const button = document.body.appendChild(
         document.createElement("button")
       );
-      button.textContent = "Clear session";
+      button.textContent = "Log out";
       button.disabled = true;
       button.addEventListener("click", () => {
-        localStorage.clear();
-        location.reload();
+        ng.requestLogout().then(() => {
+          location.reload();
+        });
       });
       return button;
     })();
 
     ng.addLoginListener(async () => {
       loginButton.disabled = true;
-      clearButton.disabled = false;
+      logout.disabled = false;
       {
         const div = document.body.appendChild(document.createElement("div"));
         {

@@ -11,8 +11,7 @@
     "bun-types": "^1.1.2"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0",
-    "medal-popup": "link:medal-popup"
+    "typescript": "^5.0.0"
   },
   "dependencies": {
     "baojs": "^0.2.1",

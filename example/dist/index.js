@@ -1101,7 +1101,7 @@ X.io.SessionLoader.prototype = { _event_listeners: {}, last_error: null, passpor
     O = "_blank";
   if (!this.session || !this.session.passport_url)
     return console.warn("Attempted to open Newgrounds Passport without a valid passport_url. Be sure you have called getValidSession() first!."), false;
-  if (this.passport_window = globalThis.open(this.session.passport_url, O), !this.passport_window)
+  if (this.passport_window = globalThis.open(this.session.passport_url, O, "popup=yes,width=600,height=600"), !this.passport_window)
     console.warn("Unable to detect passport window. Pop-up blockers will prevent loading Newgrounds Passport if loadPassport() or requestLogin() are not called from within a mouse click handler.");
   return this.passportOpen();
 }, closePassport: function() {
@@ -1554,8 +1554,10 @@ class b {
       O.style.display = "none";
   }
   requestLogout() {
-    console.log(`Logging out ${this.#K.user?.name}...`), this.#K.logOut(() => {
-      this.#H.forEach((O) => O());
+    return new Promise((O) => {
+      console.log(`Logging out ${this.#K.user?.name}...`), this.#K.logOut(() => {
+        this.#H.forEach((K) => K()), O();
+      });
     });
   }
   onLoginFailed() {
