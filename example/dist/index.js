@@ -79,9 +79,9 @@ X.io.events.EventDispatcher.prototype = { _event_listeners: {}, addEventListener
 } };
 X.io.events.EventDispatcher.prototype.constructor = X.io.events.EventDispatcher;
 X.io.core = function(O, K) {
-  var V, Q, Z, M, Y = this, W, z = new X.io.urlHelper;
-  if (z.getRequestQueryParam("ngio_session_id"))
-    Q = z.getRequestQueryParam("ngio_session_id");
+  var V, Q, Z, M, Y = this, W, L = new X.io.urlHelper;
+  if (L.getRequestQueryParam("ngio_session_id"))
+    Q = L.getRequestQueryParam("ngio_session_id");
   if (Object.defineProperty(this, "app_id", { get: function() {
     return V;
   } }), Object.defineProperty(this, "user", { get: function() {
@@ -105,14 +105,14 @@ X.io.core = function(O, K) {
   else
     console.warn("You did not set an encryption key. Some calls may not work without this.");
   var P = "Newgrounds-io-app_session-" + V.split(":").join("-");
-  function T() {
+  function J() {
     if (typeof localStorage != "undefined" && localStorage && localStorage.getItem.constructor == Function)
       return true;
     return false;
   }
   const G = {};
-  function L() {
-    if (T())
+  function T() {
+    if (J())
       return localStorage;
     return { getItem($) {
       return G[$];
@@ -123,14 +123,14 @@ X.io.core = function(O, K) {
     } };
   }
   function I() {
-    var R = L().getItem(P);
+    var R = T().getItem(P);
     return R ? R : null;
   }
   function F($) {
-    L().setItem(P, $);
+    T().setItem(P, $);
   }
   function H() {
-    L().removeItem(P);
+    T().removeItem(P);
   }
   if (!Q && I())
     Q = I();
@@ -150,7 +150,7 @@ X.io.core = function(O, K) {
   }), this._encryptCall = function($) {
     if (!$ || !$.constructor == X.io.model.call_model)
       throw new Error("Attempted to encrypt a non 'call' object");
-    var R = j.lib.WordArray.random(16), J = j.AES.encrypt(JSON.stringify($.toObject()), W, { iv: R }), S = j.enc.Base64.stringify(R.concat(J.ciphertext));
+    var R = j.lib.WordArray.random(16), z = j.AES.encrypt(JSON.stringify($.toObject()), W, { iv: R }), S = j.enc.Base64.stringify(R.concat(z.ciphertext));
     return $.secure = S, $.parameters = null, $;
   };
 };
@@ -178,19 +178,19 @@ X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
   function W() {
     if (Y)
       clearInterval(Y);
-    Z.removeEventListener("cancelLoginRequest", z), M.closePassport();
+    Z.removeEventListener("cancelLoginRequest", L), M.closePassport();
   }
-  function z() {
+  function L() {
     V && V.constructor === Function ? V.call(Q) : K.call(Q), W();
   }
-  if (Z.addEventListener("cancelLoginRequest", z), Z.getCurrentUser())
+  if (Z.addEventListener("cancelLoginRequest", L), Z.getCurrentUser())
     O.call(Q);
   else
     M.loadPassport(), Y = setInterval(function() {
       M.checkSession(function(P) {
         if (!P || P.expired)
           if (M.last_error.code == 111)
-            z();
+            L();
           else
             W(), K.call(Q);
         else if (P.user)
@@ -221,7 +221,7 @@ X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
     Z.parameters = K;
   this._validateCall(Z), this._doCall(Z, V, Q);
 }, _doCallback: function(O, K, V, Q) {
-  var Z, M, Y, W, z, P = { success: false, error: { code: 0, message: "Unexpected Server Response" } };
+  var Z, M, Y, W, L, P = { success: false, error: { code: 0, message: "Unexpected Server Response" } };
   if (typeof V == "undefined")
     V = null;
   if (O.constructor === Array && K && K.constructor === Array) {
@@ -230,14 +230,14 @@ X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
     return;
   }
   if (V && typeof V.data != "undefined") {
-    var T;
+    var J;
     if (V.data.constructor === Array) {
-      T = [];
+      J = [];
       for (Z = 0;Z < V.data.length; Z++)
-        T.push(this._formatResults(V.component, V.data[Z]));
+        J.push(this._formatResults(V.component, V.data[Z]));
     } else
-      T = this._formatResults(V.component, V.data);
-    V.data = T;
+      J = this._formatResults(V.component, V.data);
+    V.data = J;
   }
   var G;
   if (V)
@@ -247,12 +247,12 @@ X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
       console.warn("Received empty data from '" + O.component + "'."), G = null;
   else
     G = P;
-  var L;
+  var T;
   if (G.constructor === Array)
     for (Z = 0;Z < G.length; Z++)
-      L = new X.io.events.OutputEvent(O.component, O[Z], G[Z]), this.dispatchEvent(L);
+      T = new X.io.events.OutputEvent(O.component, O[Z], G[Z]), this.dispatchEvent(T);
   else
-    L = new X.io.events.OutputEvent(O.component, O, G), this.dispatchEvent(L);
+    T = new X.io.events.OutputEvent(O.component, O, G), this.dispatchEvent(T);
   if (K && K.constructor === Function)
     K.call(Q, G);
 }, _formatResults: function(O, K) {
@@ -261,17 +261,17 @@ X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
     W = X.io.call_validators.getValidator(O);
   if (!W)
     return K;
-  var z = W.returns;
-  for (Q in z) {
+  var L = W.returns;
+  for (Q in L) {
     if (typeof K[Q] == "undefined" && K.success !== false) {
       console.warn("Newgrounds.io server failed to return expected '" + Q + "' in '" + O + "' data.");
       continue;
     }
-    if (typeof z[Q].array != "undefined") {
-      if (typeof z[Q].array.object != "undefined")
-        Y = z[Q].array.object;
+    if (typeof L[Q].array != "undefined") {
+      if (typeof L[Q].array.object != "undefined")
+        Y = L[Q].array.object;
       else
-        Y = z[Q].array;
+        Y = L[Q].array;
       if (typeof X.io.model[Y] == "undefined") {
         console.warn("Received unsupported model '" + Y + "' from '" + O + "'.");
         continue;
@@ -284,8 +284,8 @@ X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
       for (Z = 0;Z < K[Q].length; Z++)
         V = new X.io.model[Y](this), V.fromObject(K[Q][Z]), M.push(V);
       K[Q] = M;
-    } else if (typeof z[Q].object != "undefined" && K[Q]) {
-      if (Y = z[Q].object, typeof X.io.model[Y] == "undefined") {
+    } else if (typeof L[Q].object != "undefined" && K[Q]) {
+      if (Y = L[Q].object, typeof X.io.model[Y] == "undefined") {
         console.warn("Received unsupported model '" + Y + "' from '" + O + "'.");
         continue;
       }
@@ -298,8 +298,8 @@ X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
     throw new Error("Attempted to call Newgrounds.io server without setting an app_id in Newgrounds.io.core instance.");
   var Q, Z = false, M = this;
   function Y(G) {
-    var L = X.io.call_validators.getValidator(G.component);
-    if (L.hasOwnProperty("redirect") && L.redirect) {
+    var T = X.io.call_validators.getValidator(G.component);
+    if (T.hasOwnProperty("redirect") && T.redirect) {
       var I = G.parameters;
       if (!I || !I.hasOwnProperty("redirect") || I.redirect)
         return true;
@@ -319,13 +319,13 @@ X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
   if (this.debug)
     W.debug = 1;
   if (Z) {
-    var z = { success: true, app_id: this.app_id, result: { component: O.component, data: { success: true } } }, P = document.createElement("form");
+    var L = { success: true, app_id: this.app_id, result: { component: O.component, data: { success: true } } }, P = document.createElement("form");
     P.action = X.io.GATEWAY_URI, P.target = "_blank", P.method = "POST";
-    var T = document.createElement("input");
-    T.type = "hidden", T.name = "input", P.appendChild(T), document.body.appendChild(P), T.value = JSON.stringify(W), P.submit(), document.body.removeChild(P);
+    var J = document.createElement("input");
+    J.type = "hidden", J.name = "input", P.appendChild(J), document.body.appendChild(P), J.value = JSON.stringify(W), P.submit(), document.body.removeChild(P);
   } else {
-    const G = this, L = X.io.GATEWAY_URI.startsWith("//") ? "https:" + X.io.GATEWAY_URI : X.io.GATEWAY_URI, I = new FormData;
-    I.append("input", JSON.stringify(W)), fetch(L, { method: "POST", body: I }).then((F) => F.json()).then((F) => {
+    const G = this, T = X.io.GATEWAY_URI.startsWith("//") ? "https:" + X.io.GATEWAY_URI : X.io.GATEWAY_URI, I = new FormData;
+    I.append("input", JSON.stringify(W)), fetch(T, { method: "POST", body: I }).then((F) => F.json()).then((F) => {
       G._doCallback(O, K, F.result, V);
     });
   }
@@ -370,8 +370,8 @@ X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
   var Y = { component: O.component }, W = X.io.call_validators.getValidator(O.component);
   if (typeof Z != "undefined")
     if (W.secure) {
-      var z = this._encryptCall(O);
-      Y.secure = z.secure;
+      var L = this._encryptCall(O);
+      Y.secure = L.secure;
     } else
       Y.parameters = Z;
   if (typeof M != "undefined")
@@ -586,55 +586,55 @@ X.io.model.input.prototype.fromObject = function(O) {
 };
 X.io.model.input.prototype.constructor = X.io.model.input;
 X.io.model.medal = function(O, K) {
-  var V, Q, Z, M, Y, W, z, P;
+  var V, Q, Z, M, Y, W, L, P;
   this.__property_names = ["description", "difficulty", "icon", "id", "name", "secret", "unlocked", "value"], this.__classname = "Newgrounds.io.model.medal", this.__ngio = O;
   var V;
   Object.defineProperty(this, "description", { get: function() {
     return typeof V == "undefined" ? null : V;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "description", T, String, null, null, null), V = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "description", J, String, null, null, null), V = J;
   } });
   var Q;
   Object.defineProperty(this, "difficulty", { get: function() {
     return typeof Q == "undefined" ? null : Q;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "difficulty", T, Number, null, null, null), Q = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "difficulty", J, Number, null, null, null), Q = J;
   } });
   var Z;
   Object.defineProperty(this, "icon", { get: function() {
     return typeof Z == "undefined" ? null : Z;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "icon", T, String, null, null, null), Z = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "icon", J, String, null, null, null), Z = J;
   } });
   var M;
   Object.defineProperty(this, "id", { get: function() {
     return typeof M == "undefined" ? null : M;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "id", T, Number, null, null, null), M = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "id", J, Number, null, null, null), M = J;
   } });
   var Y;
   Object.defineProperty(this, "name", { get: function() {
     return typeof Y == "undefined" ? null : Y;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "name", T, String, null, null, null), Y = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "name", J, String, null, null, null), Y = J;
   } });
   var W;
   Object.defineProperty(this, "secret", { get: function() {
     return typeof W == "undefined" ? null : W;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "secret", T, Boolean, null, null, null), W = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "secret", J, Boolean, null, null, null), W = J;
   } });
-  var z;
+  var L;
   Object.defineProperty(this, "unlocked", { get: function() {
-    return typeof z == "undefined" ? null : z;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "unlocked", T, Boolean, null, null, null), z = T;
+    return typeof L == "undefined" ? null : L;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "unlocked", J, Boolean, null, null, null), L = J;
   } });
   var P;
   if (Object.defineProperty(this, "value", { get: function() {
     return typeof P == "undefined" ? null : P;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "value", T, Number, null, null, null), P = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "value", J, Number, null, null, null), P = J;
   } }), K)
     this.fromObject(K);
 };
@@ -668,55 +668,55 @@ X.io.model.medal.prototype.unlock = function(O) {
 };
 X.io.model.medal.prototype.constructor = X.io.model.medal;
 X.io.model.output = function(O, K) {
-  var V, Q, Z, M, Y, W, z, P;
+  var V, Q, Z, M, Y, W, L, P;
   this.__property_names = ["api_version", "app_id", "debug", "echo", "error", "help_url", "result", "success"], this.__classname = "Newgrounds.io.model.output", this.__ngio = O;
   var V;
   Object.defineProperty(this, "api_version", { get: function() {
     return typeof V == "undefined" ? null : V;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "api_version", T, String, null, null, null), V = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "api_version", J, String, null, null, null), V = J;
   } });
   var Q;
   Object.defineProperty(this, "app_id", { get: function() {
     return typeof Q == "undefined" ? null : Q;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "app_id", T, String, null, null, null), Q = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "app_id", J, String, null, null, null), Q = J;
   } });
   var Z;
   Object.defineProperty(this, "debug", { get: function() {
     return typeof Z == "undefined" ? null : Z;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "debug", T, null, "debug", null, null), Z = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "debug", J, null, "debug", null, null), Z = J;
   } });
   var M;
   Object.defineProperty(this, "echo", { get: function() {
     return typeof M == "undefined" ? null : M;
-  }, set: function(T) {
-    M = T;
+  }, set: function(J) {
+    M = J;
   } });
   var Y;
   Object.defineProperty(this, "error", { get: function() {
     return typeof Y == "undefined" ? null : Y;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "error", T, null, "error", null, null), Y = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "error", J, null, "error", null, null), Y = J;
   } });
   var W;
   Object.defineProperty(this, "help_url", { get: function() {
     return typeof W == "undefined" ? null : W;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "help_url", T, String, null, null, null), W = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "help_url", J, String, null, null, null), W = J;
   } });
-  var z;
+  var L;
   Object.defineProperty(this, "result", { get: function() {
-    return typeof z == "undefined" ? null : z;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "result", T, null, "result", null, "result"), z = T;
+    return typeof L == "undefined" ? null : L;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "result", J, null, "result", null, "result"), L = J;
   } });
   var P;
   if (Object.defineProperty(this, "success", { get: function() {
     return typeof P == "undefined" ? null : P;
-  }, set: function(T) {
-    X.io.model.checkStrictValue(this.__classname, "success", T, Boolean, null, null, null), P = T;
+  }, set: function(J) {
+    X.io.model.checkStrictValue(this.__classname, "success", J, Boolean, null, null, null), P = J;
   } }), K)
     this.fromObject(K);
 };
@@ -1133,7 +1133,7 @@ var j = j || function(O, K) {
   } }, Y = Q.WordArray = M.extend({ init: function(I, F) {
     I = this.words = I || [], this.sigBytes = F != K ? F : 4 * I.length;
   }, toString: function(I) {
-    return (I || z).stringify(this);
+    return (I || L).stringify(this);
   }, concat: function(I) {
     var F = this.words, H = I.words, $ = this.sigBytes;
     if (I = I.sigBytes, this.clamp(), $ % 4)
@@ -1155,7 +1155,7 @@ var j = j || function(O, K) {
     for (var F = [], H = 0;H < I; H += 4)
       F.push(4294967296 * O.random() | 0);
     return new Y.init(F, I);
-  } }), W = V.enc = {}, z = W.Hex = { stringify: function(I) {
+  } }), W = V.enc = {}, L = W.Hex = { stringify: function(I) {
     var F = I.words;
     I = I.sigBytes;
     for (var H = [], $ = 0;$ < I; $++) {
@@ -1177,7 +1177,7 @@ var j = j || function(O, K) {
     for (var F = I.length, H = [], $ = 0;$ < F; $++)
       H[$ >>> 2] |= (I.charCodeAt($) & 255) << 24 - 8 * ($ % 4);
     return new Y.init(H, F);
-  } }, T = W.Utf8 = { stringify: function(I) {
+  } }, J = W.Utf8 = { stringify: function(I) {
     try {
       return decodeURIComponent(escape(P.stringify(I)));
     } catch (F) {
@@ -1188,10 +1188,10 @@ var j = j || function(O, K) {
   } }, G = Q.BufferedBlockAlgorithm = M.extend({ reset: function() {
     this._data = new Y.init, this._nDataBytes = 0;
   }, _append: function(I) {
-    typeof I == "string" && (I = T.parse(I)), this._data.concat(I), this._nDataBytes += I.sigBytes;
+    typeof I == "string" && (I = J.parse(I)), this._data.concat(I), this._nDataBytes += I.sigBytes;
   }, _process: function(I) {
-    var F = this._data, H = F.words, $ = F.sigBytes, R = this.blockSize, J = $ / (4 * R), J = I ? O.ceil(J) : O.max((J | 0) - this._minBufferSize, 0);
-    if (I = J * R, $ = O.min(4 * I, $), I) {
+    var F = this._data, H = F.words, $ = F.sigBytes, R = this.blockSize, z = $ / (4 * R), z = I ? O.ceil(z) : O.max((z | 0) - this._minBufferSize, 0);
+    if (I = z * R, $ = O.min(4 * I, $), I) {
       for (var S = 0;S < I; S += R)
         this._doProcessBlock(H, S);
       S = H.splice(0, I), F.sigBytes -= $;
@@ -1215,10 +1215,10 @@ var j = j || function(O, K) {
     };
   }, _createHmacHelper: function(I) {
     return function(F, H) {
-      return new L.HMAC.init(I, H).finalize(F);
+      return new T.HMAC.init(I, H).finalize(F);
     };
   } });
-  var L = V.algo = {};
+  var T = V.algo = {};
   return V;
 }(Math);
 (function() {
@@ -1227,8 +1227,8 @@ var j = j || function(O, K) {
     var { words: Q, sigBytes: Z } = V, M = this._map;
     V.clamp(), V = [];
     for (var Y = 0;Y < Z; Y += 3)
-      for (var W = (Q[Y >>> 2] >>> 24 - 8 * (Y % 4) & 255) << 16 | (Q[Y + 1 >>> 2] >>> 24 - 8 * ((Y + 1) % 4) & 255) << 8 | Q[Y + 2 >>> 2] >>> 24 - 8 * ((Y + 2) % 4) & 255, z = 0;4 > z && Y + 0.75 * z < Z; z++)
-        V.push(M.charAt(W >>> 6 * (3 - z) & 63));
+      for (var W = (Q[Y >>> 2] >>> 24 - 8 * (Y % 4) & 255) << 16 | (Q[Y + 1 >>> 2] >>> 24 - 8 * ((Y + 1) % 4) & 255) << 8 | Q[Y + 2 >>> 2] >>> 24 - 8 * ((Y + 2) % 4) & 255, L = 0;4 > L && Y + 0.75 * L < Z; L++)
+        V.push(M.charAt(W >>> 6 * (3 - L) & 63));
     if (Q = M.charAt(64))
       for (;V.length % 4; )
         V.push(Q);
@@ -1238,62 +1238,62 @@ var j = j || function(O, K) {
     M && (M = V.indexOf(M), M != -1 && (Q = M));
     for (var M = [], Y = 0, W = 0;W < Q; W++)
       if (W % 4) {
-        var z = Z.indexOf(V.charAt(W - 1)) << 2 * (W % 4), P = Z.indexOf(V.charAt(W)) >>> 6 - 2 * (W % 4);
-        M[Y >>> 2] |= (z | P) << 24 - 8 * (Y % 4), Y++;
+        var L = Z.indexOf(V.charAt(W - 1)) << 2 * (W % 4), P = Z.indexOf(V.charAt(W)) >>> 6 - 2 * (W % 4);
+        M[Y >>> 2] |= (L | P) << 24 - 8 * (Y % 4), Y++;
       }
     return K.create(M, Y);
   }, _map: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=" };
 })();
 (function(O) {
-  function K(G, L, I, F, H, $, R) {
-    return G = G + (L & I | ~L & F) + H + R, (G << $ | G >>> 32 - $) + L;
+  function K(G, T, I, F, H, $, R) {
+    return G = G + (T & I | ~T & F) + H + R, (G << $ | G >>> 32 - $) + T;
   }
-  function V(G, L, I, F, H, $, R) {
-    return G = G + (L & F | I & ~F) + H + R, (G << $ | G >>> 32 - $) + L;
+  function V(G, T, I, F, H, $, R) {
+    return G = G + (T & F | I & ~F) + H + R, (G << $ | G >>> 32 - $) + T;
   }
-  function Q(G, L, I, F, H, $, R) {
-    return G = G + (L ^ I ^ F) + H + R, (G << $ | G >>> 32 - $) + L;
+  function Q(G, T, I, F, H, $, R) {
+    return G = G + (T ^ I ^ F) + H + R, (G << $ | G >>> 32 - $) + T;
   }
-  function Z(G, L, I, F, H, $, R) {
-    return G = G + (I ^ (L | ~F)) + H + R, (G << $ | G >>> 32 - $) + L;
+  function Z(G, T, I, F, H, $, R) {
+    return G = G + (I ^ (T | ~F)) + H + R, (G << $ | G >>> 32 - $) + T;
   }
-  for (var M = j, z = M.lib, Y = z.WordArray, W = z.Hasher, z = M.algo, P = [], T = 0;64 > T; T++)
-    P[T] = 4294967296 * O.abs(O.sin(T + 1)) | 0;
-  z = z.MD5 = W.extend({ _doReset: function() {
+  for (var M = j, L = M.lib, Y = L.WordArray, W = L.Hasher, L = M.algo, P = [], J = 0;64 > J; J++)
+    P[J] = 4294967296 * O.abs(O.sin(J + 1)) | 0;
+  L = L.MD5 = W.extend({ _doReset: function() {
     this._hash = new Y.init([1732584193, 4023233417, 2562383102, 271733878]);
-  }, _doProcessBlock: function(G, L) {
+  }, _doProcessBlock: function(G, T) {
     for (var I = 0;16 > I; I++) {
-      var F = L + I, H = G[F];
+      var F = T + I, H = G[F];
       G[F] = (H << 8 | H >>> 24) & 16711935 | (H << 24 | H >>> 8) & 4278255360;
     }
-    var I = this._hash.words, F = G[L + 0], H = G[L + 1], $ = G[L + 2], R = G[L + 3], J = G[L + 4], S = G[L + 5], y = G[L + 6], u = G[L + 7], m = G[L + 8], x = G[L + 9], C = G[L + 10], q = G[L + 11], f = G[L + 12], h = G[L + 13], D = G[L + 14], k = G[L + 15], U = I[0], A = I[1], E = I[2], B = I[3], U = K(U, A, E, B, F, 7, P[0]), B = K(B, U, A, E, H, 12, P[1]), E = K(E, B, U, A, $, 17, P[2]), A = K(A, E, B, U, R, 22, P[3]), U = K(U, A, E, B, J, 7, P[4]), B = K(B, U, A, E, S, 12, P[5]), E = K(E, B, U, A, y, 17, P[6]), A = K(A, E, B, U, u, 22, P[7]), U = K(U, A, E, B, m, 7, P[8]), B = K(B, U, A, E, x, 12, P[9]), E = K(E, B, U, A, C, 17, P[10]), A = K(A, E, B, U, q, 22, P[11]), U = K(U, A, E, B, f, 7, P[12]), B = K(B, U, A, E, h, 12, P[13]), E = K(E, B, U, A, D, 17, P[14]), A = K(A, E, B, U, k, 22, P[15]), U = V(U, A, E, B, H, 5, P[16]), B = V(B, U, A, E, y, 9, P[17]), E = V(E, B, U, A, q, 14, P[18]), A = V(A, E, B, U, F, 20, P[19]), U = V(U, A, E, B, S, 5, P[20]), B = V(B, U, A, E, C, 9, P[21]), E = V(E, B, U, A, k, 14, P[22]), A = V(A, E, B, U, J, 20, P[23]), U = V(U, A, E, B, x, 5, P[24]), B = V(B, U, A, E, D, 9, P[25]), E = V(E, B, U, A, R, 14, P[26]), A = V(A, E, B, U, m, 20, P[27]), U = V(U, A, E, B, h, 5, P[28]), B = V(B, U, A, E, $, 9, P[29]), E = V(E, B, U, A, u, 14, P[30]), A = V(A, E, B, U, f, 20, P[31]), U = Q(U, A, E, B, S, 4, P[32]), B = Q(B, U, A, E, m, 11, P[33]), E = Q(E, B, U, A, q, 16, P[34]), A = Q(A, E, B, U, D, 23, P[35]), U = Q(U, A, E, B, H, 4, P[36]), B = Q(B, U, A, E, J, 11, P[37]), E = Q(E, B, U, A, u, 16, P[38]), A = Q(A, E, B, U, C, 23, P[39]), U = Q(U, A, E, B, h, 4, P[40]), B = Q(B, U, A, E, F, 11, P[41]), E = Q(E, B, U, A, R, 16, P[42]), A = Q(A, E, B, U, y, 23, P[43]), U = Q(U, A, E, B, x, 4, P[44]), B = Q(B, U, A, E, f, 11, P[45]), E = Q(E, B, U, A, k, 16, P[46]), A = Q(A, E, B, U, $, 23, P[47]), U = Z(U, A, E, B, F, 6, P[48]), B = Z(B, U, A, E, u, 10, P[49]), E = Z(E, B, U, A, D, 15, P[50]), A = Z(A, E, B, U, S, 21, P[51]), U = Z(U, A, E, B, f, 6, P[52]), B = Z(B, U, A, E, R, 10, P[53]), E = Z(E, B, U, A, C, 15, P[54]), A = Z(A, E, B, U, H, 21, P[55]), U = Z(U, A, E, B, m, 6, P[56]), B = Z(B, U, A, E, k, 10, P[57]), E = Z(E, B, U, A, y, 15, P[58]), A = Z(A, E, B, U, h, 21, P[59]), U = Z(U, A, E, B, J, 6, P[60]), B = Z(B, U, A, E, q, 10, P[61]), E = Z(E, B, U, A, $, 15, P[62]), A = Z(A, E, B, U, x, 21, P[63]);
+    var I = this._hash.words, F = G[T + 0], H = G[T + 1], $ = G[T + 2], R = G[T + 3], z = G[T + 4], S = G[T + 5], y = G[T + 6], u = G[T + 7], m = G[T + 8], x = G[T + 9], C = G[T + 10], q = G[T + 11], f = G[T + 12], h = G[T + 13], D = G[T + 14], k = G[T + 15], U = I[0], A = I[1], E = I[2], B = I[3], U = K(U, A, E, B, F, 7, P[0]), B = K(B, U, A, E, H, 12, P[1]), E = K(E, B, U, A, $, 17, P[2]), A = K(A, E, B, U, R, 22, P[3]), U = K(U, A, E, B, z, 7, P[4]), B = K(B, U, A, E, S, 12, P[5]), E = K(E, B, U, A, y, 17, P[6]), A = K(A, E, B, U, u, 22, P[7]), U = K(U, A, E, B, m, 7, P[8]), B = K(B, U, A, E, x, 12, P[9]), E = K(E, B, U, A, C, 17, P[10]), A = K(A, E, B, U, q, 22, P[11]), U = K(U, A, E, B, f, 7, P[12]), B = K(B, U, A, E, h, 12, P[13]), E = K(E, B, U, A, D, 17, P[14]), A = K(A, E, B, U, k, 22, P[15]), U = V(U, A, E, B, H, 5, P[16]), B = V(B, U, A, E, y, 9, P[17]), E = V(E, B, U, A, q, 14, P[18]), A = V(A, E, B, U, F, 20, P[19]), U = V(U, A, E, B, S, 5, P[20]), B = V(B, U, A, E, C, 9, P[21]), E = V(E, B, U, A, k, 14, P[22]), A = V(A, E, B, U, z, 20, P[23]), U = V(U, A, E, B, x, 5, P[24]), B = V(B, U, A, E, D, 9, P[25]), E = V(E, B, U, A, R, 14, P[26]), A = V(A, E, B, U, m, 20, P[27]), U = V(U, A, E, B, h, 5, P[28]), B = V(B, U, A, E, $, 9, P[29]), E = V(E, B, U, A, u, 14, P[30]), A = V(A, E, B, U, f, 20, P[31]), U = Q(U, A, E, B, S, 4, P[32]), B = Q(B, U, A, E, m, 11, P[33]), E = Q(E, B, U, A, q, 16, P[34]), A = Q(A, E, B, U, D, 23, P[35]), U = Q(U, A, E, B, H, 4, P[36]), B = Q(B, U, A, E, z, 11, P[37]), E = Q(E, B, U, A, u, 16, P[38]), A = Q(A, E, B, U, C, 23, P[39]), U = Q(U, A, E, B, h, 4, P[40]), B = Q(B, U, A, E, F, 11, P[41]), E = Q(E, B, U, A, R, 16, P[42]), A = Q(A, E, B, U, y, 23, P[43]), U = Q(U, A, E, B, x, 4, P[44]), B = Q(B, U, A, E, f, 11, P[45]), E = Q(E, B, U, A, k, 16, P[46]), A = Q(A, E, B, U, $, 23, P[47]), U = Z(U, A, E, B, F, 6, P[48]), B = Z(B, U, A, E, u, 10, P[49]), E = Z(E, B, U, A, D, 15, P[50]), A = Z(A, E, B, U, S, 21, P[51]), U = Z(U, A, E, B, f, 6, P[52]), B = Z(B, U, A, E, R, 10, P[53]), E = Z(E, B, U, A, C, 15, P[54]), A = Z(A, E, B, U, H, 21, P[55]), U = Z(U, A, E, B, m, 6, P[56]), B = Z(B, U, A, E, k, 10, P[57]), E = Z(E, B, U, A, y, 15, P[58]), A = Z(A, E, B, U, h, 21, P[59]), U = Z(U, A, E, B, z, 6, P[60]), B = Z(B, U, A, E, q, 10, P[61]), E = Z(E, B, U, A, $, 15, P[62]), A = Z(A, E, B, U, x, 21, P[63]);
     I[0] = I[0] + U | 0, I[1] = I[1] + A | 0, I[2] = I[2] + E | 0, I[3] = I[3] + B | 0;
   }, _doFinalize: function() {
-    var G = this._data, L = G.words, I = 8 * this._nDataBytes, F = 8 * G.sigBytes;
-    L[F >>> 5] |= 128 << 24 - F % 32;
+    var G = this._data, T = G.words, I = 8 * this._nDataBytes, F = 8 * G.sigBytes;
+    T[F >>> 5] |= 128 << 24 - F % 32;
     var H = O.floor(I / 4294967296);
-    L[(F + 64 >>> 9 << 4) + 15] = (H << 8 | H >>> 24) & 16711935 | (H << 24 | H >>> 8) & 4278255360, L[(F + 64 >>> 9 << 4) + 14] = (I << 8 | I >>> 24) & 16711935 | (I << 24 | I >>> 8) & 4278255360, G.sigBytes = 4 * (L.length + 1), this._process(), G = this._hash, L = G.words;
+    T[(F + 64 >>> 9 << 4) + 15] = (H << 8 | H >>> 24) & 16711935 | (H << 24 | H >>> 8) & 4278255360, T[(F + 64 >>> 9 << 4) + 14] = (I << 8 | I >>> 24) & 16711935 | (I << 24 | I >>> 8) & 4278255360, G.sigBytes = 4 * (T.length + 1), this._process(), G = this._hash, T = G.words;
     for (I = 0;4 > I; I++)
-      F = L[I], L[I] = (F << 8 | F >>> 24) & 16711935 | (F << 24 | F >>> 8) & 4278255360;
+      F = T[I], T[I] = (F << 8 | F >>> 24) & 16711935 | (F << 24 | F >>> 8) & 4278255360;
     return G;
   }, clone: function() {
     var G = W.clone.call(this);
     return G._hash = this._hash.clone(), G;
-  } }), M.MD5 = W._createHelper(z), M.HmacMD5 = W._createHmacHelper(z);
+  } }), M.MD5 = W._createHelper(L), M.HmacMD5 = W._createHmacHelper(L);
 })(Math);
 (function() {
   var O = j, Q = O.lib, K = Q.Base, V = Q.WordArray, Q = O.algo, Z = Q.EvpKDF = K.extend({ cfg: K.extend({ keySize: 4, hasher: Q.MD5, iterations: 1 }), init: function(M) {
     this.cfg = this.cfg.extend(M);
   }, compute: function(M, Y) {
-    for (var G = this.cfg, W = G.hasher.create(), z = V.create(), P = z.words, T = G.keySize, G = G.iterations;P.length < T; ) {
-      L && W.update(L);
-      var L = W.update(M).finalize(Y);
+    for (var G = this.cfg, W = G.hasher.create(), L = V.create(), P = L.words, J = G.keySize, G = G.iterations;P.length < J; ) {
+      T && W.update(T);
+      var T = W.update(M).finalize(Y);
       W.reset();
       for (var I = 1;I < G; I++)
-        L = W.finalize(L), W.reset();
-      z.concat(L);
+        T = W.finalize(T), W.reset();
+      L.concat(T);
     }
-    return z.sigBytes = 4 * T, z;
+    return L.sigBytes = 4 * J, L;
   } });
   O.EvpKDF = function(M, Y, W) {
     return Z.create(W).compute(M, Y);
@@ -1313,20 +1313,20 @@ j.lib.Cipher || function(O) {
   }, finalize: function(H) {
     return H && this._append(H), this._doFinalize();
   }, keySize: 4, ivSize: 4, _ENC_XFORM_MODE: 1, _DEC_XFORM_MODE: 2, _createHelper: function(H) {
-    return { encrypt: function($, R, J) {
-      return (typeof R == "string" ? F : L).encrypt(H, $, R, J);
-    }, decrypt: function($, R, J) {
-      return (typeof R == "string" ? F : L).decrypt(H, $, R, J);
+    return { encrypt: function($, R, z) {
+      return (typeof R == "string" ? F : T).encrypt(H, $, R, z);
+    }, decrypt: function($, R, z) {
+      return (typeof R == "string" ? F : T).decrypt(H, $, R, z);
     } };
   } });
   K.StreamCipher = W.extend({ _doFinalize: function() {
     return this._process(true);
   }, blockSize: 1 });
-  var G = I.mode = {}, z = function(H, $, R) {
-    var J = this._iv;
-    J ? this._iv = O : J = this._prevBlock;
+  var G = I.mode = {}, L = function(H, $, R) {
+    var z = this._iv;
+    z ? this._iv = O : z = this._prevBlock;
     for (var S = 0;S < R; S++)
-      H[$ + S] ^= J[S];
+      H[$ + S] ^= z[S];
   }, P = (K.BlockCipherMode = V.extend({ createEncryptor: function(H, $) {
     return this.Encryptor.create(H, $);
   }, createDecryptor: function(H, $) {
@@ -1335,14 +1335,14 @@ j.lib.Cipher || function(O) {
     this._cipher = H, this._iv = $;
   } })).extend();
   P.Encryptor = P.extend({ processBlock: function(H, $) {
-    var R = this._cipher, J = R.blockSize;
-    z.call(this, H, $, J), R.encryptBlock(H, $), this._prevBlock = H.slice($, $ + J);
+    var R = this._cipher, z = R.blockSize;
+    L.call(this, H, $, z), R.encryptBlock(H, $), this._prevBlock = H.slice($, $ + z);
   } }), P.Decryptor = P.extend({ processBlock: function(H, $) {
-    var R = this._cipher, J = R.blockSize, S = H.slice($, $ + J);
-    R.decryptBlock(H, $), z.call(this, H, $, J), this._prevBlock = S;
+    var R = this._cipher, z = R.blockSize, S = H.slice($, $ + z);
+    R.decryptBlock(H, $), L.call(this, H, $, z), this._prevBlock = S;
   } }), G = G.CBC = P, P = (I.pad = {}).Pkcs7 = { pad: function(H, $) {
-    for (var R = 4 * $, R = R - H.sigBytes % R, J = R << 24 | R << 16 | R << 8 | R, S = [], y = 0;y < R; y += 4)
-      S.push(J);
+    for (var R = 4 * $, R = R - H.sigBytes % R, z = R << 24 | R << 16 | R << 8 | R, S = [], y = 0;y < R; y += 4)
+      S.push(z);
     R = Q.create(S, R), H.concat(R);
   }, unpad: function(H) {
     H.sigBytes -= H.words[H.sigBytes - 1 >>> 2] & 255;
@@ -1365,7 +1365,7 @@ j.lib.Cipher || function(O) {
       $ = this._process(true), H.unpad($);
     return $;
   }, blockSize: 4 });
-  var T = K.CipherParams = V.extend({ init: function(H) {
+  var J = K.CipherParams = V.extend({ init: function(H) {
     this.mixIn(H);
   }, toString: function(H) {
     return (H || this.formatter).stringify(this);
@@ -1379,31 +1379,31 @@ j.lib.Cipher || function(O) {
       var R = Q.create($.slice(2, 4));
       $.splice(0, 4), H.sigBytes -= 16;
     }
-    return T.create({ ciphertext: H, salt: R });
-  } }, L = K.SerializableCipher = V.extend({ cfg: V.extend({ format: G }), encrypt: function(H, $, R, J) {
-    J = this.cfg.extend(J);
-    var S = H.createEncryptor(R, J);
-    return $ = S.finalize($), S = S.cfg, T.create({ ciphertext: $, key: R, iv: S.iv, algorithm: H, mode: S.mode, padding: S.padding, blockSize: H.blockSize, formatter: J.format });
-  }, decrypt: function(H, $, R, J) {
-    return J = this.cfg.extend(J), $ = this._parse($, J.format), H.createDecryptor(R, J).finalize($.ciphertext);
+    return J.create({ ciphertext: H, salt: R });
+  } }, T = K.SerializableCipher = V.extend({ cfg: V.extend({ format: G }), encrypt: function(H, $, R, z) {
+    z = this.cfg.extend(z);
+    var S = H.createEncryptor(R, z);
+    return $ = S.finalize($), S = S.cfg, J.create({ ciphertext: $, key: R, iv: S.iv, algorithm: H, mode: S.mode, padding: S.padding, blockSize: H.blockSize, formatter: z.format });
+  }, decrypt: function(H, $, R, z) {
+    return z = this.cfg.extend(z), $ = this._parse($, z.format), H.createDecryptor(R, z).finalize($.ciphertext);
   }, _parse: function(H, $) {
     return typeof H == "string" ? $.parse(H, this) : H;
-  } }), I = (I.kdf = {}).OpenSSL = { execute: function(H, $, R, J) {
-    return J || (J = Q.random(8)), H = Y.create({ keySize: $ + R }).compute(H, J), R = Q.create(H.words.slice($), 4 * R), H.sigBytes = 4 * $, T.create({ key: H, iv: R, salt: J });
-  } }, F = K.PasswordBasedCipher = L.extend({ cfg: L.cfg.extend({ kdf: I }), encrypt: function(H, $, R, J) {
-    return J = this.cfg.extend(J), R = J.kdf.execute(R, H.keySize, H.ivSize), J.iv = R.iv, H = L.encrypt.call(this, H, $, R.key, J), H.mixIn(R), H;
-  }, decrypt: function(H, $, R, J) {
-    return J = this.cfg.extend(J), $ = this._parse($, J.format), R = J.kdf.execute(R, H.keySize, H.ivSize, $.salt), J.iv = R.iv, L.decrypt.call(this, H, $, R.key, J);
+  } }), I = (I.kdf = {}).OpenSSL = { execute: function(H, $, R, z) {
+    return z || (z = Q.random(8)), H = Y.create({ keySize: $ + R }).compute(H, z), R = Q.create(H.words.slice($), 4 * R), H.sigBytes = 4 * $, J.create({ key: H, iv: R, salt: z });
+  } }, F = K.PasswordBasedCipher = T.extend({ cfg: T.cfg.extend({ kdf: I }), encrypt: function(H, $, R, z) {
+    return z = this.cfg.extend(z), R = z.kdf.execute(R, H.keySize, H.ivSize), z.iv = R.iv, H = T.encrypt.call(this, H, $, R.key, z), H.mixIn(R), H;
+  }, decrypt: function(H, $, R, z) {
+    return z = this.cfg.extend(z), $ = this._parse($, z.format), R = z.kdf.execute(R, H.keySize, H.ivSize, $.salt), z.iv = R.iv, T.decrypt.call(this, H, $, R.key, z);
   } });
 }();
 (function() {
-  for (var O = j, K = O.lib.BlockCipher, m = O.algo, V = [], Q = [], Z = [], M = [], Y = [], W = [], z = [], P = [], T = [], G = [], L = [], I = 0;256 > I; I++)
-    L[I] = 128 > I ? I << 1 : I << 1 ^ 283;
+  for (var O = j, K = O.lib.BlockCipher, m = O.algo, V = [], Q = [], Z = [], M = [], Y = [], W = [], L = [], P = [], J = [], G = [], T = [], I = 0;256 > I; I++)
+    T[I] = 128 > I ? I << 1 : I << 1 ^ 283;
   for (var F = 0, H = 0, I = 0;256 > I; I++) {
     var $ = H ^ H << 1 ^ H << 2 ^ H << 3 ^ H << 4, $ = $ >>> 8 ^ $ & 255 ^ 99;
     V[F] = $, Q[$] = F;
-    var R = L[F], J = L[R], S = L[J], y = 257 * L[$] ^ 16843008 * $;
-    Z[F] = y << 24 | y >>> 8, M[F] = y << 16 | y >>> 16, Y[F] = y << 8 | y >>> 24, W[F] = y, y = 16843009 * S ^ 65537 * J ^ 257 * R ^ 16843008 * F, z[$] = y << 24 | y >>> 8, P[$] = y << 16 | y >>> 16, T[$] = y << 8 | y >>> 24, G[$] = y, F ? (F = R ^ L[L[L[S ^ R]]], H ^= L[L[H]]) : F = H = 1;
+    var R = T[F], z = T[R], S = T[z], y = 257 * T[$] ^ 16843008 * $;
+    Z[F] = y << 24 | y >>> 8, M[F] = y << 16 | y >>> 16, Y[F] = y << 8 | y >>> 24, W[F] = y, y = 16843009 * S ^ 65537 * z ^ 257 * R ^ 16843008 * F, L[$] = y << 24 | y >>> 8, P[$] = y << 16 | y >>> 16, J[$] = y << 8 | y >>> 24, G[$] = y, F ? (F = R ^ T[T[T[S ^ R]]], H ^= T[T[H]]) : F = H = 1;
   }
   var u = [0, 1, 2, 4, 8, 16, 32, 64, 128, 27, 54], m = m.AES = K.extend({ _doReset: function() {
     for (var q = this._key, x = q.words, C = q.sigBytes / 4, q = 4 * ((this._nRounds = C + 6) + 1), f = this._keySchedule = [], h = 0;h < q; h++)
@@ -1415,12 +1415,12 @@ j.lib.Cipher || function(O) {
       }
     x = this._invKeySchedule = [];
     for (C = 0;C < q; C++)
-      h = q - C, D = C % 4 ? f[h] : f[h - 4], x[C] = 4 > C || 4 >= h ? D : z[V[D >>> 24]] ^ P[V[D >>> 16 & 255]] ^ T[V[D >>> 8 & 255]] ^ G[V[D & 255]];
+      h = q - C, D = C % 4 ? f[h] : f[h - 4], x[C] = 4 > C || 4 >= h ? D : L[V[D >>> 24]] ^ P[V[D >>> 16 & 255]] ^ J[V[D >>> 8 & 255]] ^ G[V[D & 255]];
   }, encryptBlock: function(x, C) {
     this._doCryptBlock(x, C, this._keySchedule, Z, M, Y, W, V);
   }, decryptBlock: function(x, C) {
     var q = x[C + 1];
-    x[C + 1] = x[C + 3], x[C + 3] = q, this._doCryptBlock(x, C, this._invKeySchedule, z, P, T, G, Q), q = x[C + 1], x[C + 1] = x[C + 3], x[C + 3] = q;
+    x[C + 1] = x[C + 3], x[C + 3] = q, this._doCryptBlock(x, C, this._invKeySchedule, L, P, J, G, Q), q = x[C + 1], x[C + 1] = x[C + 3], x[C + 3] = q;
   }, _doCryptBlock: function(x, C, q, f, h, D, k, U) {
     for (var B = this._nRounds, w = x[C] ^ q[0], p = x[C + 1] ^ q[1], g = x[C + 2] ^ q[2], N = x[C + 3] ^ q[3], E = 4, A = 1;A < B; A++)
       var v = f[w >>> 24] ^ h[p >>> 16 & 255] ^ D[g >>> 8 & 255] ^ k[N & 255] ^ q[E++], s = f[p >>> 24] ^ h[g >>> 16 & 255] ^ D[N >>> 8 & 255] ^ k[w & 255] ^ q[E++], t = f[g >>> 24] ^ h[N >>> 16 & 255] ^ D[w >>> 8 & 255] ^ k[p & 255] ^ q[E++], N = f[N >>> 24] ^ h[w >>> 16 & 255] ^ D[p >>> 8 & 255] ^ k[g & 255] ^ q[E++], w = v, p = s, g = t;
@@ -1433,14 +1433,15 @@ var c = { game: "Divine Techno Run", url: "https://www.newgrounds.com/portal/vie
 class b {
   #K;
   config;
-  #M = {};
+  #Y = {};
   #O;
   #Q;
-  #Y;
+  #P;
   #V;
   #X;
   #$ = new Set;
   #H = new Set;
+  #I = new Set;
   audio;
   audioOut;
   gameUrl;
@@ -1458,17 +1459,23 @@ class b {
   addLoginListener(O) {
     this.#$.add(O);
   }
-  addUnlockListener(O) {
+  addLogoutListener(O) {
     this.#H.add(O);
+  }
+  addUnlockListener(O) {
+    this.#I.add(O);
   }
   removeLoginListener(O) {
     this.#$.delete(O);
   }
-  removeUnlockListener(O) {
+  removeLogoutListener(O) {
     this.#H.delete(O);
   }
+  removeUnlockListener(O) {
+    this.#I.delete(O);
+  }
   constructor(O = c) {
-    this.config = O, this.#K = new X.io.core(O.key, O.skey), this.#Y = O.debug, this.initSession(), this.audio = O.noAudio ? undefined : new Audio(O.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = O.noAudio ? undefined : new Audio(O.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg"), this.gameUrl = O.url;
+    this.config = O, this.#K = new X.io.core(O.key, O.skey), this.#P = O.debug, this.initSession(), this.audio = O.noAudio ? undefined : new Audio(O.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = O.noAudio ? undefined : new Audio(O.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg"), this.gameUrl = O.url;
   }
   get key() {
     return this.config.key;
@@ -1524,14 +1531,14 @@ class b {
     const K = await this.getMedals(), V = K.filter((Q) => Q.name === O)[0];
     if (V)
       return new Promise((Q) => {
-        if (!V.unlocked && !this.#M[V.id])
+        if (!V.unlocked && !this.#Y[V.id])
           this.#K.callComponent("Medal.unlock", { id: V.id }, (Z) => {
             const M = Z.medal;
             if (M) {
               for (let Y = 0;Y < K.length; Y++)
                 if (K[Y].id === M.id)
                   K[Y] = M;
-              this.#M[M.id] = true, this.#H.forEach((Y) => Y(M)), this.showReceivedMedal(M), Q(Z.medal);
+              this.#Y[M.id] = true, this.#I.forEach((Y) => Y(M)), this.showReceivedMedal(M), Q(Z.medal);
             }
           });
         else
@@ -1545,6 +1552,11 @@ class b {
     const O = document.getElementById("newgrounds-login");
     if (O)
       O.style.display = "none";
+  }
+  requestLogout() {
+    console.log(`Logging out ${this.#K.user?.name}...`), this.#K.logOut(() => {
+      this.#H.forEach((O) => O());
+    });
   }
   onLoginFailed() {
     console.log("There was a problem logging in: ", this.#K.login_error?.message);
@@ -1561,7 +1573,7 @@ class b {
   initSession() {
     this.#K.getValidSession(() => {
       this.validateSession(this.#K.session_id);
-      const O = !this.#Y ? undefined : document.body.appendChild(document.createElement("button"));
+      const O = !this.#P ? undefined : document.body.appendChild(document.createElement("button"));
       if (O)
         O.id = "newgrounds-login", O.style.position = "absolute", O.style.top = "5px", O.style.right = "5px", O.style.height = "24px", O.style.fontSize = "10pt", O.style.zIndex = "1000", O.classList.add("button"), O.innerText = "login newgrounds", O.addEventListener("click", (K) => {
           this.requestLogin(), K.stopPropagation();
@@ -1573,18 +1585,18 @@ class b {
   onLoggedIn() {
     console.log("Welcome ", this.#K.user?.name + "!"), this.#$.forEach((O) => O()), this.getMedals(), this.getScoreboards();
   }
-  #I;
-  #P() {
-    if (!this.#I) {
+  #M;
+  #W() {
+    if (!this.#M) {
       const O = document.body.appendChild(document.createElement("div"));
-      O.style.display = "none", O.style.position = "absolute", O.style.right = "10px", O.style.top = "10px", O.style.padding = "5px 10px", O.style.border = "2px solid #880", O.style.borderRadius = "5px", O.style.background = "linear-gradient(#884, #553)", O.style.boxShadow = "2px 2px black", O.style.flexDirection = "row", O.style.transition = "opacity .5s, margin-right .3s", O.style.opacity = "0", O.style.marginRight = "-300px", O.style.zIndex = "3000", O.style.fontFamily = "Papyrus, fantasy", this.#I = O;
+      O.style.display = "none", O.style.position = "absolute", O.style.right = "10px", O.style.top = "10px", O.style.padding = "5px 10px", O.style.border = "2px solid #880", O.style.borderRadius = "5px", O.style.background = "linear-gradient(#884, #553)", O.style.boxShadow = "2px 2px black", O.style.flexDirection = "row", O.style.transition = "opacity .5s, margin-right .3s", O.style.opacity = "0", O.style.marginRight = "-300px", O.style.zIndex = "3000", O.style.fontFamily = "Papyrus, fantasy", this.#M = O;
     }
-    return this.#I;
+    return this.#M;
   }
   #Z;
   showReceivedMedal(O) {
     clearTimeout(this.#Z);
-    const K = this.#P();
+    const K = this.#W();
     K.style.display = "flex", K.innerText = "";
     const V = K.appendChild(document.createElement("img"));
     V.addEventListener("load", () => {

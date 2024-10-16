@@ -51,6 +51,7 @@ interface NGIO {
     }) => void): void;
   getValidSession(callback: (e?: any) => void): void;
   requestLogin(onLoggedIn: () => void, onLoginFailed: () => void, onLoginCancelled: () => void): void;
+  logOut(onLoggedOut: () => void): void;
 }
 
 interface Medal {
@@ -76,6 +77,7 @@ export class NewgroundsWrapper {
   #scoreboards?: Scoreboard[];
   #scoreBoardsCallback?: ((scoreboards: Scoreboard[]) => void)[];
   #loginListeners = new Set<() => void>();
+  #logoutListeners = new Set<() => void>();
   #medalListeners = new Set<(medal: Medal) => void>();
   audio?: HTMLAudioElement;
   audioOut?: HTMLAudioElement;
@@ -99,12 +101,20 @@ export class NewgroundsWrapper {
     this.#loginListeners.add(listener);
   }
 
+  addLogoutListener(listener: () => void) {
+    this.#logoutListeners.add(listener);
+  }
+
   addUnlockListener(listener: (medal: Medal) => void) {
     this.#medalListeners.add(listener);
   }
 
   removeLoginListener(listener: () => void) {
     this.#loginListeners.delete(listener);
+  }
+
+  removeLogoutListener(listener: () => void) {
+    this.#logoutListeners.delete(listener);
   }
 
   removeUnlockListener(listener: (medal: Medal) => void) {
@@ -237,6 +247,13 @@ export class NewgroundsWrapper {
     if (button) {
       button.style.display = "none";
     }
+  }
+
+  requestLogout() {
+    console.log(`Logging out ${this.#ngio.user?.name}...`);
+    this.#ngio.logOut(() => {
+      this.#logoutListeners.forEach(listener => listener());
+    });
   }
 
   onLoginFailed() {
