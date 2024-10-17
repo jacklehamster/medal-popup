@@ -30,6 +30,7 @@ interface NGIO {
       medium: string;
       large: string;
     };
+    supporter: boolean;
   };
   login_error?: {
     message: string;
@@ -121,6 +122,10 @@ export class NewgroundsWrapper {
     this.#medalListeners.delete(listener);
   }
 
+  get ngio() {
+    return this.#ngio;
+  }
+
   constructor(config: Config = testConfig) {
     this.config = config;
     this.#ngio = new Newgrounds.io.core(config.key, config.skey);
@@ -145,6 +150,10 @@ export class NewgroundsWrapper {
 
   get user() {
     return this.#ngio.user?.name;
+  }
+
+  get supporter() {
+    return this.#ngio.user?.supporter;
   }
 
   get session() {

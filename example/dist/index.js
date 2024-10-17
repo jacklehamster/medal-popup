@@ -1474,6 +1474,9 @@ class b {
   removeUnlockListener(O) {
     this.#I.delete(O);
   }
+  get ngio() {
+    return this.#K;
+  }
   constructor(O = c) {
     this.config = O, this.#K = new X.io.core(O.key, O.skey), this.#P = O.debug, this.initSession(), this.audio = O.noAudio ? undefined : new Audio(O.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = O.noAudio ? undefined : new Audio(O.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg"), this.gameUrl = O.url;
   }
@@ -1488,6 +1491,9 @@ class b {
   }
   get user() {
     return this.#K.user?.name;
+  }
+  get supporter() {
+    return this.#K.user?.supporter;
   }
   get session() {
     return this.#K.session_id;

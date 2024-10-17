@@ -90,6 +90,13 @@
           text.textContent = ng.user;
         }
       }
+      {
+        const div = document.body.appendChild(document.createElement("div"));
+        {
+          const text = div.appendChild(document.createElement("div"));
+          text.textContent = `Supporter: ${ng.supporter}`;
+        }
+      }
 
       const medals = await ng.getMedals();
       const medalButtons = {};
