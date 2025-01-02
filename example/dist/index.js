@@ -327,6 +327,8 @@ $.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners
     let E = this, J = $.io.GATEWAY_URI.startsWith("//") ? "https:" + $.io.GATEWAY_URI : $.io.GATEWAY_URI, V = new FormData;
     V.append("input", JSON.stringify(I)), fetch(J, { method: "POST", body: V }).then((A) => A.json()).then((A) => {
       E._doCallback(Q, K, A.result, Z);
+    }).catch((A) => {
+      E._doCallback(Q, K, undefined, Z);
     });
   }
 }, _doValidateCall: function(Q, K) {
