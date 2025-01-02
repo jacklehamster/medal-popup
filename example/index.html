@@ -4,6 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Newgrounds API tester</title>
+    <style>
+      body {
+        background-color: silver;
+      }
+    </style>
   </head>
   <body>
     <h1>Newgrounds API tester</h1>
@@ -38,19 +43,35 @@
       const button = document.body.appendChild(
         document.createElement("button")
       );
-      const resultDiv = document.body.appendChild(
-        document.createElement("div")
-      );
-      resultDiv.style.fontFamily = "Courier";
       button.textContent = "Validate session";
       button.addEventListener("click", async () => {
         resultDiv.textContent = "Validating session...";
         const session = ng.session;
         const result = await fetch("/validate-session/" + session);
         const text = await result.text();
+        resultDiv.textContent = `Session validation: ${text}`;
+      });
+    }
+
+    {
+      const button = document.body.appendChild(
+        document.createElement("button")
+      );
+      button.textContent = "Save data";
+      button.addEventListener("click", async () => {
+        resultDiv.textContent = "Saving data...";
+        const session = ng.session;
+        const result = await fetch(
+          "/save-data/" + session + "/" + JSON.stringify({ test: "test123" })
+        );
+        const text = await result.text();
+        console.log(text);
         resultDiv.textContent = text;
       });
     }
+    const resultDiv = document.body.appendChild(document.createElement("div"));
+    resultDiv.style.fontFamily = "Courier";
+
     const logout = (() => {
       const button = document.body.appendChild(
         document.createElement("button")
@@ -98,6 +119,10 @@
         }
       }
 
+      function formatIcon(src) {
+        return src.indexOf("http") === 0 ? src : "https:" + src;
+      }
+
       const medals = await ng.getMedals();
       const medalButtons = {};
       medals.forEach((medal) => {
@@ -105,10 +130,12 @@
           const div = document.body.appendChild(document.createElement("div"));
           {
             const button = div.appendChild(document.createElement("button"));
-            button.textContent = `unlockMedal("${medal.name}") - ${medal.unlocked ? "unlocked" : "locked"}`;
+            button.innerHTML = `<img src="${formatIcon(medal.icon)}"> unlockMedal("${medal.name}") - ${medal.unlocked ? "unlocked" : "locked"}`;
             medalButtons[medal.id] = button;
             button.addEventListener("click", () => {
-              ng.unlockMedal(medal.name);
+              ng.unlockMedal(medal.name).then((medal) => {
+                logData("medal", medal.name + " Unlocked: " + medal.unlocked);
+              });
             });
           }
         }
@@ -137,6 +164,7 @@
               if (result) {
                 div.appendChild(document.createElement("span")).textContent =
                   "Score posted.";
+                logData("score", result);
               }
             });
           }
@@ -144,8 +172,8 @@
       });
 
       ng.addUnlockListener((medal) => {
-        medalButtons[medal.id].textContent =
-          `unlockMedal("${medal.name}") - ${medal.unlocked ? "unlocked" : "locked"}`;
+        medalButtons[medal.id].innerHTML =
+          `<img src="${formatIcon(medal.icon)}"> unlockMedal("${medal.name}") - ${medal.unlocked ? "unlocked" : "locked"}`;
       });
 
       {
@@ -156,10 +184,77 @@
         button.addEventListener("click", async () => {
           const result = await ng.logEvent("test_event");
           if (result) {
-            console.log(result);
+            logData("logEvent", result);
           }
         });
       }
+
+      {
+        const button = document.body.appendChild(
+          document.createElement("button")
+        );
+        button.textContent = `loadSlots()`;
+        button.addEventListener("click", async () => {
+          const result = await ng.loadSlots();
+          if (result) {
+            logData("loadSlots", result);
+          }
+        });
+      }
+
+      {
+        const button = document.body.appendChild(
+          document.createElement("button")
+        );
+        button.textContent = `loadSlot(1)`;
+        button.addEventListener("click", async () => {
+          const result = await ng.loadSlot(1);
+          if (result) {
+            logData("loadSlot", result);
+          }
+        });
+      }
+
+      {
+        const button = document.body.appendChild(
+          document.createElement("button")
+        );
+        button.textContent = `saveData(1)`;
+        button.addEventListener("click", async () => {
+          const result = await ng.saveData(1, { test: "test456" });
+          if (result) {
+            logData("saveData", result);
+          }
+        });
+      }
+    });
+
+    function logData(title, log, isError) {
+      console.log("Log:", log);
+      const logDiv =
+        document.querySelector("#logger") ??
+        document.body.appendChild(document.createElement("div"));
+      logDiv.id = "logger";
+      const div = logDiv.insertBefore(
+        document.createElement("div"),
+        logDiv.firstChild
+      );
+      div.style.border = "1px solid black";
+      div.style.margin = "5px";
+      const titleDiv = div.appendChild(document.createElement("div"));
+      titleDiv.textContent = title;
+      const contentDiv = div.appendChild(document.createElement("div"));
+      contentDiv.style.color = isError ? "red" : "black";
+      contentDiv.style.whiteSpace = "pre";
+      contentDiv.textContent = JSON.stringify(log, null, 2);
+    }
+    //    <!-- <div id="log" style="border: 1px solid black"></div> -->
+
+    window.addEventListener("error", (error) => {
+      logData("error", error.message, true);
+    });
+    window.addEventListener("unhandledrejection", (error) => {
+      logData("unhandledrejection", error.reason, true);
     });
 
     window.ng = ng;

@@ -1,6 +1,6 @@
 import Bao from "baojs";
 import serveStatic from "serve-static-bun";
-import { validateSession } from "medal-popup";
+import { validateSession, saveData, TESTCONFIG } from "medal-popup";
 
 const app = new Bao();
 
@@ -10,12 +10,27 @@ app.get("/validate-session/:session", async (ctx) => {
     return ctx.sendText("No session provided");
   }
   const result = await validateSession(session, {
-    "key": "34685:cxZQ5a1E",
-    "skey": "aBuRcFJLqDmPe3Gb0uultA=="
+    "key": TESTCONFIG.key,
+    "skey": TESTCONFIG.skey
   });
 
   return ctx.sendText(result ?? "");
 });
+
+app.get("/save-data/:session/:data", async (ctx) => {
+  const session = ctx.params.session;
+  const data = ctx.params.data;
+  if (!session || !data) {
+    return ctx.sendText("No session or data provided");
+  }
+  const result = await saveData(JSON.parse(decodeURIComponent(data)), session, {
+    "key": TESTCONFIG.key,
+    "skey": TESTCONFIG.skey
+  });
+
+  return ctx.sendText(result ?? "");
+});
+
 
 app.get("/", async (ctx) => {
   const content = Bun.file("index.html");

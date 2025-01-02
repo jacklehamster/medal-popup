@@ -15,11 +15,20 @@ export interface Config {
   noAudio?: boolean;
 }
 
-const testConfig = {
+export const TESTCONFIG = {
   "game": "Divine Techno Run",
   "url": "https://www.newgrounds.com/portal/view/628667",
   "key": "34685:cxZQ5a1E",
   "skey": "aBuRcFJLqDmPe3Gb0uultA==",
+}
+
+interface CallbackResult {
+  medal?: Medal;
+  medals?: Medal[];
+  slot?: Slot;
+  slots?: Slot[];
+  success: boolean;
+  scoreboards: Scoreboard[];
 }
 
 interface NGIO {
@@ -39,17 +48,13 @@ interface NGIO {
   checkSession(callback: (e: any) => void): void;
   callComponent(command: string,
     payload: {
-      id?: string;
+      id?: string | number;
       value?: number;
       host?: string;
       event_name?: string;
+      data?: any;
     },
-    callback: (result: {
-      medal?: Medal;
-      medals?: Medal[];
-      success: boolean;
-      scoreboards: Scoreboard[];
-    }) => void): void;
+    callback: (result: CallbackResult) => void): void;
   getValidSession(callback: (e?: any) => void): void;
   requestLogin(onLoggedIn: () => void, onLoginFailed: () => void, onLoginCancelled: () => void): void;
   logOut(onLoggedOut: () => void): void;
@@ -68,6 +73,15 @@ interface Scoreboard {
   id: string;
 }
 
+interface Slot {
+  datetime: string;
+  id: number;
+  size: number;
+  timestamp: number;
+  url: string;
+  data?: any;
+}
+
 export class NewgroundsWrapper {
   #ngio: NGIO;
   config;
@@ -84,13 +98,23 @@ export class NewgroundsWrapper {
   audioOut?: HTMLAudioElement;
   gameUrl?: string;
 
-  static async validateSession(session: string, config: Config = testConfig): Promise<string | undefined> {
+  static async validateSession(session: string, config: Config = TESTCONFIG): Promise<string | undefined> {
     const ngio = new Newgrounds.io.core(config.key, config.skey);
     ngio.session_id = session;
     return new Promise((resolve) => {
       ngio.callComponent("App.checkSession", {}, (result: any) => {
         resolve(result?.success ? result.session?.user?.name : undefined);
       })
+    });
+  }
+
+  static async saveData(data: any, session: string, config: Config = TESTCONFIG) {
+    const ngio = new Newgrounds.io.core(config.key, config.skey);
+    ngio.session_id = session;
+    return new Promise((resolve) => {
+      ngio.callComponent("CloudSave.setData", { id: 1, data: JSON.stringify(data) }, (result: any) => {
+        resolve(result);
+      });
     });
   }
 
@@ -126,7 +150,7 @@ export class NewgroundsWrapper {
     return this.#ngio;
   }
 
-  constructor(config: Config = testConfig) {
+  constructor(config: Config = TESTCONFIG) {
     this.config = config;
     this.#ngio = new Newgrounds.io.core(config.key, config.skey);
     this.#debug = config.debug;
@@ -322,6 +346,7 @@ export class NewgroundsWrapper {
     this.#loginListeners.forEach(listener => listener());
     this.getMedals();
     this.getScoreboards();
+    this.#logView();
   }
 
   #medalDiv?: HTMLDivElement;
@@ -410,15 +435,61 @@ export class NewgroundsWrapper {
     }
   }
 
-  async logView() {
-    this.#ngio.callComponent("App.logView", { host: location.host }, response => {
-      console.log(response);
+  async #logView() {
+    return new Promise((resolve: any) => {
+      this.#ngio.callComponent("App.logView", { host: location.host }, response => {
+        resolve(response);
+      });
     });
   }
 
   async logEvent(name: string) {
-    this.#ngio.callComponent("Event.logEvent", { event_name: name, host: location.host }, response => {
-      console.log(response);
+    return new Promise((resolve: any) => {
+      this.#ngio.callComponent("Event.logEvent", { event_name: name, host: location.host }, response => {
+        resolve(response);
+      });
     });
+  }
+
+  async loadSlots() {
+    const response = await new Promise<CallbackResult>(resolve => {
+      this.#ngio.callComponent("CloudSave.loadSlots", {}, response => {
+        resolve(response);
+      });
+    });
+    if (!response.success || !response.slots) {
+      return [];
+    }
+    return await Promise.all(response.slots.map(async (slot: Slot) => {
+      const { url } = slot;
+      const data = url ? await fetch(url).then(response => response.json()) : undefined;
+      return { ...slot, data };
+    }));
+  }
+
+  async loadSlot(id: number) {
+    const response = await new Promise<CallbackResult>(resolve => {
+      this.#ngio.callComponent("CloudSave.loadSlot", { id }, response => {
+        resolve(response);
+      });
+    });
+    if (!response.success || !response.slot) {
+      return undefined;
+    }
+    const { url } = response.slot;
+    const data = url ? await fetch(url).then(response => response.json()) : undefined;
+    return { ...response.slot, data };
+  }
+
+  async saveData(id: number, data: any) {
+    const response = await new Promise<CallbackResult>(resolve => {
+      this.#ngio.callComponent("CloudSave.setData", { id, data: JSON.stringify(data) }, response => {
+        resolve(response);
+      });
+    });
+    if (!response.success || !response.slot) {
+      return undefined;
+    }
+    return response.slot;
   }
 }

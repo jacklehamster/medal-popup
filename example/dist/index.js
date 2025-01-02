@@ -1,1107 +1,1110 @@
-// /Users/vincent/medal-popup/example/node_modules/medal-popup/dist/index.js
-var X = {};
-X.io = { GATEWAY_URI: "//newgrounds.io/gateway_v3.php" };
-X.io.events = {};
-X.io.call_validators = {};
-X.io.model = { checkStrictValue: function(O, K, V, Q, Z, M, Y) {
-  if (Q == "mixed")
+// ../dist/index.js
+var $ = {};
+$.io = { GATEWAY_URI: "//newgrounds.io/gateway_v3.php" };
+$.io.events = {};
+$.io.call_validators = {};
+$.io.model = { checkStrictValue: function(Q, K, Z, X, H, Y, O) {
+  if (X == "mixed")
     return true;
-  if (V === null || typeof V == "undefined")
+  if (Z === null || typeof Z == "undefined")
     return true;
-  if (Q && V.constructor === Q)
+  if (X && Z.constructor === X)
     return true;
-  if (Q == Boolean && V.constructor === Number)
+  if (X == Boolean && Z.constructor === Number)
     return true;
-  if (Z && V.constructor === X.io.model[Z])
+  if (H && Z.constructor === $.io.model[H])
     return true;
-  if (V.constructor === Array && (M || Y)) {
-    for (var W = 0;W < V.length; W++)
-      this.checkStrictValue(O, K, V[W], M, Y, null, null);
+  if (Z.constructor === Array && (Y || O)) {
+    for (var I = 0;I < Z.length; I++)
+      this.checkStrictValue(Q, K, Z[I], Y, O, null, null);
     return true;
   }
-  if (O)
-    throw new Error("Illegal '" + K + "' value set in model " + O);
+  if (Q)
+    throw new Error("Illegal '" + K + "' value set in model " + Q);
   return false;
 } };
-X.io.events.OutputEvent = function(O, K, V) {
-  this.type = O, this.call = K, this.data = V, this.success = V && typeof (V.success != "undefined") ? V.success ? true : false : false, this.preventDefault = false;
+$.io.events.OutputEvent = function(Q, K, Z) {
+  this.type = Q, this.call = K, this.data = Z, this.success = Z && typeof (Z.success != "undefined") ? Z.success ? true : false : false, this.preventDefault = false;
 };
-X.io.events.OutputEvent.prototype.constructor = X.io.events.OutputEvent;
-X.io.events.SessionEvent = function(O) {
-  this.type = O, this.user = null, this.passport_url = null;
+$.io.events.OutputEvent.prototype.constructor = $.io.events.OutputEvent;
+$.io.events.SessionEvent = function(Q) {
+  this.type = Q, this.user = null, this.passport_url = null;
 };
-X.io.events.SessionEvent.USER_LOADED = "user-loaded";
-X.io.events.SessionEvent.SESSION_EXPIRED = "session-expired";
-X.io.events.SessionEvent.REQUEST_LOGIN = "request-login";
-X.io.events.SessionEvent.prototype.constructor = X.io.events.SessionEvent;
-X.io.events.EventDispatcher = function() {
+$.io.events.SessionEvent.USER_LOADED = "user-loaded";
+$.io.events.SessionEvent.SESSION_EXPIRED = "session-expired";
+$.io.events.SessionEvent.REQUEST_LOGIN = "request-login";
+$.io.events.SessionEvent.prototype.constructor = $.io.events.SessionEvent;
+$.io.events.EventDispatcher = function() {
 };
-X.io.events.EventDispatcher.prototype = { _event_listeners: {}, addEventListener: function(O, K) {
-  if (O.constructor !== String)
+$.io.events.EventDispatcher.prototype = { _event_listeners: {}, addEventListener: function(Q, K) {
+  if (Q.constructor !== String)
     throw new Error("Event names must be a string format.");
   if (K.constructor !== Function)
     throw new Error("Event listeners must be functions.");
-  if (typeof this._event_listeners[O] == "undefined")
-    this._event_listeners[O] = [];
-  this._event_listeners[O].push(K);
-}, removeEventListener: function(O, K) {
-  if (typeof this._event_listeners[O] == "undefined")
+  if (typeof this._event_listeners[Q] == "undefined")
+    this._event_listeners[Q] = [];
+  this._event_listeners[Q].push(K);
+}, removeEventListener: function(Q, K) {
+  if (typeof this._event_listeners[Q] == "undefined")
     return;
-  var V = -1;
-  for (let Q = 0;Q < this._event_listeners[O].length; Q++)
-    if (this._event_listeners[O][Q] === K) {
-      V = Q;
+  var Z = -1;
+  for (let X = 0;X < this._event_listeners[Q].length; X++)
+    if (this._event_listeners[Q][X] === K) {
+      Z = X;
       break;
     }
-  if (V >= 0)
-    return this._event_listeners[O].splice(V, 1), true;
+  if (Z >= 0)
+    return this._event_listeners[Q].splice(Z, 1), true;
   return false;
-}, removeAllEventListeners: function(O) {
-  if (typeof this._event_listeners[O] == "undefined")
+}, removeAllEventListeners: function(Q) {
+  if (typeof this._event_listeners[Q] == "undefined")
     return 0;
-  var K = this._event_listeners[O].length;
-  return this._event_listeners[O] = [], K;
-}, dispatchEvent: function(O) {
-  var K = false, V;
-  for (var Q in X.io.events)
-    if (O.constructor === X.io.events[Q]) {
+  var K = this._event_listeners[Q].length;
+  return this._event_listeners[Q] = [], K;
+}, dispatchEvent: function(Q) {
+  var K = false, Z;
+  for (var X in $.io.events)
+    if (Q.constructor === $.io.events[X]) {
       K = true;
       break;
     }
   if (!K)
     throw new Error("Unsupported event object");
-  if (typeof this._event_listeners[O.type] == "undefined")
+  if (typeof this._event_listeners[Q.type] == "undefined")
     return false;
-  for (var Z = 0;Z < this._event_listeners[O.type].length; Z++)
-    if (V = this._event_listeners[O.type][Z], V(O) === false || O.preventDefault)
+  for (var H = 0;H < this._event_listeners[Q.type].length; H++)
+    if (Z = this._event_listeners[Q.type][H], Z(Q) === false || Q.preventDefault)
       return true;
   return true;
 } };
-X.io.events.EventDispatcher.prototype.constructor = X.io.events.EventDispatcher;
-X.io.core = function(O, K) {
-  var V, Q, Z, M, Y = this, W, L = new X.io.urlHelper;
-  if (L.getRequestQueryParam("ngio_session_id"))
-    Q = L.getRequestQueryParam("ngio_session_id");
+$.io.events.EventDispatcher.prototype.constructor = $.io.events.EventDispatcher;
+$.io.core = function(Q, K) {
+  var Z, X, H, Y, O = this, I, T = new $.io.urlHelper;
+  if (T.getRequestQueryParam("ngio_session_id"))
+    X = T.getRequestQueryParam("ngio_session_id");
   if (Object.defineProperty(this, "app_id", { get: function() {
-    return V;
+    return Z;
   } }), Object.defineProperty(this, "user", { get: function() {
     return this.getCurrentUser();
-  } }), Object.defineProperty(this, "session_id", { set: function($) {
-    if ($ && typeof $ != "string")
+  } }), Object.defineProperty(this, "session_id", { set: function(M) {
+    if (M && typeof M != "string")
       throw new Error("'session_id' must be a string value.");
-    Q = $ ? $ : null;
+    X = M ? M : null;
   }, get: function() {
-    return Q ? Q : null;
-  } }), Object.defineProperty(this, "debug", { set: function($) {
-    M = $ ? true : false;
+    return X ? X : null;
+  } }), Object.defineProperty(this, "debug", { set: function(M) {
+    Y = M ? true : false;
   }, get: function() {
-    return M;
-  } }), !O)
+    return Y;
+  } }), !Q)
     throw new Error("Missing required 'app_id' in Newgrounds.io.core constructor");
-  if (typeof O != "string")
+  if (typeof Q != "string")
     throw new Error("'app_id' must be a string value in Newgrounds.io.core constructor");
-  if (V = O, K)
-    W = j.enc.Base64.parse(K);
+  if (Z = Q, K)
+    I = j.enc.Base64.parse(K);
   else
     console.warn("You did not set an encryption key. Some calls may not work without this.");
-  var P = "Newgrounds-io-app_session-" + V.split(":").join("-");
-  function J() {
+  var W = "Newgrounds-io-app_session-" + Z.split(":").join("-");
+  function z() {
     if (typeof localStorage != "undefined" && localStorage && localStorage.getItem.constructor == Function)
       return true;
     return false;
   }
-  const G = {};
-  function T() {
-    if (J())
+  let E = {};
+  function J() {
+    if (z())
       return localStorage;
-    return { getItem($) {
-      return G[$];
-    }, setItem($, R) {
-      G[$] = R;
-    }, removeItem($) {
-      delete G[$];
+    return { getItem(M) {
+      return E[M];
+    }, setItem(M, R) {
+      E[M] = R;
+    }, removeItem(M) {
+      delete E[M];
     } };
   }
-  function I() {
-    var R = T().getItem(P);
+  function V() {
+    var R = J().getItem(W);
     return R ? R : null;
   }
-  function F($) {
-    T().setItem(P, $);
+  function A(M) {
+    J().setItem(W, M);
   }
-  function H() {
-    T().removeItem(P);
+  function P() {
+    J().removeItem(W);
   }
-  if (!Q && I())
-    Q = I();
-  this.addEventListener("App.endSession", function($) {
-    Y.session_id = null, H();
-  }), this.addEventListener("App.startSession", function($) {
-    if ($.success)
-      Y.session_id = $.data.session.id;
-  }), this.addEventListener("App.checkSession", ($) => {
-    if ($.success) {
-      if ($.data.session.expired)
-        H(), this.session_id = null;
-      else if ($.data.session.remember)
-        F($.data.session.id);
+  if (!X && V())
+    X = V();
+  this.addEventListener("App.endSession", function(M) {
+    O.session_id = null, P();
+  }), this.addEventListener("App.startSession", function(M) {
+    if (M.success)
+      O.session_id = M.data.session.id;
+  }), this.addEventListener("App.checkSession", (M) => {
+    if (M.success) {
+      if (M.data.session.expired)
+        P(), this.session_id = null;
+      else if (M.data.session.remember)
+        A(M.data.session.id);
     } else
-      this.session_id = null, H();
-  }), this._encryptCall = function($) {
-    if (!$ || !$.constructor == X.io.model.call_model)
+      this.session_id = null, P();
+  }), this._encryptCall = function(M) {
+    if (!M || !M.constructor == $.io.model.call_model)
       throw new Error("Attempted to encrypt a non 'call' object");
-    var R = j.lib.WordArray.random(16), z = j.AES.encrypt(JSON.stringify($.toObject()), W, { iv: R }), S = j.enc.Base64.stringify(R.concat(z.ciphertext));
-    return $.secure = S, $.parameters = null, $;
+    var R = j.lib.WordArray.random(16), L = j.AES.encrypt(JSON.stringify(M.toObject()), I, { iv: R }), S = j.enc.Base64.stringify(R.concat(L.ciphertext));
+    return M.secure = S, M.parameters = null, M;
   };
 };
-X.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners: {}, addEventListener: X.io.events.EventDispatcher.prototype.addEventListener, removeEventListener: X.io.events.EventDispatcher.prototype.removeEventListener, removeAllEventListeners: X.io.events.EventDispatcher.prototype.removeAllEventListeners, dispatchEvent: X.io.events.EventDispatcher.prototype.dispatchEvent, getSessionLoader: function() {
+$.io.core.prototype = { _session_loader: null, _call_queue: [], _event_listeners: {}, addEventListener: $.io.events.EventDispatcher.prototype.addEventListener, removeEventListener: $.io.events.EventDispatcher.prototype.removeEventListener, removeAllEventListeners: $.io.events.EventDispatcher.prototype.removeAllEventListeners, dispatchEvent: $.io.events.EventDispatcher.prototype.dispatchEvent, getSessionLoader: function() {
   if (this._session_loader == null)
-    this._session_loader = new X.io.SessionLoader(this);
+    this._session_loader = new $.io.SessionLoader(this);
   return this._session_loader;
 }, getSession: function() {
   return this.getSessionLoader().session;
 }, getCurrentUser: function() {
-  var O = this.getSessionLoader();
-  if (O.session)
-    return O.session.user;
+  var Q = this.getSessionLoader();
+  if (Q.session)
+    return Q.session.user;
   return null;
 }, getLoginError: function() {
   return this.getSessionLoader().last_error;
-}, getValidSession: function(O, K) {
-  this.getSessionLoader().getValidSession(O, K);
-}, requestLogin: function(O, K, V, Q) {
-  if (!O || O.constructor !== Function)
+}, getValidSession: function(Q, K) {
+  this.getSessionLoader().getValidSession(Q, K);
+}, requestLogin: function(Q, K, Z, X) {
+  if (!Q || Q.constructor !== Function)
     throw "Missing required callback for 'on_logged_in'.";
   if (!K || K.constructor !== Function)
     throw "Missing required callback for 'on_login_failed'.";
-  var Z = this, M = this.getSessionLoader(), Y;
-  function W() {
-    if (Y)
-      clearInterval(Y);
-    Z.removeEventListener("cancelLoginRequest", L), M.closePassport();
+  var H = this, Y = this.getSessionLoader(), O;
+  function I() {
+    if (O)
+      clearInterval(O);
+    H.removeEventListener("cancelLoginRequest", T), Y.closePassport();
   }
-  function L() {
-    V && V.constructor === Function ? V.call(Q) : K.call(Q), W();
+  function T() {
+    Z && Z.constructor === Function ? Z.call(X) : K.call(X), I();
   }
-  if (Z.addEventListener("cancelLoginRequest", L), Z.getCurrentUser())
-    O.call(Q);
+  if (H.addEventListener("cancelLoginRequest", T), H.getCurrentUser())
+    Q.call(X);
   else
-    M.loadPassport(), Y = setInterval(function() {
-      M.checkSession(function(P) {
-        if (!P || P.expired)
-          if (M.last_error.code == 111)
-            L();
+    Y.loadPassport(), O = setInterval(function() {
+      Y.checkSession(function(W) {
+        if (!W || W.expired)
+          if (Y.last_error.code == 111)
+            T();
           else
-            W(), K.call(Q);
-        else if (P.user)
-          W(), O.call(Q);
+            I(), K.call(X);
+        else if (W.user)
+          I(), Q.call(X);
       });
     }, 3000);
 }, cancelLoginRequest: function() {
-  event = new X.io.events.OutputEvent("cancelLoginRequest", null, null), this.dispatchEvent(event);
-}, logOut: function(O, K) {
-  this.getSessionLoader().endSession(O, K);
-}, queueComponent: function(O, K, V, Q) {
-  if (K && K.constructor === Function && !V)
-    V = K, K = null;
-  var Z = new X.io.model.call(this);
-  if (Z.component = O, typeof K != "undefined")
-    Z.parameters = K;
-  this._validateCall(Z), this._call_queue.push([Z, V, Q]);
+  event = new $.io.events.OutputEvent("cancelLoginRequest", null, null), this.dispatchEvent(event);
+}, logOut: function(Q, K) {
+  this.getSessionLoader().endSession(Q, K);
+}, queueComponent: function(Q, K, Z, X) {
+  if (K && K.constructor === Function && !Z)
+    Z = K, K = null;
+  var H = new $.io.model.call(this);
+  if (H.component = Q, typeof K != "undefined")
+    H.parameters = K;
+  this._validateCall(H), this._call_queue.push([H, Z, X]);
 }, executeQueue: function() {
-  var O = [], K = [], V = [];
-  for (var Q = 0;Q < this._call_queue.length; Q++)
-    O.push(this._call_queue[Q][0]), K.push(this._call_queue[Q][1]), V.push(this._call_queue[Q][2]);
-  this._doCall(O, K, V), this._call_queue = [];
-}, callComponent: function(O, K, V, Q) {
-  if (K.constructor === Function && !V)
-    V = K, K = null;
-  var Z = new X.io.model.call(this);
-  if (Z.component = O, typeof K != "undefined")
-    Z.parameters = K;
-  this._validateCall(Z), this._doCall(Z, V, Q);
-}, _doCallback: function(O, K, V, Q) {
-  var Z, M, Y, W, L, P = { success: false, error: { code: 0, message: "Unexpected Server Response" } };
-  if (typeof V == "undefined")
-    V = null;
-  if (O.constructor === Array && K && K.constructor === Array) {
-    for (Z = 0;Z < O.length; Z++)
-      M = !V || typeof V[Z] == "undefined" ? P : V[Z], Y = typeof K[Z] == "undefined" ? null : K[Z], this._doCallback(O[Z], Y, M, Q[Z]);
+  var Q = [], K = [], Z = [];
+  for (var X = 0;X < this._call_queue.length; X++)
+    Q.push(this._call_queue[X][0]), K.push(this._call_queue[X][1]), Z.push(this._call_queue[X][2]);
+  this._doCall(Q, K, Z), this._call_queue = [];
+}, callComponent: function(Q, K, Z, X) {
+  if (K.constructor === Function && !Z)
+    Z = K, K = null;
+  var H = new $.io.model.call(this);
+  if (H.component = Q, typeof K != "undefined")
+    H.parameters = K;
+  this._validateCall(H), this._doCall(H, Z, X);
+}, _doCallback: function(Q, K, Z, X) {
+  var H, Y, O, I, T, W = { success: false, error: { code: 0, message: "Unexpected Server Response" } };
+  if (typeof Z == "undefined")
+    Z = null;
+  if (Q.constructor === Array && K && K.constructor === Array) {
+    for (H = 0;H < Q.length; H++)
+      Y = !Z || typeof Z[H] == "undefined" ? W : Z[H], O = typeof K[H] == "undefined" ? null : K[H], this._doCallback(Q[H], O, Y, X[H]);
     return;
   }
-  if (V && typeof V.data != "undefined") {
-    var J;
-    if (V.data.constructor === Array) {
-      J = [];
-      for (Z = 0;Z < V.data.length; Z++)
-        J.push(this._formatResults(V.component, V.data[Z]));
+  if (Z && typeof Z.data != "undefined") {
+    var z;
+    if (Z.data.constructor === Array) {
+      z = [];
+      for (H = 0;H < Z.data.length; H++)
+        z.push(this._formatResults(Z.component, Z.data[H]));
     } else
-      J = this._formatResults(V.component, V.data);
-    V.data = J;
+      z = this._formatResults(Z.component, Z.data);
+    Z.data = z;
   }
-  var G;
-  if (V)
-    if (typeof V.data != "undefined")
-      G = V.data;
+  var E;
+  if (Z)
+    if (typeof Z.data != "undefined")
+      E = Z.data;
     else
-      console.warn("Received empty data from '" + O.component + "'."), G = null;
+      console.warn("Received empty data from '" + Q.component + "'."), E = null;
   else
-    G = P;
-  var T;
-  if (G.constructor === Array)
-    for (Z = 0;Z < G.length; Z++)
-      T = new X.io.events.OutputEvent(O.component, O[Z], G[Z]), this.dispatchEvent(T);
+    E = W;
+  var J;
+  if (E.constructor === Array)
+    for (H = 0;H < E.length; H++)
+      J = new $.io.events.OutputEvent(Q.component, Q[H], E[H]), this.dispatchEvent(J);
   else
-    T = new X.io.events.OutputEvent(O.component, O, G), this.dispatchEvent(T);
+    J = new $.io.events.OutputEvent(Q.component, Q, E), this.dispatchEvent(J);
   if (K && K.constructor === Function)
-    K.call(Q, G);
-}, _formatResults: function(O, K) {
-  var V, Q, Z, M, Y, W = null;
+    K.call(X, E);
+}, _formatResults: function(Q, K) {
+  var Z, X, H, Y, O, I = null;
   if (typeof K.success != "undefined" && K.success)
-    W = X.io.call_validators.getValidator(O);
-  if (!W)
+    I = $.io.call_validators.getValidator(Q);
+  if (!I)
     return K;
-  var L = W.returns;
-  for (Q in L) {
-    if (typeof K[Q] == "undefined" && K.success !== false) {
-      console.warn("Newgrounds.io server failed to return expected '" + Q + "' in '" + O + "' data.");
+  var T = I.returns;
+  for (X in T) {
+    if (typeof K[X] == "undefined" && K.success !== false) {
+      console.warn("Newgrounds.io server failed to return expected '" + X + "' in '" + Q + "' data.");
       continue;
     }
-    if (typeof L[Q].array != "undefined") {
-      if (typeof L[Q].array.object != "undefined")
-        Y = L[Q].array.object;
+    if (typeof T[X].array != "undefined") {
+      if (typeof T[X].array.object != "undefined")
+        O = T[X].array.object;
       else
-        Y = L[Q].array;
-      if (typeof X.io.model[Y] == "undefined") {
-        console.warn("Received unsupported model '" + Y + "' from '" + O + "'.");
+        O = T[X].array;
+      if (typeof $.io.model[O] == "undefined") {
+        console.warn("Received unsupported model '" + O + "' from '" + Q + "'.");
         continue;
       }
-      if (K[Q].constructor !== Array) {
-        console.warn("Expected array<" + Y + "> value for '" + Q + "' in '" + O + "' data, got " + typeof K[Q]);
+      if (K[X].constructor !== Array) {
+        console.warn("Expected array<" + O + "> value for '" + X + "' in '" + Q + "' data, got " + typeof K[X]);
         continue;
       }
-      M = [];
-      for (Z = 0;Z < K[Q].length; Z++)
-        V = new X.io.model[Y](this), V.fromObject(K[Q][Z]), M.push(V);
-      K[Q] = M;
-    } else if (typeof L[Q].object != "undefined" && K[Q]) {
-      if (Y = L[Q].object, typeof X.io.model[Y] == "undefined") {
-        console.warn("Received unsupported model '" + Y + "' from '" + O + "'.");
+      Y = [];
+      for (H = 0;H < K[X].length; H++)
+        Z = new $.io.model[O](this), Z.fromObject(K[X][H]), Y.push(Z);
+      K[X] = Y;
+    } else if (typeof T[X].object != "undefined" && K[X]) {
+      if (O = T[X].object, typeof $.io.model[O] == "undefined") {
+        console.warn("Received unsupported model '" + O + "' from '" + Q + "'.");
         continue;
       }
-      V = new X.io.model[Y](this), V.fromObject(K[Q]), K[Q] = V;
+      Z = new $.io.model[O](this), Z.fromObject(K[X]), K[X] = Z;
     }
   }
   return K;
-}, _doCall: function(O, K, V) {
+}, _doCall: function(Q, K, Z) {
   if (!this.app_id)
     throw new Error("Attempted to call Newgrounds.io server without setting an app_id in Newgrounds.io.core instance.");
-  var Q, Z = false, M = this;
-  function Y(G) {
-    var T = X.io.call_validators.getValidator(G.component);
-    if (T.hasOwnProperty("redirect") && T.redirect) {
-      var I = G.parameters;
-      if (!I || !I.hasOwnProperty("redirect") || I.redirect)
+  var X, H = false, Y = this;
+  function O(E) {
+    var J = $.io.call_validators.getValidator(E.component);
+    if (J.hasOwnProperty("redirect") && J.redirect) {
+      var V = E.parameters;
+      if (!V || !V.hasOwnProperty("redirect") || V.redirect)
         return true;
     }
     return false;
   }
-  if (O.constructor === Array) {
-    Q = [];
-    for (i = 0;i < O.length; i++) {
-      if (Y(O[i]))
+  if (Q.constructor === Array) {
+    X = [];
+    for (i = 0;i < Q.length; i++) {
+      if (O(Q[i]))
         throw new Error("Loader components can not be called in an array without a redirect=false parameter.");
-      Q.push(O[i].toObject());
+      X.push(Q[i].toObject());
     }
   } else
-    Q = O.toObject(), Z = Y(O);
-  var W = { app_id: this.app_id, session_id: this.session_id, call: Q };
+    X = Q.toObject(), H = O(Q);
+  var I = { app_id: this.app_id, session_id: this.session_id, call: X };
   if (this.debug)
-    W.debug = 1;
-  if (Z) {
-    var L = { success: true, app_id: this.app_id, result: { component: O.component, data: { success: true } } }, P = document.createElement("form");
-    P.action = X.io.GATEWAY_URI, P.target = "_blank", P.method = "POST";
-    var J = document.createElement("input");
-    J.type = "hidden", J.name = "input", P.appendChild(J), document.body.appendChild(P), J.value = JSON.stringify(W), P.submit(), document.body.removeChild(P);
+    I.debug = 1;
+  if (H) {
+    var T = { success: true, app_id: this.app_id, result: { component: Q.component, data: { success: true } } }, W = document.createElement("form");
+    W.action = $.io.GATEWAY_URI, W.target = "_blank", W.method = "POST";
+    var z = document.createElement("input");
+    z.type = "hidden", z.name = "input", W.appendChild(z), document.body.appendChild(W), z.value = JSON.stringify(I), W.submit(), document.body.removeChild(W);
   } else {
-    const G = this, T = X.io.GATEWAY_URI.startsWith("//") ? "https:" + X.io.GATEWAY_URI : X.io.GATEWAY_URI, I = new FormData;
-    I.append("input", JSON.stringify(W)), fetch(T, { method: "POST", body: I }).then((F) => F.json()).then((F) => {
-      G._doCallback(O, K, F.result, V);
+    let E = this, J = $.io.GATEWAY_URI.startsWith("//") ? "https:" + $.io.GATEWAY_URI : $.io.GATEWAY_URI, V = new FormData;
+    V.append("input", JSON.stringify(I)), fetch(J, { method: "POST", body: V }).then((A) => A.json()).then((A) => {
+      E._doCallback(Q, K, A.result, Z);
     });
   }
-}, _doValidateCall: function(O, K) {
-  var V, Q, Z, M, Y = X.io.call_validators.getValidator(O);
-  if (!Y)
-    throw new Error("'" + O + "' is not a valid server component.");
-  if (Y.require_session && !this.session_id)
-    throw new Error("'" + O + "' requires a session id");
-  if (Y.import && Y.import.length > 0)
-    for (V = 0;V < Y.import.length; V++)
-      Q = Y.import[V].split("."), this._doValidateCall(Q[0], Q[1], K);
-  var W;
-  for (Z in Y.params) {
-    if (M = Y.params[Z], W = K && typeof K[Z] != "undefined" ? K[Z] : null, !W && M.extract_from && M.extract_from.alias)
-      W = K[M.extract_from.alias];
-    if (W === null) {
-      if (M.required)
-        throw new Error("Missing required parameter for '" + O + "': " + Z);
+}, _doValidateCall: function(Q, K) {
+  var Z, X, H, Y, O = $.io.call_validators.getValidator(Q);
+  if (!O)
+    throw new Error("'" + Q + "' is not a valid server component.");
+  if (O.require_session && !this.session_id)
+    throw new Error("'" + Q + "' requires a session id");
+  if (O.import && O.import.length > 0)
+    for (Z = 0;Z < O.import.length; Z++)
+      X = O.import[Z].split("."), this._doValidateCall(X[0], X[1], K);
+  var I;
+  for (H in O.params) {
+    if (Y = O.params[H], I = K && typeof K[H] != "undefined" ? K[H] : null, !I && Y.extract_from && Y.extract_from.alias)
+      I = K[Y.extract_from.alias];
+    if (I === null) {
+      if (Y.required)
+        throw new Error("Missing required parameter for '" + Q + "': " + H);
       continue;
     }
-    if (M.extract_from && W.constructor === X.io.model[M.extract_from.object])
-      W = W[M.extract_from.property];
-    if (!X.io.model.checkStrictValue(null, Z, W, M.type, null, null, null))
-      throw new Error("Illegal value for '" + Z + "' parameter of '" + O + "': " + W);
+    if (Y.extract_from && I.constructor === $.io.model[Y.extract_from.object])
+      I = I[Y.extract_from.property];
+    if (!$.io.model.checkStrictValue(null, H, I, Y.type, null, null, null))
+      throw new Error("Illegal value for '" + H + "' parameter of '" + Q + "': " + I);
   }
-}, _validateCall: function(O) {
+}, _validateCall: function(Q) {
   var K;
-  if (O.constructor === Array) {
-    var V = [];
-    for (K = 0;K < O.length; K++)
-      V.push(this._validateCall(O[K]));
-    return V;
-  } else if (O.constructor !== X.io.model.call)
+  if (Q.constructor === Array) {
+    var Z = [];
+    for (K = 0;K < Q.length; K++)
+      Z.push(this._validateCall(Q[K]));
+    return Z;
+  } else if (Q.constructor !== $.io.model.call)
     throw new Error("Unexpected 'call_model' value. Expected Newgrounds.io.model.call instance.");
-  var { component: Q, parameters: Z, echo: M } = O;
-  if (Z && Z.constructor === Array)
-    for (K = 0;K < Z.length; K++)
-      this._doValidateCall(Q, Z[K]);
+  var { component: X, parameters: H, echo: Y } = Q;
+  if (H && H.constructor === Array)
+    for (K = 0;K < H.length; K++)
+      this._doValidateCall(X, H[K]);
   else
-    this._doValidateCall(Q, Z);
-  var Y = { component: O.component }, W = X.io.call_validators.getValidator(O.component);
-  if (typeof Z != "undefined")
-    if (W.secure) {
-      var L = this._encryptCall(O);
-      Y.secure = L.secure;
+    this._doValidateCall(X, H);
+  var O = { component: Q.component }, I = $.io.call_validators.getValidator(Q.component);
+  if (typeof H != "undefined")
+    if (I.secure) {
+      var T = this._encryptCall(Q);
+      O.secure = T.secure;
     } else
-      Y.parameters = Z;
-  if (typeof M != "undefined")
-    Y.echo = M;
-  return Y;
+      O.parameters = H;
+  if (typeof Y != "undefined")
+    O.echo = Y;
+  return O;
 } };
-X.io.core.prototype.constructor = X.io.core;
-X.io.core.instance_id = 0;
-X.io.core.getNextInstanceID = function() {
-  return X.io.core.instance_id++, X.io.core.instance_id;
+$.io.core.prototype.constructor = $.io.core;
+$.io.core.instance_id = 0;
+$.io.core.getNextInstanceID = function() {
+  return $.io.core.instance_id++, $.io.core.instance_id;
 };
-X.io.urlHelper = function() {
-  var O = globalThis.location?.href, K = {}, V = O?.split("?").pop();
-  if (V) {
-    var Q = V.split("&"), Z;
-    for (var M = 0;M < Q.length; M++)
-      Z = Q[M].split("="), K[Z[0]] = Z[1];
+$.io.urlHelper = function() {
+  var Q = globalThis.location?.href, K = {}, Z = Q?.split("?").pop();
+  if (Z) {
+    var X = Z.split("&"), H;
+    for (var Y = 0;Y < X.length; Y++)
+      H = X[Y].split("="), K[H[0]] = H[1];
   }
-  this.getRequestQueryParam = function(Y, W) {
-    if (typeof W == "undefined")
-      W = null;
-    return typeof K[Y] == "undefined" ? W : K[Y];
+  this.getRequestQueryParam = function(O, I) {
+    if (typeof I == "undefined")
+      I = null;
+    return typeof K[O] == "undefined" ? I : K[O];
   };
 };
-X.io.model.call = function(O, K) {
-  var V, Q, Z, M;
-  this.__property_names = ["component", "echo", "parameters", "secure"], this.__classname = "Newgrounds.io.model.call", this.__ngio = O;
-  var V;
+$.io.model.call = function(Q, K) {
+  var Z, X, H, Y;
+  this.__property_names = ["component", "echo", "parameters", "secure"], this.__classname = "Newgrounds.io.model.call", this.__ngio = Q;
+  var Z;
   Object.defineProperty(this, "component", { get: function() {
-    return typeof V == "undefined" ? null : V;
-  }, set: function(Y) {
-    X.io.model.checkStrictValue(this.__classname, "component", Y, String, null, null, null), V = Y;
+    return typeof Z == "undefined" ? null : Z;
+  }, set: function(O) {
+    $.io.model.checkStrictValue(this.__classname, "component", O, String, null, null, null), Z = O;
   } });
-  var Q;
+  var X;
   Object.defineProperty(this, "echo", { get: function() {
-    return typeof Q == "undefined" ? null : Q;
-  }, set: function(Y) {
-    Q = Y;
+    return typeof X == "undefined" ? null : X;
+  }, set: function(O) {
+    X = O;
   } });
-  var Z;
+  var H;
   Object.defineProperty(this, "parameters", { get: function() {
-    return typeof Z == "undefined" ? null : Z;
-  }, set: function(Y) {
-    X.io.model.checkStrictValue(this.__classname, "parameters", Y, Object, null, Object, null), Z = Y;
+    return typeof H == "undefined" ? null : H;
+  }, set: function(O) {
+    $.io.model.checkStrictValue(this.__classname, "parameters", O, Object, null, Object, null), H = O;
   } });
-  var M;
+  var Y;
   if (Object.defineProperty(this, "secure", { get: function() {
-    return typeof M == "undefined" ? null : M;
-  }, set: function(Y) {
-    X.io.model.checkStrictValue(this.__classname, "secure", Y, String, null, null, null), M = Y;
+    return typeof Y == "undefined" ? null : Y;
+  }, set: function(O) {
+    $.io.model.checkStrictValue(this.__classname, "secure", O, String, null, null, null), Y = O;
   } }), K)
     this.fromObject(K);
 };
-X.io.model.call.prototype._has_ngio_user = function() {
+$.io.model.call.prototype._has_ngio_user = function() {
   return this.__ngio && this.__ngio.user;
 };
-X.io.model.call.prototype.toObject = function() {
-  var O = {};
+$.io.model.call.prototype.toObject = function() {
+  var Q = {};
   for (var K = 0;K < this.__property_names.length; K++)
     if (typeof this[this.__property_names[K]] != "undefined")
-      O[this.__property_names[K]] = this[this.__property_names[K]];
-  return O;
+      Q[this.__property_names[K]] = this[this.__property_names[K]];
+  return Q;
 };
-X.io.model.call.prototype.fromObject = function(O) {
-  var K, V;
-  for (var Q = 0;Q < this.__property_names.length; Q++)
-    K = O[this.__property_names[Q]], this[this.__property_names[Q]] = K;
+$.io.model.call.prototype.fromObject = function(Q) {
+  var K, Z;
+  for (var X = 0;X < this.__property_names.length; X++)
+    K = Q[this.__property_names[X]], this[this.__property_names[X]] = K;
 };
-X.io.model.call.prototype.constructor = X.io.model.call;
-X.io.model.debug = function(O, K) {
-  var V, Q;
-  this.__property_names = ["exec_time", "input"], this.__classname = "Newgrounds.io.model.debug", this.__ngio = O;
-  var V;
+$.io.model.call.prototype.constructor = $.io.model.call;
+$.io.model.debug = function(Q, K) {
+  var Z, X;
+  this.__property_names = ["exec_time", "input"], this.__classname = "Newgrounds.io.model.debug", this.__ngio = Q;
+  var Z;
   Object.defineProperty(this, "exec_time", { get: function() {
-    return typeof V == "undefined" ? null : V;
-  }, set: function(Z) {
-    X.io.model.checkStrictValue(this.__classname, "exec_time", Z, String, null, null, null), V = Z;
+    return typeof Z == "undefined" ? null : Z;
+  }, set: function(H) {
+    $.io.model.checkStrictValue(this.__classname, "exec_time", H, String, null, null, null), Z = H;
   } });
-  var Q;
+  var X;
   if (Object.defineProperty(this, "input", { get: function() {
-    return typeof Q == "undefined" ? null : Q;
-  }, set: function(Z) {
-    X.io.model.checkStrictValue(this.__classname, "input", Z, null, "input", null, null), Q = Z;
+    return typeof X == "undefined" ? null : X;
+  }, set: function(H) {
+    $.io.model.checkStrictValue(this.__classname, "input", H, null, "input", null, null), X = H;
   } }), K)
     this.fromObject(K);
 };
-X.io.model.debug.prototype._has_ngio_user = function() {
+$.io.model.debug.prototype._has_ngio_user = function() {
   return this.__ngio && this.__ngio.user;
 };
-X.io.model.debug.prototype.toObject = function() {
-  var O = {};
+$.io.model.debug.prototype.toObject = function() {
+  var Q = {};
   for (var K = 0;K < this.__property_names.length; K++)
     if (typeof this[this.__property_names[K]] != "undefined")
-      O[this.__property_names[K]] = this[this.__property_names[K]];
-  return O;
+      Q[this.__property_names[K]] = this[this.__property_names[K]];
+  return Q;
 };
-X.io.model.debug.prototype.fromObject = function(O) {
-  var K, V;
-  for (var Q = 0;Q < this.__property_names.length; Q++) {
-    if (K = O[this.__property_names[Q]], this.__property_names[Q] == "input" && K)
-      K = new X.io.model.input(this.__ngio, K);
-    this[this.__property_names[Q]] = K;
+$.io.model.debug.prototype.fromObject = function(Q) {
+  var K, Z;
+  for (var X = 0;X < this.__property_names.length; X++) {
+    if (K = Q[this.__property_names[X]], this.__property_names[X] == "input" && K)
+      K = new $.io.model.input(this.__ngio, K);
+    this[this.__property_names[X]] = K;
   }
 };
-X.io.model.debug.prototype.constructor = X.io.model.debug;
-X.io.model.error = function(O, K) {
-  var V, Q;
-  this.__property_names = ["code", "message"], this.__classname = "Newgrounds.io.model.error", this.__ngio = O;
-  var V;
+$.io.model.debug.prototype.constructor = $.io.model.debug;
+$.io.model.error = function(Q, K) {
+  var Z, X;
+  this.__property_names = ["code", "message"], this.__classname = "Newgrounds.io.model.error", this.__ngio = Q;
+  var Z;
   Object.defineProperty(this, "code", { get: function() {
-    return typeof V == "undefined" ? null : V;
-  }, set: function(Z) {
-    X.io.model.checkStrictValue(this.__classname, "code", Z, Number, null, null, null), V = Z;
+    return typeof Z == "undefined" ? null : Z;
+  }, set: function(H) {
+    $.io.model.checkStrictValue(this.__classname, "code", H, Number, null, null, null), Z = H;
   } });
-  var Q;
+  var X;
   if (Object.defineProperty(this, "message", { get: function() {
-    return typeof Q == "undefined" ? null : Q;
-  }, set: function(Z) {
-    X.io.model.checkStrictValue(this.__classname, "message", Z, String, null, null, null), Q = Z;
+    return typeof X == "undefined" ? null : X;
+  }, set: function(H) {
+    $.io.model.checkStrictValue(this.__classname, "message", H, String, null, null, null), X = H;
   } }), K)
     this.fromObject(K);
 };
-X.io.model.error.prototype._has_ngio_user = function() {
+$.io.model.error.prototype._has_ngio_user = function() {
   return this.__ngio && this.__ngio.user;
 };
-X.io.model.error.prototype.toObject = function() {
-  var O = {};
+$.io.model.error.prototype.toObject = function() {
+  var Q = {};
   for (var K = 0;K < this.__property_names.length; K++)
     if (typeof this[this.__property_names[K]] != "undefined")
-      O[this.__property_names[K]] = this[this.__property_names[K]];
-  return O;
+      Q[this.__property_names[K]] = this[this.__property_names[K]];
+  return Q;
 };
-X.io.model.error.prototype.fromObject = function(O) {
-  var K, V;
-  for (var Q = 0;Q < this.__property_names.length; Q++)
-    K = O[this.__property_names[Q]], this[this.__property_names[Q]] = K;
+$.io.model.error.prototype.fromObject = function(Q) {
+  var K, Z;
+  for (var X = 0;X < this.__property_names.length; X++)
+    K = Q[this.__property_names[X]], this[this.__property_names[X]] = K;
 };
-X.io.model.error.get = function(O, K) {
-  var V = new X.io.model.error;
-  return V.message = O ? O : "Unknown Error", V.code = K ? K : 0, V;
+$.io.model.error.get = function(Q, K) {
+  var Z = new $.io.model.error;
+  return Z.message = Q ? Q : "Unknown Error", Z.code = K ? K : 0, Z;
 };
-X.io.model.error.MISSING_INPUT = 100;
-X.io.model.error.INVALID_INPUT = 101;
-X.io.model.error.MISSING_PARAMETER = 102;
-X.io.model.error.INVALID_PARAMETER = 103;
-X.io.model.error.EXPIRED_SESSION = 104;
-X.io.model.error.DUPLICATE_SESSION = 105;
-X.io.model.error.MAX_CONNECTIONS_EXCEEDED = 106;
-X.io.model.error.MAX_CALLS_EXCEEDED = 107;
-X.io.model.error.MEMORY_EXCEEDED = 108;
-X.io.model.error.TIMED_OUT = 109;
-X.io.model.error.LOGIN_REQUIRED = 110;
-X.io.model.error.INVALID_APP_ID = 200;
-X.io.model.error.INVALID_ENCRYPTION = 201;
-X.io.model.error.INVALID_MEDAL_ID = 202;
-X.io.model.error.INVALID_SCOREBOARD_ID = 203;
-X.io.model.error.INVALID_SAVEGROUP_ID = 204;
-X.io.model.error.SERVER_UNAVAILABLE = 504;
-X.io.model.error.prototype.constructor = X.io.model.error;
-X.io.model.input = function(O, K) {
-  var V, Q, Z, M, Y;
-  this.__property_names = ["app_id", "call", "debug", "echo", "session_id"], this.__classname = "Newgrounds.io.model.input", this.__ngio = O;
-  var V;
-  Object.defineProperty(this, "app_id", { get: function() {
-    return typeof V == "undefined" ? null : V;
-  }, set: function(W) {
-    X.io.model.checkStrictValue(this.__classname, "app_id", W, String, null, null, null), V = W;
-  } });
-  var Q;
-  Object.defineProperty(this, "call", { get: function() {
-    return typeof Q == "undefined" ? null : Q;
-  }, set: function(W) {
-    X.io.model.checkStrictValue(this.__classname, "call", W, null, "call", null, "call"), Q = W;
-  } });
+$.io.model.error.MISSING_INPUT = 100;
+$.io.model.error.INVALID_INPUT = 101;
+$.io.model.error.MISSING_PARAMETER = 102;
+$.io.model.error.INVALID_PARAMETER = 103;
+$.io.model.error.EXPIRED_SESSION = 104;
+$.io.model.error.DUPLICATE_SESSION = 105;
+$.io.model.error.MAX_CONNECTIONS_EXCEEDED = 106;
+$.io.model.error.MAX_CALLS_EXCEEDED = 107;
+$.io.model.error.MEMORY_EXCEEDED = 108;
+$.io.model.error.TIMED_OUT = 109;
+$.io.model.error.LOGIN_REQUIRED = 110;
+$.io.model.error.INVALID_APP_ID = 200;
+$.io.model.error.INVALID_ENCRYPTION = 201;
+$.io.model.error.INVALID_MEDAL_ID = 202;
+$.io.model.error.INVALID_SCOREBOARD_ID = 203;
+$.io.model.error.INVALID_SAVEGROUP_ID = 204;
+$.io.model.error.SERVER_UNAVAILABLE = 504;
+$.io.model.error.prototype.constructor = $.io.model.error;
+$.io.model.input = function(Q, K) {
+  var Z, X, H, Y, O;
+  this.__property_names = ["app_id", "call", "debug", "echo", "session_id"], this.__classname = "Newgrounds.io.model.input", this.__ngio = Q;
   var Z;
-  Object.defineProperty(this, "debug", { get: function() {
+  Object.defineProperty(this, "app_id", { get: function() {
     return typeof Z == "undefined" ? null : Z;
-  }, set: function(W) {
-    X.io.model.checkStrictValue(this.__classname, "debug", W, Boolean, null, null, null), Z = W;
+  }, set: function(I) {
+    $.io.model.checkStrictValue(this.__classname, "app_id", I, String, null, null, null), Z = I;
   } });
-  var M;
-  Object.defineProperty(this, "echo", { get: function() {
-    return typeof M == "undefined" ? null : M;
-  }, set: function(W) {
-    M = W;
+  var X;
+  Object.defineProperty(this, "call", { get: function() {
+    return typeof X == "undefined" ? null : X;
+  }, set: function(I) {
+    $.io.model.checkStrictValue(this.__classname, "call", I, null, "call", null, "call"), X = I;
+  } });
+  var H;
+  Object.defineProperty(this, "debug", { get: function() {
+    return typeof H == "undefined" ? null : H;
+  }, set: function(I) {
+    $.io.model.checkStrictValue(this.__classname, "debug", I, Boolean, null, null, null), H = I;
   } });
   var Y;
-  if (Object.defineProperty(this, "session_id", { get: function() {
+  Object.defineProperty(this, "echo", { get: function() {
     return typeof Y == "undefined" ? null : Y;
-  }, set: function(W) {
-    X.io.model.checkStrictValue(this.__classname, "session_id", W, String, null, null, null), Y = W;
+  }, set: function(I) {
+    Y = I;
+  } });
+  var O;
+  if (Object.defineProperty(this, "session_id", { get: function() {
+    return typeof O == "undefined" ? null : O;
+  }, set: function(I) {
+    $.io.model.checkStrictValue(this.__classname, "session_id", I, String, null, null, null), O = I;
   } }), K)
     this.fromObject(K);
 };
-X.io.model.input.prototype._has_ngio_user = function() {
+$.io.model.input.prototype._has_ngio_user = function() {
   return this.__ngio && this.__ngio.user;
 };
-X.io.model.input.prototype.toObject = function() {
-  var O = {};
+$.io.model.input.prototype.toObject = function() {
+  var Q = {};
   for (var K = 0;K < this.__property_names.length; K++)
     if (typeof this[this.__property_names[K]] != "undefined")
-      O[this.__property_names[K]] = this[this.__property_names[K]];
-  return O;
+      Q[this.__property_names[K]] = this[this.__property_names[K]];
+  return Q;
 };
-X.io.model.input.prototype.fromObject = function(O) {
-  var K, V;
-  for (var Q = 0;Q < this.__property_names.length; Q++) {
-    if (K = O[this.__property_names[Q]], this.__property_names[Q] == "call" && K)
-      K = new X.io.model.call(this.__ngio, K);
-    this[this.__property_names[Q]] = K;
+$.io.model.input.prototype.fromObject = function(Q) {
+  var K, Z;
+  for (var X = 0;X < this.__property_names.length; X++) {
+    if (K = Q[this.__property_names[X]], this.__property_names[X] == "call" && K)
+      K = new $.io.model.call(this.__ngio, K);
+    this[this.__property_names[X]] = K;
   }
 };
-X.io.model.input.prototype.constructor = X.io.model.input;
-X.io.model.medal = function(O, K) {
-  var V, Q, Z, M, Y, W, L, P;
-  this.__property_names = ["description", "difficulty", "icon", "id", "name", "secret", "unlocked", "value"], this.__classname = "Newgrounds.io.model.medal", this.__ngio = O;
-  var V;
-  Object.defineProperty(this, "description", { get: function() {
-    return typeof V == "undefined" ? null : V;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "description", J, String, null, null, null), V = J;
-  } });
-  var Q;
-  Object.defineProperty(this, "difficulty", { get: function() {
-    return typeof Q == "undefined" ? null : Q;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "difficulty", J, Number, null, null, null), Q = J;
-  } });
+$.io.model.input.prototype.constructor = $.io.model.input;
+$.io.model.medal = function(Q, K) {
+  var Z, X, H, Y, O, I, T, W;
+  this.__property_names = ["description", "difficulty", "icon", "id", "name", "secret", "unlocked", "value"], this.__classname = "Newgrounds.io.model.medal", this.__ngio = Q;
   var Z;
-  Object.defineProperty(this, "icon", { get: function() {
+  Object.defineProperty(this, "description", { get: function() {
     return typeof Z == "undefined" ? null : Z;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "icon", J, String, null, null, null), Z = J;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "description", z, String, null, null, null), Z = z;
   } });
-  var M;
-  Object.defineProperty(this, "id", { get: function() {
-    return typeof M == "undefined" ? null : M;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "id", J, Number, null, null, null), M = J;
+  var X;
+  Object.defineProperty(this, "difficulty", { get: function() {
+    return typeof X == "undefined" ? null : X;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "difficulty", z, Number, null, null, null), X = z;
+  } });
+  var H;
+  Object.defineProperty(this, "icon", { get: function() {
+    return typeof H == "undefined" ? null : H;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "icon", z, String, null, null, null), H = z;
   } });
   var Y;
-  Object.defineProperty(this, "name", { get: function() {
+  Object.defineProperty(this, "id", { get: function() {
     return typeof Y == "undefined" ? null : Y;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "name", J, String, null, null, null), Y = J;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "id", z, Number, null, null, null), Y = z;
+  } });
+  var O;
+  Object.defineProperty(this, "name", { get: function() {
+    return typeof O == "undefined" ? null : O;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "name", z, String, null, null, null), O = z;
+  } });
+  var I;
+  Object.defineProperty(this, "secret", { get: function() {
+    return typeof I == "undefined" ? null : I;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "secret", z, Boolean, null, null, null), I = z;
+  } });
+  var T;
+  Object.defineProperty(this, "unlocked", { get: function() {
+    return typeof T == "undefined" ? null : T;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "unlocked", z, Boolean, null, null, null), T = z;
   } });
   var W;
-  Object.defineProperty(this, "secret", { get: function() {
-    return typeof W == "undefined" ? null : W;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "secret", J, Boolean, null, null, null), W = J;
-  } });
-  var L;
-  Object.defineProperty(this, "unlocked", { get: function() {
-    return typeof L == "undefined" ? null : L;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "unlocked", J, Boolean, null, null, null), L = J;
-  } });
-  var P;
   if (Object.defineProperty(this, "value", { get: function() {
-    return typeof P == "undefined" ? null : P;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "value", J, Number, null, null, null), P = J;
+    return typeof W == "undefined" ? null : W;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "value", z, Number, null, null, null), W = z;
   } }), K)
     this.fromObject(K);
 };
-X.io.model.medal.prototype._has_ngio_user = function() {
+$.io.model.medal.prototype._has_ngio_user = function() {
   return this.__ngio && this.__ngio.user;
 };
-X.io.model.medal.prototype.toObject = function() {
-  var O = {};
+$.io.model.medal.prototype.toObject = function() {
+  var Q = {};
   for (var K = 0;K < this.__property_names.length; K++)
     if (typeof this[this.__property_names[K]] != "undefined")
-      O[this.__property_names[K]] = this[this.__property_names[K]];
-  return O;
+      Q[this.__property_names[K]] = this[this.__property_names[K]];
+  return Q;
 };
-X.io.model.medal.prototype.fromObject = function(O) {
-  var K, V;
-  for (var Q = 0;Q < this.__property_names.length; Q++)
-    K = O[this.__property_names[Q]], this[this.__property_names[Q]] = K;
+$.io.model.medal.prototype.fromObject = function(Q) {
+  var K, Z;
+  for (var X = 0;X < this.__property_names.length; X++)
+    K = Q[this.__property_names[X]], this[this.__property_names[X]] = K;
 };
-X.io.model.medal.prototype.unlock = function(O) {
+$.io.model.medal.prototype.unlock = function(Q) {
   var K = this;
   if (this._has_ngio_user())
-    this.__ngio.callComponent("Medal.unlock", { id: this.id }, function(Z) {
-      if (Z.success)
+    this.__ngio.callComponent("Medal.unlock", { id: this.id }, function(H) {
+      if (H.success)
         this.unlocked = true;
-      O(Z);
+      Q(H);
     });
-  else if (typeof O == "function") {
-    var V = X.io.model.error.get("This function requires a valid user session.", X.io.model.error.LOGIN_REQUIRED), Q = { success: false, error: V };
-    O(Q);
+  else if (typeof Q == "function") {
+    var Z = $.io.model.error.get("This function requires a valid user session.", $.io.model.error.LOGIN_REQUIRED), X = { success: false, error: Z };
+    Q(X);
   }
 };
-X.io.model.medal.prototype.constructor = X.io.model.medal;
-X.io.model.output = function(O, K) {
-  var V, Q, Z, M, Y, W, L, P;
-  this.__property_names = ["api_version", "app_id", "debug", "echo", "error", "help_url", "result", "success"], this.__classname = "Newgrounds.io.model.output", this.__ngio = O;
-  var V;
-  Object.defineProperty(this, "api_version", { get: function() {
-    return typeof V == "undefined" ? null : V;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "api_version", J, String, null, null, null), V = J;
-  } });
-  var Q;
-  Object.defineProperty(this, "app_id", { get: function() {
-    return typeof Q == "undefined" ? null : Q;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "app_id", J, String, null, null, null), Q = J;
-  } });
+$.io.model.medal.prototype.constructor = $.io.model.medal;
+$.io.model.output = function(Q, K) {
+  var Z, X, H, Y, O, I, T, W;
+  this.__property_names = ["api_version", "app_id", "debug", "echo", "error", "help_url", "result", "success"], this.__classname = "Newgrounds.io.model.output", this.__ngio = Q;
   var Z;
-  Object.defineProperty(this, "debug", { get: function() {
+  Object.defineProperty(this, "api_version", { get: function() {
     return typeof Z == "undefined" ? null : Z;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "debug", J, null, "debug", null, null), Z = J;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "api_version", z, String, null, null, null), Z = z;
   } });
-  var M;
-  Object.defineProperty(this, "echo", { get: function() {
-    return typeof M == "undefined" ? null : M;
-  }, set: function(J) {
-    M = J;
+  var X;
+  Object.defineProperty(this, "app_id", { get: function() {
+    return typeof X == "undefined" ? null : X;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "app_id", z, String, null, null, null), X = z;
+  } });
+  var H;
+  Object.defineProperty(this, "debug", { get: function() {
+    return typeof H == "undefined" ? null : H;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "debug", z, null, "debug", null, null), H = z;
   } });
   var Y;
-  Object.defineProperty(this, "error", { get: function() {
+  Object.defineProperty(this, "echo", { get: function() {
     return typeof Y == "undefined" ? null : Y;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "error", J, null, "error", null, null), Y = J;
+  }, set: function(z) {
+    Y = z;
+  } });
+  var O;
+  Object.defineProperty(this, "error", { get: function() {
+    return typeof O == "undefined" ? null : O;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "error", z, null, "error", null, null), O = z;
+  } });
+  var I;
+  Object.defineProperty(this, "help_url", { get: function() {
+    return typeof I == "undefined" ? null : I;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "help_url", z, String, null, null, null), I = z;
+  } });
+  var T;
+  Object.defineProperty(this, "result", { get: function() {
+    return typeof T == "undefined" ? null : T;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "result", z, null, "result", null, "result"), T = z;
   } });
   var W;
-  Object.defineProperty(this, "help_url", { get: function() {
-    return typeof W == "undefined" ? null : W;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "help_url", J, String, null, null, null), W = J;
-  } });
-  var L;
-  Object.defineProperty(this, "result", { get: function() {
-    return typeof L == "undefined" ? null : L;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "result", J, null, "result", null, "result"), L = J;
-  } });
-  var P;
   if (Object.defineProperty(this, "success", { get: function() {
-    return typeof P == "undefined" ? null : P;
-  }, set: function(J) {
-    X.io.model.checkStrictValue(this.__classname, "success", J, Boolean, null, null, null), P = J;
+    return typeof W == "undefined" ? null : W;
+  }, set: function(z) {
+    $.io.model.checkStrictValue(this.__classname, "success", z, Boolean, null, null, null), W = z;
   } }), K)
     this.fromObject(K);
 };
-X.io.model.output.prototype._has_ngio_user = function() {
+$.io.model.output.prototype._has_ngio_user = function() {
   return this.__ngio && this.__ngio.user;
 };
-X.io.model.output.prototype.toObject = function() {
-  var O = {};
+$.io.model.output.prototype.toObject = function() {
+  var Q = {};
   for (var K = 0;K < this.__property_names.length; K++)
     if (typeof this[this.__property_names[K]] != "undefined")
-      O[this.__property_names[K]] = this[this.__property_names[K]];
-  return O;
+      Q[this.__property_names[K]] = this[this.__property_names[K]];
+  return Q;
 };
-X.io.model.output.prototype.fromObject = function(O) {
-  var K, V;
-  for (var Q = 0;Q < this.__property_names.length; Q++) {
-    if (K = O[this.__property_names[Q]], this.__property_names[Q] == "debug" && K)
-      K = new X.io.model.debug(this.__ngio, K);
-    else if (this.__property_names[Q] == "error" && K)
-      K = new X.io.model.error(this.__ngio, K);
-    else if (this.__property_names[Q] == "result" && K)
-      K = new X.io.model.result(this.__ngio, K);
-    this[this.__property_names[Q]] = K;
+$.io.model.output.prototype.fromObject = function(Q) {
+  var K, Z;
+  for (var X = 0;X < this.__property_names.length; X++) {
+    if (K = Q[this.__property_names[X]], this.__property_names[X] == "debug" && K)
+      K = new $.io.model.debug(this.__ngio, K);
+    else if (this.__property_names[X] == "error" && K)
+      K = new $.io.model.error(this.__ngio, K);
+    else if (this.__property_names[X] == "result" && K)
+      K = new $.io.model.result(this.__ngio, K);
+    this[this.__property_names[X]] = K;
   }
 };
-X.io.model.output.prototype.constructor = X.io.model.output;
-X.io.model.result = function(O, K) {
-  var V, Q, Z;
-  this.__property_names = ["component", "data", "echo"], this.__classname = "Newgrounds.io.model.result", this.__ngio = O;
-  var V;
+$.io.model.output.prototype.constructor = $.io.model.output;
+$.io.model.result = function(Q, K) {
+  var Z, X, H;
+  this.__property_names = ["component", "data", "echo"], this.__classname = "Newgrounds.io.model.result", this.__ngio = Q;
+  var Z;
   Object.defineProperty(this, "component", { get: function() {
-    return typeof V == "undefined" ? null : V;
-  }, set: function(M) {
-    X.io.model.checkStrictValue(this.__classname, "component", M, String, null, null, null), V = M;
+    return typeof Z == "undefined" ? null : Z;
+  }, set: function(Y) {
+    $.io.model.checkStrictValue(this.__classname, "component", Y, String, null, null, null), Z = Y;
   } });
-  var Q;
+  var X;
   Object.defineProperty(this, "data", { get: function() {
-    return typeof Q == "undefined" ? null : Q;
-  }, set: function(M) {
-    X.io.model.checkStrictValue(this.__classname, "data", M, Object, null, Object, null), Q = M;
+    return typeof X == "undefined" ? null : X;
+  }, set: function(Y) {
+    $.io.model.checkStrictValue(this.__classname, "data", Y, Object, null, Object, null), X = Y;
   } });
-  var Z;
+  var H;
   if (Object.defineProperty(this, "echo", { get: function() {
-    return typeof Z == "undefined" ? null : Z;
-  }, set: function(M) {
-    Z = M;
+    return typeof H == "undefined" ? null : H;
+  }, set: function(Y) {
+    H = Y;
   } }), K)
     this.fromObject(K);
 };
-X.io.model.result.prototype._has_ngio_user = function() {
+$.io.model.result.prototype._has_ngio_user = function() {
   return this.__ngio && this.__ngio.user;
 };
-X.io.model.result.prototype.toObject = function() {
-  var O = {};
+$.io.model.result.prototype.toObject = function() {
+  var Q = {};
   for (var K = 0;K < this.__property_names.length; K++)
     if (typeof this[this.__property_names[K]] != "undefined")
-      O[this.__property_names[K]] = this[this.__property_names[K]];
-  return O;
+      Q[this.__property_names[K]] = this[this.__property_names[K]];
+  return Q;
 };
-X.io.model.result.prototype.fromObject = function(O) {
-  var K, V;
-  for (var Q = 0;Q < this.__property_names.length; Q++)
-    K = O[this.__property_names[Q]], this[this.__property_names[Q]] = K;
+$.io.model.result.prototype.fromObject = function(Q) {
+  var K, Z;
+  for (var X = 0;X < this.__property_names.length; X++)
+    K = Q[this.__property_names[X]], this[this.__property_names[X]] = K;
 };
-X.io.model.result.prototype.constructor = X.io.model.result;
-X.io.model.score = function(O, K) {
-  var V, Q, Z, M;
-  this.__property_names = ["formatted_value", "tag", "user", "value"], this.__classname = "Newgrounds.io.model.score", this.__ngio = O;
-  var V;
-  Object.defineProperty(this, "formatted_value", { get: function() {
-    return typeof V == "undefined" ? null : V;
-  }, set: function(Y) {
-    X.io.model.checkStrictValue(this.__classname, "formatted_value", Y, String, null, null, null), V = Y;
-  } });
-  var Q;
-  Object.defineProperty(this, "tag", { get: function() {
-    return typeof Q == "undefined" ? null : Q;
-  }, set: function(Y) {
-    X.io.model.checkStrictValue(this.__classname, "tag", Y, String, null, null, null), Q = Y;
-  } });
+$.io.model.result.prototype.constructor = $.io.model.result;
+$.io.model.score = function(Q, K) {
+  var Z, X, H, Y;
+  this.__property_names = ["formatted_value", "tag", "user", "value"], this.__classname = "Newgrounds.io.model.score", this.__ngio = Q;
   var Z;
-  Object.defineProperty(this, "user", { get: function() {
+  Object.defineProperty(this, "formatted_value", { get: function() {
     return typeof Z == "undefined" ? null : Z;
-  }, set: function(Y) {
-    X.io.model.checkStrictValue(this.__classname, "user", Y, null, "user", null, null), Z = Y;
+  }, set: function(O) {
+    $.io.model.checkStrictValue(this.__classname, "formatted_value", O, String, null, null, null), Z = O;
   } });
-  var M;
+  var X;
+  Object.defineProperty(this, "tag", { get: function() {
+    return typeof X == "undefined" ? null : X;
+  }, set: function(O) {
+    $.io.model.checkStrictValue(this.__classname, "tag", O, String, null, null, null), X = O;
+  } });
+  var H;
+  Object.defineProperty(this, "user", { get: function() {
+    return typeof H == "undefined" ? null : H;
+  }, set: function(O) {
+    $.io.model.checkStrictValue(this.__classname, "user", O, null, "user", null, null), H = O;
+  } });
+  var Y;
   if (Object.defineProperty(this, "value", { get: function() {
-    return typeof M == "undefined" ? null : M;
-  }, set: function(Y) {
-    X.io.model.checkStrictValue(this.__classname, "value", Y, Number, null, null, null), M = Y;
+    return typeof Y == "undefined" ? null : Y;
+  }, set: function(O) {
+    $.io.model.checkStrictValue(this.__classname, "value", O, Number, null, null, null), Y = O;
   } }), K)
     this.fromObject(K);
 };
-X.io.model.score.prototype._has_ngio_user = function() {
+$.io.model.score.prototype._has_ngio_user = function() {
   return this.__ngio && this.__ngio.user;
 };
-X.io.model.score.prototype.toObject = function() {
-  var O = {};
+$.io.model.score.prototype.toObject = function() {
+  var Q = {};
   for (var K = 0;K < this.__property_names.length; K++)
     if (typeof this[this.__property_names[K]] != "undefined")
-      O[this.__property_names[K]] = this[this.__property_names[K]];
-  return O;
+      Q[this.__property_names[K]] = this[this.__property_names[K]];
+  return Q;
 };
-X.io.model.score.prototype.fromObject = function(O) {
-  var K, V;
-  for (var Q = 0;Q < this.__property_names.length; Q++) {
-    if (K = O[this.__property_names[Q]], this.__property_names[Q] == "user" && K)
-      K = new X.io.model.user(this.__ngio, K);
-    this[this.__property_names[Q]] = K;
+$.io.model.score.prototype.fromObject = function(Q) {
+  var K, Z;
+  for (var X = 0;X < this.__property_names.length; X++) {
+    if (K = Q[this.__property_names[X]], this.__property_names[X] == "user" && K)
+      K = new $.io.model.user(this.__ngio, K);
+    this[this.__property_names[X]] = K;
   }
 };
-X.io.model.score.prototype.constructor = X.io.model.score;
-X.io.model.scoreboard = function(O, K) {
-  var V, Q;
-  this.__property_names = ["id", "name"], this.__classname = "Newgrounds.io.model.scoreboard", this.__ngio = O;
-  var V;
+$.io.model.score.prototype.constructor = $.io.model.score;
+$.io.model.scoreboard = function(Q, K) {
+  var Z, X;
+  this.__property_names = ["id", "name"], this.__classname = "Newgrounds.io.model.scoreboard", this.__ngio = Q;
+  var Z;
   Object.defineProperty(this, "id", { get: function() {
-    return typeof V == "undefined" ? null : V;
-  }, set: function(Z) {
-    X.io.model.checkStrictValue(this.__classname, "id", Z, Number, null, null, null), V = Z;
+    return typeof Z == "undefined" ? null : Z;
+  }, set: function(H) {
+    $.io.model.checkStrictValue(this.__classname, "id", H, Number, null, null, null), Z = H;
   } });
-  var Q;
+  var X;
   if (Object.defineProperty(this, "name", { get: function() {
-    return typeof Q == "undefined" ? null : Q;
-  }, set: function(Z) {
-    X.io.model.checkStrictValue(this.__classname, "name", Z, String, null, null, null), Q = Z;
+    return typeof X == "undefined" ? null : X;
+  }, set: function(H) {
+    $.io.model.checkStrictValue(this.__classname, "name", H, String, null, null, null), X = H;
   } }), K)
     this.fromObject(K);
 };
-X.io.model.scoreboard.prototype._has_ngio_user = function() {
+$.io.model.scoreboard.prototype._has_ngio_user = function() {
   return this.__ngio && this.__ngio.user;
 };
-X.io.model.scoreboard.prototype.toObject = function() {
-  var O = {};
+$.io.model.scoreboard.prototype.toObject = function() {
+  var Q = {};
   for (var K = 0;K < this.__property_names.length; K++)
     if (typeof this[this.__property_names[K]] != "undefined")
-      O[this.__property_names[K]] = this[this.__property_names[K]];
-  return O;
+      Q[this.__property_names[K]] = this[this.__property_names[K]];
+  return Q;
 };
-X.io.model.scoreboard.prototype.fromObject = function(O) {
-  var K, V;
-  for (var Q = 0;Q < this.__property_names.length; Q++)
-    K = O[this.__property_names[Q]], this[this.__property_names[Q]] = K;
+$.io.model.scoreboard.prototype.fromObject = function(Q) {
+  var K, Z;
+  for (var X = 0;X < this.__property_names.length; X++)
+    K = Q[this.__property_names[X]], this[this.__property_names[X]] = K;
 };
-X.io.model.scoreboard.prototype.postScore = function(O, K, V) {
-  var Q = this;
-  if (typeof K == "function" && !V)
-    V = K, K = null;
+$.io.model.scoreboard.prototype.postScore = function(Q, K, Z) {
+  var X = this;
+  if (typeof K == "function" && !Z)
+    Z = K, K = null;
   if (!K)
     K = null;
   if (this._has_ngio_user())
-    this.__ngio.callComponent("ScoreBoard.postScore", { id: this.id, value: O, tag: K }, function(Y) {
-      V(Y);
+    this.__ngio.callComponent("ScoreBoard.postScore", { id: this.id, value: Q, tag: K }, function(O) {
+      Z(O);
     });
-  else if (typeof V == "function") {
-    var Z = X.io.model.error.get("This function requires a valid user session.", X.io.model.error.LOGIN_REQUIRED), M = { success: false, error: Z };
-    V(M);
+  else if (typeof Z == "function") {
+    var H = $.io.model.error.get("This function requires a valid user session.", $.io.model.error.LOGIN_REQUIRED), Y = { success: false, error: H };
+    Z(Y);
   }
 };
-X.io.model.scoreboard.prototype.constructor = X.io.model.scoreboard;
-X.io.model.session = function(O, K) {
-  var V, Q, Z, M, Y;
-  this.__property_names = ["expired", "id", "passport_url", "remember", "user"], this.__classname = "Newgrounds.io.model.session", this.__ngio = O;
-  var V;
-  Object.defineProperty(this, "expired", { get: function() {
-    return typeof V == "undefined" ? null : V;
-  }, set: function(W) {
-    X.io.model.checkStrictValue(this.__classname, "expired", W, Boolean, null, null, null), V = W;
-  } });
-  var Q;
-  Object.defineProperty(this, "id", { get: function() {
-    return typeof Q == "undefined" ? null : Q;
-  }, set: function(W) {
-    X.io.model.checkStrictValue(this.__classname, "id", W, String, null, null, null), Q = W;
-  } });
+$.io.model.scoreboard.prototype.constructor = $.io.model.scoreboard;
+$.io.model.session = function(Q, K) {
+  var Z, X, H, Y, O;
+  this.__property_names = ["expired", "id", "passport_url", "remember", "user"], this.__classname = "Newgrounds.io.model.session", this.__ngio = Q;
   var Z;
-  Object.defineProperty(this, "passport_url", { get: function() {
+  Object.defineProperty(this, "expired", { get: function() {
     return typeof Z == "undefined" ? null : Z;
-  }, set: function(W) {
-    X.io.model.checkStrictValue(this.__classname, "passport_url", W, String, null, null, null), Z = W;
+  }, set: function(I) {
+    $.io.model.checkStrictValue(this.__classname, "expired", I, Boolean, null, null, null), Z = I;
   } });
-  var M;
-  Object.defineProperty(this, "remember", { get: function() {
-    return typeof M == "undefined" ? null : M;
-  }, set: function(W) {
-    X.io.model.checkStrictValue(this.__classname, "remember", W, Boolean, null, null, null), M = W;
+  var X;
+  Object.defineProperty(this, "id", { get: function() {
+    return typeof X == "undefined" ? null : X;
+  }, set: function(I) {
+    $.io.model.checkStrictValue(this.__classname, "id", I, String, null, null, null), X = I;
+  } });
+  var H;
+  Object.defineProperty(this, "passport_url", { get: function() {
+    return typeof H == "undefined" ? null : H;
+  }, set: function(I) {
+    $.io.model.checkStrictValue(this.__classname, "passport_url", I, String, null, null, null), H = I;
   } });
   var Y;
-  if (Object.defineProperty(this, "user", { get: function() {
+  Object.defineProperty(this, "remember", { get: function() {
     return typeof Y == "undefined" ? null : Y;
-  }, set: function(W) {
-    X.io.model.checkStrictValue(this.__classname, "user", W, null, "user", null, null), Y = W;
+  }, set: function(I) {
+    $.io.model.checkStrictValue(this.__classname, "remember", I, Boolean, null, null, null), Y = I;
+  } });
+  var O;
+  if (Object.defineProperty(this, "user", { get: function() {
+    return typeof O == "undefined" ? null : O;
+  }, set: function(I) {
+    $.io.model.checkStrictValue(this.__classname, "user", I, null, "user", null, null), O = I;
   } }), K)
     this.fromObject(K);
 };
-X.io.model.session.prototype._has_ngio_user = function() {
+$.io.model.session.prototype._has_ngio_user = function() {
   return this.__ngio && this.__ngio.user;
 };
-X.io.model.session.prototype.toObject = function() {
-  var O = {};
+$.io.model.session.prototype.toObject = function() {
+  var Q = {};
   for (var K = 0;K < this.__property_names.length; K++)
     if (typeof this[this.__property_names[K]] != "undefined")
-      O[this.__property_names[K]] = this[this.__property_names[K]];
-  return O;
+      Q[this.__property_names[K]] = this[this.__property_names[K]];
+  return Q;
 };
-X.io.model.session.prototype.fromObject = function(O) {
-  var K, V;
-  for (var Q = 0;Q < this.__property_names.length; Q++) {
-    if (K = O[this.__property_names[Q]], this.__property_names[Q] == "user" && K)
-      K = new X.io.model.user(this.__ngio, K);
-    this[this.__property_names[Q]] = K;
+$.io.model.session.prototype.fromObject = function(Q) {
+  var K, Z;
+  for (var X = 0;X < this.__property_names.length; X++) {
+    if (K = Q[this.__property_names[X]], this.__property_names[X] == "user" && K)
+      K = new $.io.model.user(this.__ngio, K);
+    this[this.__property_names[X]] = K;
   }
 };
-X.io.model.session.prototype.constructor = X.io.model.session;
-X.io.model.user = function(O, K) {
-  var V, Q, Z, M;
-  this.__property_names = ["icons", "id", "name", "supporter"], this.__classname = "Newgrounds.io.model.user", this.__ngio = O;
-  var V;
+$.io.model.session.prototype.constructor = $.io.model.session;
+$.io.model.user = function(Q, K) {
+  var Z, X, H, Y;
+  this.__property_names = ["icons", "id", "name", "supporter"], this.__classname = "Newgrounds.io.model.user", this.__ngio = Q;
+  var Z;
   Object.defineProperty(this, "icons", { get: function() {
-    return typeof V == "undefined" ? null : V;
-  }, set: function(Y) {
-    X.io.model.checkStrictValue(this.__classname, "icons", Y, null, "usericons", null, null), V = Y;
-  } });
-  var Q;
-  Object.defineProperty(this, "id", { get: function() {
-    return typeof Q == "undefined" ? null : Q;
-  }, set: function(Y) {
-    X.io.model.checkStrictValue(this.__classname, "id", Y, Number, null, null, null), Q = Y;
-  } });
-  var Z;
-  Object.defineProperty(this, "name", { get: function() {
     return typeof Z == "undefined" ? null : Z;
-  }, set: function(Y) {
-    X.io.model.checkStrictValue(this.__classname, "name", Y, String, null, null, null), Z = Y;
+  }, set: function(O) {
+    $.io.model.checkStrictValue(this.__classname, "icons", O, null, "usericons", null, null), Z = O;
   } });
-  var M;
+  var X;
+  Object.defineProperty(this, "id", { get: function() {
+    return typeof X == "undefined" ? null : X;
+  }, set: function(O) {
+    $.io.model.checkStrictValue(this.__classname, "id", O, Number, null, null, null), X = O;
+  } });
+  var H;
+  Object.defineProperty(this, "name", { get: function() {
+    return typeof H == "undefined" ? null : H;
+  }, set: function(O) {
+    $.io.model.checkStrictValue(this.__classname, "name", O, String, null, null, null), H = O;
+  } });
+  var Y;
   if (Object.defineProperty(this, "supporter", { get: function() {
-    return typeof M == "undefined" ? null : M;
-  }, set: function(Y) {
-    X.io.model.checkStrictValue(this.__classname, "supporter", Y, Boolean, null, null, null), M = Y;
+    return typeof Y == "undefined" ? null : Y;
+  }, set: function(O) {
+    $.io.model.checkStrictValue(this.__classname, "supporter", O, Boolean, null, null, null), Y = O;
   } }), K)
     this.fromObject(K);
 };
-X.io.model.user.prototype._has_ngio_user = function() {
+$.io.model.user.prototype._has_ngio_user = function() {
   return this.__ngio && this.__ngio.user;
 };
-X.io.model.user.prototype.toObject = function() {
-  var O = {};
+$.io.model.user.prototype.toObject = function() {
+  var Q = {};
   for (var K = 0;K < this.__property_names.length; K++)
     if (typeof this[this.__property_names[K]] != "undefined")
-      O[this.__property_names[K]] = this[this.__property_names[K]];
-  return O;
+      Q[this.__property_names[K]] = this[this.__property_names[K]];
+  return Q;
 };
-X.io.model.user.prototype.fromObject = function(O) {
-  var K, V;
-  for (var Q = 0;Q < this.__property_names.length; Q++) {
-    if (K = O[this.__property_names[Q]], this.__property_names[Q] == "icons" && K)
-      K = new X.io.model.usericons(this.__ngio, K);
-    this[this.__property_names[Q]] = K;
+$.io.model.user.prototype.fromObject = function(Q) {
+  var K, Z;
+  for (var X = 0;X < this.__property_names.length; X++) {
+    if (K = Q[this.__property_names[X]], this.__property_names[X] == "icons" && K)
+      K = new $.io.model.usericons(this.__ngio, K);
+    this[this.__property_names[X]] = K;
   }
 };
-X.io.model.user.prototype.constructor = X.io.model.user;
-X.io.model.usericons = function(O, K) {
-  var V, Q, Z;
-  this.__property_names = ["large", "medium", "small"], this.__classname = "Newgrounds.io.model.usericons", this.__ngio = O;
-  var V;
-  Object.defineProperty(this, "large", { get: function() {
-    return typeof V == "undefined" ? null : V;
-  }, set: function(M) {
-    X.io.model.checkStrictValue(this.__classname, "large", M, String, null, null, null), V = M;
-  } });
-  var Q;
-  Object.defineProperty(this, "medium", { get: function() {
-    return typeof Q == "undefined" ? null : Q;
-  }, set: function(M) {
-    X.io.model.checkStrictValue(this.__classname, "medium", M, String, null, null, null), Q = M;
-  } });
+$.io.model.user.prototype.constructor = $.io.model.user;
+$.io.model.usericons = function(Q, K) {
+  var Z, X, H;
+  this.__property_names = ["large", "medium", "small"], this.__classname = "Newgrounds.io.model.usericons", this.__ngio = Q;
   var Z;
-  if (Object.defineProperty(this, "small", { get: function() {
+  Object.defineProperty(this, "large", { get: function() {
     return typeof Z == "undefined" ? null : Z;
-  }, set: function(M) {
-    X.io.model.checkStrictValue(this.__classname, "small", M, String, null, null, null), Z = M;
+  }, set: function(Y) {
+    $.io.model.checkStrictValue(this.__classname, "large", Y, String, null, null, null), Z = Y;
+  } });
+  var X;
+  Object.defineProperty(this, "medium", { get: function() {
+    return typeof X == "undefined" ? null : X;
+  }, set: function(Y) {
+    $.io.model.checkStrictValue(this.__classname, "medium", Y, String, null, null, null), X = Y;
+  } });
+  var H;
+  if (Object.defineProperty(this, "small", { get: function() {
+    return typeof H == "undefined" ? null : H;
+  }, set: function(Y) {
+    $.io.model.checkStrictValue(this.__classname, "small", Y, String, null, null, null), H = Y;
   } }), K)
     this.fromObject(K);
 };
-X.io.model.usericons.prototype._has_ngio_user = function() {
+$.io.model.usericons.prototype._has_ngio_user = function() {
   return this.__ngio && this.__ngio.user;
 };
-X.io.model.usericons.prototype.toObject = function() {
-  var O = {};
+$.io.model.usericons.prototype.toObject = function() {
+  var Q = {};
   for (var K = 0;K < this.__property_names.length; K++)
     if (typeof this[this.__property_names[K]] != "undefined")
-      O[this.__property_names[K]] = this[this.__property_names[K]];
-  return O;
+      Q[this.__property_names[K]] = this[this.__property_names[K]];
+  return Q;
 };
-X.io.model.usericons.prototype.fromObject = function(O) {
-  var K, V;
-  for (var Q = 0;Q < this.__property_names.length; Q++)
-    K = O[this.__property_names[Q]], this[this.__property_names[Q]] = K;
+$.io.model.usericons.prototype.fromObject = function(Q) {
+  var K, Z;
+  for (var X = 0;X < this.__property_names.length; X++)
+    K = Q[this.__property_names[X]], this[this.__property_names[X]] = K;
 };
-X.io.model.usericons.prototype.constructor = X.io.model.usericons;
-X.io.call_validators.getValidator = function(O) {
-  var K = O.split("."), V = K[0], Q = K[1], Z = X.io.call_validators[V] && X.io.call_validators[V][Q] ? X.io.call_validators[V][Q] : null;
-  return Z;
+$.io.model.usericons.prototype.constructor = $.io.model.usericons;
+$.io.call_validators.getValidator = function(Q) {
+  var K = Q.split("."), Z = K[0], X = K[1], H = $.io.call_validators[Z] && $.io.call_validators[Z][X] ? $.io.call_validators[Z][X] : null;
+  return H;
 };
-X.io.call_validators.App = { checkSession: { require_session: true, secure: false, redirect: false, import: false, params: {}, returns: { session: { object: "session", description: null } } }, endSession: { require_session: true, secure: false, redirect: false, import: false, params: {}, returns: {} }, getCurrentVersion: { require_session: false, secure: false, redirect: false, import: false, params: { version: { type: String, extract_from: null, required: null, description: 'The version number (in "X.Y.Z" format) of the client-side app. (default = "0.0.0")' } }, returns: {} }, getHostLicense: { require_session: false, secure: false, redirect: false, import: false, params: { host: { type: String, extract_from: null, required: null, description: "The host domain to check (ei, somesite.com)." } }, returns: {} }, logView: { require_session: false, secure: false, redirect: false, import: false, params: { host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Examples: "www.somesite.com", "localHost"' } }, returns: {} }, startSession: { require_session: false, secure: false, redirect: false, import: false, params: { force: { type: Boolean, extract_from: null, required: null, description: "If true, will create a new session even if the user already has an existing one.\n\nNote: Any previous session ids will no longer be valid if this is used." } }, returns: { session: { object: "session", description: null } } } };
-X.io.call_validators.Event = { logEvent: { require_session: false, secure: false, redirect: false, import: false, params: { event_name: { type: String, extract_from: null, required: true, description: "The name of your custom event as defined in your Referrals & Events settings." }, host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Example: "newgrounds.com", "localHost"' } }, returns: {} } };
-X.io.call_validators.Gateway = { getDatetime: { require_session: false, secure: false, redirect: false, import: false, params: {}, returns: {} }, getVersion: { require_session: false, secure: false, redirect: false, import: false, params: {}, returns: {} }, ping: { require_session: false, secure: false, redirect: false, import: false, params: {}, returns: {} } };
-X.io.call_validators.Loader = { loadAuthorUrl: { require_session: false, secure: false, redirect: true, import: false, params: { host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Example: "www.somesite.com", "localHost"' }, redirect: { type: Boolean, extract_from: null, required: false, description: "Set this to false to get a JSON response containing the URL instead of doing an actual redirect." } }, returns: {} }, loadMoreGames: { require_session: false, secure: false, redirect: true, import: false, params: { host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Example: "www.somesite.com", "localHost"' }, redirect: { type: Boolean, extract_from: null, required: false, description: "Set this to false to get a JSON response containing the URL instead of doing an actual redirect." } }, returns: {} }, loadNewgrounds: { require_session: false, secure: false, redirect: true, import: false, params: { host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Example: "www.somesite.com", "localHost"' }, redirect: { type: Boolean, extract_from: null, required: false, description: "Set this to false to get a JSON response containing the URL instead of doing an actual redirect." } }, returns: {} }, loadOfficialUrl: { require_session: false, secure: false, redirect: true, import: false, params: { host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Example: "www.somesite.com", "localHost"' }, redirect: { type: Boolean, extract_from: null, required: false, description: "Set this to false to get a JSON response containing the URL instead of doing an actual redirect." } }, returns: {} }, loadReferral: { require_session: false, secure: false, redirect: true, import: false, params: { host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Example: "www.somesite.com", "localHost"' }, redirect: { type: Boolean, extract_from: null, required: false, description: "Set this to false to get a JSON response containing the URL instead of doing an actual redirect." }, referral_name: { type: String, extract_from: null, required: true, description: 'The name of the referral (as defined in your "Referrals & Events" settings).' } }, returns: {} } };
-X.io.call_validators.Medal = { getList: { require_session: false, secure: false, redirect: false, import: false, params: {}, returns: { medals: { array: { object: "medal" }, description: "An array of medal objects." } } }, unlock: { require_session: true, secure: true, redirect: false, import: false, params: { id: { type: Number, extract_from: { object: "medal", alias: "medal", property: "id" }, required: true, description: "The numeric ID of the medal to unlock." } }, returns: { medal: { object: "medal", description: "The #medal that was unlocked." } } } };
-X.io.call_validators.ScoreBoard = { getBoards: { require_session: false, secure: false, redirect: false, import: false, params: {}, returns: { scoreboards: { array: { object: "scoreboard" }, description: "An array of #scoreboard objects." } } }, getScores: { require_session: false, secure: false, redirect: false, import: false, params: { id: { type: Number, extract_from: { object: "scoreboard", alias: "scoreboard", property: "id" }, required: true, description: "The numeric ID of the scoreboard." }, limit: { type: Number, extract_from: null, required: null, description: "An integer indicating the number of scores to include in the list. Default = 10." }, period: { type: String, extract_from: null, required: null, description: "The time-frame to pull scores from (see notes for acceptable values)." }, skip: { type: Number, extract_from: null, required: null, description: "An integer indicating the number of scores to skip before starting the list. Default = 0." }, social: { type: Boolean, extract_from: null, required: null, description: "If set to true, only social scores will be loaded (scores by the user and their friends). This param will be ignored if there is no valid session id and the 'user' param is absent." }, tag: { type: String, extract_from: null, required: null, description: "A tag to filter results by." }, user: { type: "mixed", extract_from: null, required: null, description: "A user's ID or name.  If 'social' is true, this user and their friends will be included. Otherwise, only scores for this user will be loaded. If this param is missing and there is a valid session id, that user will be used by default." } }, returns: { scoreboard: { object: "scoreboard", description: "The #scoreboard being queried." }, scores: { array: { object: "score" }, description: "An array of #score objects." }, user: { object: "user", description: "The #user the score list is associated with (either as defined in the 'user' param, or extracted from the current session when 'social' is set to true)" } } }, postScore: { require_session: true, secure: true, redirect: false, import: false, params: { id: { type: Number, extract_from: { object: "scoreboard", alias: "scoreboard", property: "id" }, required: true, description: "The numeric ID of the scoreboard." }, tag: { type: String, extract_from: null, required: null, description: "An optional tag that can be used to filter scores via ScoreBoard.getScores" }, value: { type: Number, extract_from: null, required: true, description: "The int value of the score." } }, returns: { score: { object: "score", description: "The #score that was posted to the board." }, scoreboard: { object: "scoreboard", description: "The #scoreboard that was posted to." } } } };
-X.io.SessionLoader = function(O) {
-  if (!O || O.constructor !== X.io.core)
+$.io.call_validators.App = { checkSession: { require_session: true, secure: false, redirect: false, import: false, params: {}, returns: { session: { object: "session", description: null } } }, endSession: { require_session: true, secure: false, redirect: false, import: false, params: {}, returns: {} }, getCurrentVersion: { require_session: false, secure: false, redirect: false, import: false, params: { version: { type: String, extract_from: null, required: null, description: 'The version number (in "X.Y.Z" format) of the client-side app. (default = "0.0.0")' } }, returns: {} }, getHostLicense: { require_session: false, secure: false, redirect: false, import: false, params: { host: { type: String, extract_from: null, required: null, description: "The host domain to check (ei, somesite.com)." } }, returns: {} }, logView: { require_session: false, secure: false, redirect: false, import: false, params: { host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Examples: "www.somesite.com", "localHost"' } }, returns: {} }, startSession: { require_session: false, secure: false, redirect: false, import: false, params: { force: { type: Boolean, extract_from: null, required: null, description: `If true, will create a new session even if the user already has an existing one.
+
+Note: Any previous session ids will no longer be valid if this is used.` } }, returns: { session: { object: "session", description: null } } } };
+$.io.call_validators.CloudSave = { loadSlots: { require_session: true, secure: true, redirect: false, import: false, params: {}, returns: {} }, loadSlot: { require_session: true, secure: true, redirect: false, import: false, params: { id: { type: Number, extract_from: null, required: true, description: "The slot number to load." } }, returns: {} }, setData: { require_session: true, secure: true, redirect: false, import: false, params: { id: { type: Number, extract_from: null, required: true, description: "The slot number to save." }, data: { type: String, extract_from: null, required: true, description: "The data to save." } }, returns: {} } };
+$.io.call_validators.Event = { logEvent: { require_session: false, secure: false, redirect: false, import: false, params: { event_name: { type: String, extract_from: null, required: true, description: "The name of your custom event as defined in your Referrals & Events settings." }, host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Example: "newgrounds.com", "localHost"' } }, returns: {} } };
+$.io.call_validators.Gateway = { getDatetime: { require_session: false, secure: false, redirect: false, import: false, params: {}, returns: {} }, getVersion: { require_session: false, secure: false, redirect: false, import: false, params: {}, returns: {} }, ping: { require_session: false, secure: false, redirect: false, import: false, params: {}, returns: {} } };
+$.io.call_validators.Loader = { loadAuthorUrl: { require_session: false, secure: false, redirect: true, import: false, params: { host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Example: "www.somesite.com", "localHost"' }, redirect: { type: Boolean, extract_from: null, required: false, description: "Set this to false to get a JSON response containing the URL instead of doing an actual redirect." } }, returns: {} }, loadMoreGames: { require_session: false, secure: false, redirect: true, import: false, params: { host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Example: "www.somesite.com", "localHost"' }, redirect: { type: Boolean, extract_from: null, required: false, description: "Set this to false to get a JSON response containing the URL instead of doing an actual redirect." } }, returns: {} }, loadNewgrounds: { require_session: false, secure: false, redirect: true, import: false, params: { host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Example: "www.somesite.com", "localHost"' }, redirect: { type: Boolean, extract_from: null, required: false, description: "Set this to false to get a JSON response containing the URL instead of doing an actual redirect." } }, returns: {} }, loadOfficialUrl: { require_session: false, secure: false, redirect: true, import: false, params: { host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Example: "www.somesite.com", "localHost"' }, redirect: { type: Boolean, extract_from: null, required: false, description: "Set this to false to get a JSON response containing the URL instead of doing an actual redirect." } }, returns: {} }, loadReferral: { require_session: false, secure: false, redirect: true, import: false, params: { host: { type: String, extract_from: null, required: true, description: 'The domain hosting your app. Example: "www.somesite.com", "localHost"' }, redirect: { type: Boolean, extract_from: null, required: false, description: "Set this to false to get a JSON response containing the URL instead of doing an actual redirect." }, referral_name: { type: String, extract_from: null, required: true, description: 'The name of the referral (as defined in your "Referrals & Events" settings).' } }, returns: {} } };
+$.io.call_validators.Medal = { getList: { require_session: false, secure: false, redirect: false, import: false, params: {}, returns: { medals: { array: { object: "medal" }, description: "An array of medal objects." } } }, unlock: { require_session: true, secure: true, redirect: false, import: false, params: { id: { type: Number, extract_from: { object: "medal", alias: "medal", property: "id" }, required: true, description: "The numeric ID of the medal to unlock." } }, returns: { medal: { object: "medal", description: "The #medal that was unlocked." } } } };
+$.io.call_validators.ScoreBoard = { getBoards: { require_session: false, secure: false, redirect: false, import: false, params: {}, returns: { scoreboards: { array: { object: "scoreboard" }, description: "An array of #scoreboard objects." } } }, getScores: { require_session: false, secure: false, redirect: false, import: false, params: { id: { type: Number, extract_from: { object: "scoreboard", alias: "scoreboard", property: "id" }, required: true, description: "The numeric ID of the scoreboard." }, limit: { type: Number, extract_from: null, required: null, description: "An integer indicating the number of scores to include in the list. Default = 10." }, period: { type: String, extract_from: null, required: null, description: "The time-frame to pull scores from (see notes for acceptable values)." }, skip: { type: Number, extract_from: null, required: null, description: "An integer indicating the number of scores to skip before starting the list. Default = 0." }, social: { type: Boolean, extract_from: null, required: null, description: "If set to true, only social scores will be loaded (scores by the user and their friends). This param will be ignored if there is no valid session id and the 'user' param is absent." }, tag: { type: String, extract_from: null, required: null, description: "A tag to filter results by." }, user: { type: "mixed", extract_from: null, required: null, description: "A user's ID or name.  If 'social' is true, this user and their friends will be included. Otherwise, only scores for this user will be loaded. If this param is missing and there is a valid session id, that user will be used by default." } }, returns: { scoreboard: { object: "scoreboard", description: "The #scoreboard being queried." }, scores: { array: { object: "score" }, description: "An array of #score objects." }, user: { object: "user", description: "The #user the score list is associated with (either as defined in the 'user' param, or extracted from the current session when 'social' is set to true)" } } }, postScore: { require_session: true, secure: true, redirect: false, import: false, params: { id: { type: Number, extract_from: { object: "scoreboard", alias: "scoreboard", property: "id" }, required: true, description: "The numeric ID of the scoreboard." }, tag: { type: String, extract_from: null, required: null, description: "An optional tag that can be used to filter scores via ScoreBoard.getScores" }, value: { type: Number, extract_from: null, required: true, description: "The int value of the score." } }, returns: { score: { object: "score", description: "The #score that was posted to the board." }, scoreboard: { object: "scoreboard", description: "The #scoreboard that was posted to." } } } };
+$.io.SessionLoader = function(Q) {
+  if (!Q || Q.constructor !== $.io.core)
     throw new Error("'ngio' must be a 'Newgrounds.io.core' instance.");
-  this.__ngio = O;
+  this.__ngio = Q;
   var K = null;
-  Object.defineProperty(this, "session", { set: function(V) {
-    if (V && !V.constructor === X.io.model.session)
+  Object.defineProperty(this, "session", { set: function(Z) {
+    if (Z && !Z.constructor === $.io.model.session)
       throw new Error("'session' must be a 'Newgrounds.io.model.session' instance.");
-    K = V;
+    K = Z;
   }, get: function() {
     return K;
   } });
 };
-X.io.SessionLoader.prototype = { _event_listeners: {}, last_error: null, passport_window: null, addEventListener: X.io.events.EventDispatcher.prototype.addEventListener, removeEventListener: X.io.events.EventDispatcher.prototype.removeEventListener, removeAllEventListeners: X.io.events.EventDispatcher.prototype.removeAllEventListeners, dispatchEvent: X.io.events.EventDispatcher.prototype.dispatchEvent, getValidSession: function(O, K) {
-  var V = this;
-  V.checkSession(function(Q) {
-    if (!Q || Q.expired)
-      V.startSession(O, K);
+$.io.SessionLoader.prototype = { _event_listeners: {}, last_error: null, passport_window: null, addEventListener: $.io.events.EventDispatcher.prototype.addEventListener, removeEventListener: $.io.events.EventDispatcher.prototype.removeEventListener, removeAllEventListeners: $.io.events.EventDispatcher.prototype.removeAllEventListeners, dispatchEvent: $.io.events.EventDispatcher.prototype.dispatchEvent, getValidSession: function(Q, K) {
+  var Z = this;
+  Z.checkSession(function(X) {
+    if (!X || X.expired)
+      Z.startSession(Q, K);
     else
-      O.call(K, Q);
+      Q.call(K, X);
   });
-}, startSession: function(O, K) {
-  var V = new X.io.events.SessionEvent, Q = this;
-  this.__ngio.callComponent("App.startSession", function(Z) {
-    if (!Z.success || !Z.session) {
-      if (Z.error)
-        Q.last_error = Z.error;
+}, startSession: function(Q, K) {
+  var Z = new $.io.events.SessionEvent, X = this;
+  this.__ngio.callComponent("App.startSession", function(H) {
+    if (!H.success || !H.session) {
+      if (H.error)
+        X.last_error = H.error;
       else
-        Q.last_error = new X.io.model.error, Q.last_error.message = "Unexpected Error";
-      V.type = X.io.events.SessionEvent.SESSION_EXPIRED, Q.session = null;
+        X.last_error = new $.io.model.error, X.last_error.message = "Unexpected Error";
+      Z.type = $.io.events.SessionEvent.SESSION_EXPIRED, X.session = null;
     } else
-      V.type = X.io.events.SessionEvent.REQUEST_LOGIN, V.passport_url = Z.session.passport_url, Q.session = Z.session;
-    if (Q.__ngio.session_id = Q.session ? Q.session.id : null, Q.dispatchEvent(V), O && O.constructor === Function)
-      O.call(K, Q.session);
+      Z.type = $.io.events.SessionEvent.REQUEST_LOGIN, Z.passport_url = H.session.passport_url, X.session = H.session;
+    if (X.__ngio.session_id = X.session ? X.session.id : null, X.dispatchEvent(Z), Q && Q.constructor === Function)
+      Q.call(K, X.session);
   });
-}, checkSession: function(O, K) {
-  var V = new X.io.events.SessionEvent, Q = this;
-  if (Q.session && Q.session.user) {
-    if (V.type = X.io.events.SessionEvent.USER_LOADED, V.user = Q.session.user, Q.dispatchEvent(V), O && O.constructor === Function)
-      O.call(K, Q.session);
+}, checkSession: function(Q, K) {
+  var Z = new $.io.events.SessionEvent, X = this;
+  if (X.session && X.session.user) {
+    if (Z.type = $.io.events.SessionEvent.USER_LOADED, Z.user = X.session.user, X.dispatchEvent(Z), Q && Q.constructor === Function)
+      Q.call(K, X.session);
   } else if (!this.__ngio.session_id) {
-    if (V.type = X.io.events.SessionEvent.SESSION_EXPIRED, Q.session = null, Q.dispatchEvent(V), O && O.constructor === Function)
-      O.call(K, null);
+    if (Z.type = $.io.events.SessionEvent.SESSION_EXPIRED, X.session = null, X.dispatchEvent(Z), Q && Q.constructor === Function)
+      Q.call(K, null);
   } else
-    this.__ngio.callComponent("App.checkSession", function(Z) {
-      if (!Z.success || !Z.session || Z.session.expired)
-        if (V.type = X.io.events.SessionEvent.SESSION_EXPIRED, Q.session = null, Z.error)
-          Q.last_error = Z.error;
-        else if (Q.last_error = new X.io.model.error, Z.session && Z.session.expired)
-          Q.last_error.message = "Session is Expired";
+    this.__ngio.callComponent("App.checkSession", function(H) {
+      if (!H.success || !H.session || H.session.expired)
+        if (Z.type = $.io.events.SessionEvent.SESSION_EXPIRED, X.session = null, H.error)
+          X.last_error = H.error;
+        else if (X.last_error = new $.io.model.error, H.session && H.session.expired)
+          X.last_error.message = "Session is Expired";
         else
-          Q.last_error.message = "Unexpected Error";
-      else if (!Z.session.user)
-        V.type = X.io.events.SessionEvent.REQUEST_LOGIN, V.passport_url = Z.session.passport_url, Q.session = Z.session;
+          X.last_error.message = "Unexpected Error";
+      else if (!H.session.user)
+        Z.type = $.io.events.SessionEvent.REQUEST_LOGIN, Z.passport_url = H.session.passport_url, X.session = H.session;
       else
-        V.type = X.io.events.SessionEvent.USER_LOADED, V.user = Z.session.user, Q.session = Z.session;
-      if (Q.__ngio.session_id = Q.session ? Q.session.id : null, Q.dispatchEvent(V), O && O.constructor === Function)
-        O.call(K, Q.session);
+        Z.type = $.io.events.SessionEvent.USER_LOADED, Z.user = H.session.user, X.session = H.session;
+      if (X.__ngio.session_id = X.session ? X.session.id : null, X.dispatchEvent(Z), Q && Q.constructor === Function)
+        Q.call(K, X.session);
     });
-}, endSession: function(O, K) {
-  var V = this, Q = this.__ngio;
-  this.__ngio.callComponent("App.endSession", function(Z) {
-    V.session = null, Q.session_id = null;
-    var M = new X.io.events.SessionEvent(X.io.events.SessionEvent.SESSION_EXPIRED);
-    if (V.dispatchEvent(M), O && O.constructor === Function)
-      O.call(K, V.session);
+}, endSession: function(Q, K) {
+  var Z = this, X = this.__ngio;
+  this.__ngio.callComponent("App.endSession", function(H) {
+    Z.session = null, X.session_id = null;
+    var Y = new $.io.events.SessionEvent($.io.events.SessionEvent.SESSION_EXPIRED);
+    if (Z.dispatchEvent(Y), Q && Q.constructor === Function)
+      Q.call(K, Z.session);
   }), this.__ngio.session_id = null, this.session = null;
-}, loadPassport: function(O) {
-  if (typeof O != "string")
-    O = "_blank";
+}, loadPassport: function(Q) {
+  if (typeof Q != "string")
+    Q = "_blank";
   if (!this.session || !this.session.passport_url)
     return console.warn("Attempted to open Newgrounds Passport without a valid passport_url. Be sure you have called getValidSession() first!."), false;
-  if (this.passport_window = globalThis.open(this.session.passport_url, O, "popup=yes,width=600,height=600"), !this.passport_window)
+  if (this.passport_window = globalThis.open(this.session.passport_url, Q, "popup=yes,width=600,height=600"), !this.passport_window)
     console.warn("Unable to detect passport window. Pop-up blockers will prevent loading Newgrounds Passport if loadPassport() or requestLogin() are not called from within a mouse click handler.");
   return this.passportOpen();
 }, closePassport: function() {
@@ -1111,374 +1114,382 @@ X.io.SessionLoader.prototype = { _event_listeners: {}, last_error: null, passpor
 }, passportOpen: function() {
   return this.passport_window && this.passport_window.parent ? true : false;
 } };
-X.io.SessionLoader.prototype.constructor = X.io.SessionLoader;
-var j = j || function(O, K) {
-  var V = {}, Q = V.lib = {}, Z = function() {
-  }, M = Q.Base = { extend: function(I) {
-    Z.prototype = this;
-    var F = new Z;
-    return I && F.mixIn(I), F.hasOwnProperty("init") || (F.init = function() {
-      F.$super.init.apply(this, arguments);
-    }), F.init.prototype = F, F.$super = this, F;
+$.io.SessionLoader.prototype.constructor = $.io.SessionLoader;
+var j = j || function(Q, K) {
+  var Z = {}, X = Z.lib = {}, H = function() {
+  }, Y = X.Base = { extend: function(V) {
+    H.prototype = this;
+    var A = new H;
+    return V && A.mixIn(V), A.hasOwnProperty("init") || (A.init = function() {
+      A.$super.init.apply(this, arguments);
+    }), A.init.prototype = A, A.$super = this, A;
   }, create: function() {
-    var I = this.extend();
-    return I.init.apply(I, arguments), I;
+    var V = this.extend();
+    return V.init.apply(V, arguments), V;
   }, init: function() {
-  }, mixIn: function(I) {
-    for (var F in I)
-      I.hasOwnProperty(F) && (this[F] = I[F]);
-    I.hasOwnProperty("toString") && (this.toString = I.toString);
+  }, mixIn: function(V) {
+    for (var A in V)
+      V.hasOwnProperty(A) && (this[A] = V[A]);
+    V.hasOwnProperty("toString") && (this.toString = V.toString);
   }, clone: function() {
     return this.init.prototype.extend(this);
-  } }, Y = Q.WordArray = M.extend({ init: function(I, F) {
-    I = this.words = I || [], this.sigBytes = F != K ? F : 4 * I.length;
-  }, toString: function(I) {
-    return (I || L).stringify(this);
-  }, concat: function(I) {
-    var F = this.words, H = I.words, $ = this.sigBytes;
-    if (I = I.sigBytes, this.clamp(), $ % 4)
-      for (var R = 0;R < I; R++)
-        F[$ + R >>> 2] |= (H[R >>> 2] >>> 24 - 8 * (R % 4) & 255) << 24 - 8 * (($ + R) % 4);
-    else if (65535 < H.length)
-      for (R = 0;R < I; R += 4)
-        F[$ + R >>> 2] = H[R >>> 2];
+  } }, O = X.WordArray = Y.extend({ init: function(V, A) {
+    V = this.words = V || [], this.sigBytes = A != K ? A : 4 * V.length;
+  }, toString: function(V) {
+    return (V || T).stringify(this);
+  }, concat: function(V) {
+    var A = this.words, P = V.words, M = this.sigBytes;
+    if (V = V.sigBytes, this.clamp(), M % 4)
+      for (var R = 0;R < V; R++)
+        A[M + R >>> 2] |= (P[R >>> 2] >>> 24 - 8 * (R % 4) & 255) << 24 - 8 * ((M + R) % 4);
+    else if (65535 < P.length)
+      for (R = 0;R < V; R += 4)
+        A[M + R >>> 2] = P[R >>> 2];
     else
-      F.push.apply(F, H);
-    return this.sigBytes += I, this;
+      A.push.apply(A, P);
+    return this.sigBytes += V, this;
   }, clamp: function() {
-    var I = this.words, F = this.sigBytes;
-    I[F >>> 2] &= 4294967295 << 32 - 8 * (F % 4), I.length = O.ceil(F / 4);
+    var V = this.words, A = this.sigBytes;
+    V[A >>> 2] &= 4294967295 << 32 - 8 * (A % 4), V.length = Q.ceil(A / 4);
   }, clone: function() {
-    var I = M.clone.call(this);
-    return I.words = this.words.slice(0), I;
-  }, random: function(I) {
-    for (var F = [], H = 0;H < I; H += 4)
-      F.push(4294967296 * O.random() | 0);
-    return new Y.init(F, I);
-  } }), W = V.enc = {}, L = W.Hex = { stringify: function(I) {
-    var F = I.words;
-    I = I.sigBytes;
-    for (var H = [], $ = 0;$ < I; $++) {
-      var R = F[$ >>> 2] >>> 24 - 8 * ($ % 4) & 255;
-      H.push((R >>> 4).toString(16)), H.push((R & 15).toString(16));
+    var V = Y.clone.call(this);
+    return V.words = this.words.slice(0), V;
+  }, random: function(V) {
+    for (var A = [], P = 0;P < V; P += 4)
+      A.push(4294967296 * Q.random() | 0);
+    return new O.init(A, V);
+  } }), I = Z.enc = {}, T = I.Hex = { stringify: function(V) {
+    var A = V.words;
+    V = V.sigBytes;
+    for (var P = [], M = 0;M < V; M++) {
+      var R = A[M >>> 2] >>> 24 - 8 * (M % 4) & 255;
+      P.push((R >>> 4).toString(16)), P.push((R & 15).toString(16));
     }
-    return H.join("");
-  }, parse: function(I) {
-    for (var F = I.length, H = [], $ = 0;$ < F; $ += 2)
-      H[$ >>> 3] |= parseInt(I.substr($, 2), 16) << 24 - 4 * ($ % 8);
-    return new Y.init(H, F / 2);
-  } }, P = W.Latin1 = { stringify: function(I) {
-    var F = I.words;
-    I = I.sigBytes;
-    for (var H = [], $ = 0;$ < I; $++)
-      H.push(String.fromCharCode(F[$ >>> 2] >>> 24 - 8 * ($ % 4) & 255));
-    return H.join("");
-  }, parse: function(I) {
-    for (var F = I.length, H = [], $ = 0;$ < F; $++)
-      H[$ >>> 2] |= (I.charCodeAt($) & 255) << 24 - 8 * ($ % 4);
-    return new Y.init(H, F);
-  } }, J = W.Utf8 = { stringify: function(I) {
+    return P.join("");
+  }, parse: function(V) {
+    for (var A = V.length, P = [], M = 0;M < A; M += 2)
+      P[M >>> 3] |= parseInt(V.substr(M, 2), 16) << 24 - 4 * (M % 8);
+    return new O.init(P, A / 2);
+  } }, W = I.Latin1 = { stringify: function(V) {
+    var A = V.words;
+    V = V.sigBytes;
+    for (var P = [], M = 0;M < V; M++)
+      P.push(String.fromCharCode(A[M >>> 2] >>> 24 - 8 * (M % 4) & 255));
+    return P.join("");
+  }, parse: function(V) {
+    for (var A = V.length, P = [], M = 0;M < A; M++)
+      P[M >>> 2] |= (V.charCodeAt(M) & 255) << 24 - 8 * (M % 4);
+    return new O.init(P, A);
+  } }, z = I.Utf8 = { stringify: function(V) {
     try {
-      return decodeURIComponent(escape(P.stringify(I)));
-    } catch (F) {
+      return decodeURIComponent(escape(W.stringify(V)));
+    } catch (A) {
       throw Error("Malformed UTF-8 data");
     }
-  }, parse: function(I) {
-    return P.parse(unescape(encodeURIComponent(I)));
-  } }, G = Q.BufferedBlockAlgorithm = M.extend({ reset: function() {
-    this._data = new Y.init, this._nDataBytes = 0;
-  }, _append: function(I) {
-    typeof I == "string" && (I = J.parse(I)), this._data.concat(I), this._nDataBytes += I.sigBytes;
-  }, _process: function(I) {
-    var F = this._data, H = F.words, $ = F.sigBytes, R = this.blockSize, z = $ / (4 * R), z = I ? O.ceil(z) : O.max((z | 0) - this._minBufferSize, 0);
-    if (I = z * R, $ = O.min(4 * I, $), I) {
-      for (var S = 0;S < I; S += R)
-        this._doProcessBlock(H, S);
-      S = H.splice(0, I), F.sigBytes -= $;
+  }, parse: function(V) {
+    return W.parse(unescape(encodeURIComponent(V)));
+  } }, E = X.BufferedBlockAlgorithm = Y.extend({ reset: function() {
+    this._data = new O.init, this._nDataBytes = 0;
+  }, _append: function(V) {
+    typeof V == "string" && (V = z.parse(V)), this._data.concat(V), this._nDataBytes += V.sigBytes;
+  }, _process: function(V) {
+    var A = this._data, P = A.words, M = A.sigBytes, R = this.blockSize, L = M / (4 * R), L = V ? Q.ceil(L) : Q.max((L | 0) - this._minBufferSize, 0);
+    if (V = L * R, M = Q.min(4 * V, M), V) {
+      for (var S = 0;S < V; S += R)
+        this._doProcessBlock(P, S);
+      S = P.splice(0, V), A.sigBytes -= M;
     }
-    return new Y.init(S, $);
+    return new O.init(S, M);
   }, clone: function() {
-    var I = M.clone.call(this);
-    return I._data = this._data.clone(), I;
+    var V = Y.clone.call(this);
+    return V._data = this._data.clone(), V;
   }, _minBufferSize: 0 });
-  Q.Hasher = G.extend({ cfg: M.extend(), init: function(I) {
-    this.cfg = this.cfg.extend(I), this.reset();
+  X.Hasher = E.extend({ cfg: Y.extend(), init: function(V) {
+    this.cfg = this.cfg.extend(V), this.reset();
   }, reset: function() {
-    G.reset.call(this), this._doReset();
-  }, update: function(I) {
-    return this._append(I), this._process(), this;
-  }, finalize: function(I) {
-    return I && this._append(I), this._doFinalize();
-  }, blockSize: 16, _createHelper: function(I) {
-    return function(F, H) {
-      return new I.init(H).finalize(F);
+    E.reset.call(this), this._doReset();
+  }, update: function(V) {
+    return this._append(V), this._process(), this;
+  }, finalize: function(V) {
+    return V && this._append(V), this._doFinalize();
+  }, blockSize: 16, _createHelper: function(V) {
+    return function(A, P) {
+      return new V.init(P).finalize(A);
     };
-  }, _createHmacHelper: function(I) {
-    return function(F, H) {
-      return new T.HMAC.init(I, H).finalize(F);
+  }, _createHmacHelper: function(V) {
+    return function(A, P) {
+      return new J.HMAC.init(V, P).finalize(A);
     };
   } });
-  var T = V.algo = {};
-  return V;
+  var J = Z.algo = {};
+  return Z;
 }(Math);
 (function() {
-  var O = j, K = O.lib.WordArray;
-  O.enc.Base64 = { stringify: function(V) {
-    var { words: Q, sigBytes: Z } = V, M = this._map;
-    V.clamp(), V = [];
-    for (var Y = 0;Y < Z; Y += 3)
-      for (var W = (Q[Y >>> 2] >>> 24 - 8 * (Y % 4) & 255) << 16 | (Q[Y + 1 >>> 2] >>> 24 - 8 * ((Y + 1) % 4) & 255) << 8 | Q[Y + 2 >>> 2] >>> 24 - 8 * ((Y + 2) % 4) & 255, L = 0;4 > L && Y + 0.75 * L < Z; L++)
-        V.push(M.charAt(W >>> 6 * (3 - L) & 63));
-    if (Q = M.charAt(64))
-      for (;V.length % 4; )
-        V.push(Q);
-    return V.join("");
-  }, parse: function(V) {
-    var Q = V.length, Z = this._map, M = Z.charAt(64);
-    M && (M = V.indexOf(M), M != -1 && (Q = M));
-    for (var M = [], Y = 0, W = 0;W < Q; W++)
-      if (W % 4) {
-        var L = Z.indexOf(V.charAt(W - 1)) << 2 * (W % 4), P = Z.indexOf(V.charAt(W)) >>> 6 - 2 * (W % 4);
-        M[Y >>> 2] |= (L | P) << 24 - 8 * (Y % 4), Y++;
+  var Q = j, K = Q.lib.WordArray;
+  Q.enc.Base64 = { stringify: function(Z) {
+    var { words: X, sigBytes: H } = Z, Y = this._map;
+    Z.clamp(), Z = [];
+    for (var O = 0;O < H; O += 3)
+      for (var I = (X[O >>> 2] >>> 24 - 8 * (O % 4) & 255) << 16 | (X[O + 1 >>> 2] >>> 24 - 8 * ((O + 1) % 4) & 255) << 8 | X[O + 2 >>> 2] >>> 24 - 8 * ((O + 2) % 4) & 255, T = 0;4 > T && O + 0.75 * T < H; T++)
+        Z.push(Y.charAt(I >>> 6 * (3 - T) & 63));
+    if (X = Y.charAt(64))
+      for (;Z.length % 4; )
+        Z.push(X);
+    return Z.join("");
+  }, parse: function(Z) {
+    var X = Z.length, H = this._map, Y = H.charAt(64);
+    Y && (Y = Z.indexOf(Y), Y != -1 && (X = Y));
+    for (var Y = [], O = 0, I = 0;I < X; I++)
+      if (I % 4) {
+        var T = H.indexOf(Z.charAt(I - 1)) << 2 * (I % 4), W = H.indexOf(Z.charAt(I)) >>> 6 - 2 * (I % 4);
+        Y[O >>> 2] |= (T | W) << 24 - 8 * (O % 4), O++;
       }
-    return K.create(M, Y);
+    return K.create(Y, O);
   }, _map: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=" };
 })();
-(function(O) {
-  function K(G, T, I, F, H, $, R) {
-    return G = G + (T & I | ~T & F) + H + R, (G << $ | G >>> 32 - $) + T;
+(function(Q) {
+  function K(E, J, V, A, P, M, R) {
+    return E = E + (J & V | ~J & A) + P + R, (E << M | E >>> 32 - M) + J;
   }
-  function V(G, T, I, F, H, $, R) {
-    return G = G + (T & F | I & ~F) + H + R, (G << $ | G >>> 32 - $) + T;
+  function Z(E, J, V, A, P, M, R) {
+    return E = E + (J & A | V & ~A) + P + R, (E << M | E >>> 32 - M) + J;
   }
-  function Q(G, T, I, F, H, $, R) {
-    return G = G + (T ^ I ^ F) + H + R, (G << $ | G >>> 32 - $) + T;
+  function X(E, J, V, A, P, M, R) {
+    return E = E + (J ^ V ^ A) + P + R, (E << M | E >>> 32 - M) + J;
   }
-  function Z(G, T, I, F, H, $, R) {
-    return G = G + (I ^ (T | ~F)) + H + R, (G << $ | G >>> 32 - $) + T;
+  function H(E, J, V, A, P, M, R) {
+    return E = E + (V ^ (J | ~A)) + P + R, (E << M | E >>> 32 - M) + J;
   }
-  for (var M = j, L = M.lib, Y = L.WordArray, W = L.Hasher, L = M.algo, P = [], J = 0;64 > J; J++)
-    P[J] = 4294967296 * O.abs(O.sin(J + 1)) | 0;
-  L = L.MD5 = W.extend({ _doReset: function() {
-    this._hash = new Y.init([1732584193, 4023233417, 2562383102, 271733878]);
-  }, _doProcessBlock: function(G, T) {
-    for (var I = 0;16 > I; I++) {
-      var F = T + I, H = G[F];
-      G[F] = (H << 8 | H >>> 24) & 16711935 | (H << 24 | H >>> 8) & 4278255360;
+  for (var Y = j, T = Y.lib, O = T.WordArray, I = T.Hasher, T = Y.algo, W = [], z = 0;64 > z; z++)
+    W[z] = 4294967296 * Q.abs(Q.sin(z + 1)) | 0;
+  T = T.MD5 = I.extend({ _doReset: function() {
+    this._hash = new O.init([1732584193, 4023233417, 2562383102, 271733878]);
+  }, _doProcessBlock: function(E, J) {
+    for (var V = 0;16 > V; V++) {
+      var A = J + V, P = E[A];
+      E[A] = (P << 8 | P >>> 24) & 16711935 | (P << 24 | P >>> 8) & 4278255360;
     }
-    var I = this._hash.words, F = G[T + 0], H = G[T + 1], $ = G[T + 2], R = G[T + 3], z = G[T + 4], S = G[T + 5], y = G[T + 6], u = G[T + 7], m = G[T + 8], x = G[T + 9], C = G[T + 10], q = G[T + 11], f = G[T + 12], h = G[T + 13], D = G[T + 14], k = G[T + 15], U = I[0], A = I[1], E = I[2], B = I[3], U = K(U, A, E, B, F, 7, P[0]), B = K(B, U, A, E, H, 12, P[1]), E = K(E, B, U, A, $, 17, P[2]), A = K(A, E, B, U, R, 22, P[3]), U = K(U, A, E, B, z, 7, P[4]), B = K(B, U, A, E, S, 12, P[5]), E = K(E, B, U, A, y, 17, P[6]), A = K(A, E, B, U, u, 22, P[7]), U = K(U, A, E, B, m, 7, P[8]), B = K(B, U, A, E, x, 12, P[9]), E = K(E, B, U, A, C, 17, P[10]), A = K(A, E, B, U, q, 22, P[11]), U = K(U, A, E, B, f, 7, P[12]), B = K(B, U, A, E, h, 12, P[13]), E = K(E, B, U, A, D, 17, P[14]), A = K(A, E, B, U, k, 22, P[15]), U = V(U, A, E, B, H, 5, P[16]), B = V(B, U, A, E, y, 9, P[17]), E = V(E, B, U, A, q, 14, P[18]), A = V(A, E, B, U, F, 20, P[19]), U = V(U, A, E, B, S, 5, P[20]), B = V(B, U, A, E, C, 9, P[21]), E = V(E, B, U, A, k, 14, P[22]), A = V(A, E, B, U, z, 20, P[23]), U = V(U, A, E, B, x, 5, P[24]), B = V(B, U, A, E, D, 9, P[25]), E = V(E, B, U, A, R, 14, P[26]), A = V(A, E, B, U, m, 20, P[27]), U = V(U, A, E, B, h, 5, P[28]), B = V(B, U, A, E, $, 9, P[29]), E = V(E, B, U, A, u, 14, P[30]), A = V(A, E, B, U, f, 20, P[31]), U = Q(U, A, E, B, S, 4, P[32]), B = Q(B, U, A, E, m, 11, P[33]), E = Q(E, B, U, A, q, 16, P[34]), A = Q(A, E, B, U, D, 23, P[35]), U = Q(U, A, E, B, H, 4, P[36]), B = Q(B, U, A, E, z, 11, P[37]), E = Q(E, B, U, A, u, 16, P[38]), A = Q(A, E, B, U, C, 23, P[39]), U = Q(U, A, E, B, h, 4, P[40]), B = Q(B, U, A, E, F, 11, P[41]), E = Q(E, B, U, A, R, 16, P[42]), A = Q(A, E, B, U, y, 23, P[43]), U = Q(U, A, E, B, x, 4, P[44]), B = Q(B, U, A, E, f, 11, P[45]), E = Q(E, B, U, A, k, 16, P[46]), A = Q(A, E, B, U, $, 23, P[47]), U = Z(U, A, E, B, F, 6, P[48]), B = Z(B, U, A, E, u, 10, P[49]), E = Z(E, B, U, A, D, 15, P[50]), A = Z(A, E, B, U, S, 21, P[51]), U = Z(U, A, E, B, f, 6, P[52]), B = Z(B, U, A, E, R, 10, P[53]), E = Z(E, B, U, A, C, 15, P[54]), A = Z(A, E, B, U, H, 21, P[55]), U = Z(U, A, E, B, m, 6, P[56]), B = Z(B, U, A, E, k, 10, P[57]), E = Z(E, B, U, A, y, 15, P[58]), A = Z(A, E, B, U, h, 21, P[59]), U = Z(U, A, E, B, z, 6, P[60]), B = Z(B, U, A, E, q, 10, P[61]), E = Z(E, B, U, A, $, 15, P[62]), A = Z(A, E, B, U, x, 21, P[63]);
-    I[0] = I[0] + U | 0, I[1] = I[1] + A | 0, I[2] = I[2] + E | 0, I[3] = I[3] + B | 0;
+    var V = this._hash.words, A = E[J + 0], P = E[J + 1], M = E[J + 2], R = E[J + 3], L = E[J + 4], S = E[J + 5], y = E[J + 6], u = E[J + 7], g = E[J + 8], x = E[J + 9], C = E[J + 10], q = E[J + 11], f = E[J + 12], h = E[J + 13], D = E[J + 14], k = E[J + 15], U = V[0], G = V[1], F = V[2], B = V[3], U = K(U, G, F, B, A, 7, W[0]), B = K(B, U, G, F, P, 12, W[1]), F = K(F, B, U, G, M, 17, W[2]), G = K(G, F, B, U, R, 22, W[3]), U = K(U, G, F, B, L, 7, W[4]), B = K(B, U, G, F, S, 12, W[5]), F = K(F, B, U, G, y, 17, W[6]), G = K(G, F, B, U, u, 22, W[7]), U = K(U, G, F, B, g, 7, W[8]), B = K(B, U, G, F, x, 12, W[9]), F = K(F, B, U, G, C, 17, W[10]), G = K(G, F, B, U, q, 22, W[11]), U = K(U, G, F, B, f, 7, W[12]), B = K(B, U, G, F, h, 12, W[13]), F = K(F, B, U, G, D, 17, W[14]), G = K(G, F, B, U, k, 22, W[15]), U = Z(U, G, F, B, P, 5, W[16]), B = Z(B, U, G, F, y, 9, W[17]), F = Z(F, B, U, G, q, 14, W[18]), G = Z(G, F, B, U, A, 20, W[19]), U = Z(U, G, F, B, S, 5, W[20]), B = Z(B, U, G, F, C, 9, W[21]), F = Z(F, B, U, G, k, 14, W[22]), G = Z(G, F, B, U, L, 20, W[23]), U = Z(U, G, F, B, x, 5, W[24]), B = Z(B, U, G, F, D, 9, W[25]), F = Z(F, B, U, G, R, 14, W[26]), G = Z(G, F, B, U, g, 20, W[27]), U = Z(U, G, F, B, h, 5, W[28]), B = Z(B, U, G, F, M, 9, W[29]), F = Z(F, B, U, G, u, 14, W[30]), G = Z(G, F, B, U, f, 20, W[31]), U = X(U, G, F, B, S, 4, W[32]), B = X(B, U, G, F, g, 11, W[33]), F = X(F, B, U, G, q, 16, W[34]), G = X(G, F, B, U, D, 23, W[35]), U = X(U, G, F, B, P, 4, W[36]), B = X(B, U, G, F, L, 11, W[37]), F = X(F, B, U, G, u, 16, W[38]), G = X(G, F, B, U, C, 23, W[39]), U = X(U, G, F, B, h, 4, W[40]), B = X(B, U, G, F, A, 11, W[41]), F = X(F, B, U, G, R, 16, W[42]), G = X(G, F, B, U, y, 23, W[43]), U = X(U, G, F, B, x, 4, W[44]), B = X(B, U, G, F, f, 11, W[45]), F = X(F, B, U, G, k, 16, W[46]), G = X(G, F, B, U, M, 23, W[47]), U = H(U, G, F, B, A, 6, W[48]), B = H(B, U, G, F, u, 10, W[49]), F = H(F, B, U, G, D, 15, W[50]), G = H(G, F, B, U, S, 21, W[51]), U = H(U, G, F, B, f, 6, W[52]), B = H(B, U, G, F, R, 10, W[53]), F = H(F, B, U, G, C, 15, W[54]), G = H(G, F, B, U, P, 21, W[55]), U = H(U, G, F, B, g, 6, W[56]), B = H(B, U, G, F, k, 10, W[57]), F = H(F, B, U, G, y, 15, W[58]), G = H(G, F, B, U, h, 21, W[59]), U = H(U, G, F, B, L, 6, W[60]), B = H(B, U, G, F, q, 10, W[61]), F = H(F, B, U, G, M, 15, W[62]), G = H(G, F, B, U, x, 21, W[63]);
+    V[0] = V[0] + U | 0, V[1] = V[1] + G | 0, V[2] = V[2] + F | 0, V[3] = V[3] + B | 0;
   }, _doFinalize: function() {
-    var G = this._data, T = G.words, I = 8 * this._nDataBytes, F = 8 * G.sigBytes;
-    T[F >>> 5] |= 128 << 24 - F % 32;
-    var H = O.floor(I / 4294967296);
-    T[(F + 64 >>> 9 << 4) + 15] = (H << 8 | H >>> 24) & 16711935 | (H << 24 | H >>> 8) & 4278255360, T[(F + 64 >>> 9 << 4) + 14] = (I << 8 | I >>> 24) & 16711935 | (I << 24 | I >>> 8) & 4278255360, G.sigBytes = 4 * (T.length + 1), this._process(), G = this._hash, T = G.words;
-    for (I = 0;4 > I; I++)
-      F = T[I], T[I] = (F << 8 | F >>> 24) & 16711935 | (F << 24 | F >>> 8) & 4278255360;
-    return G;
+    var E = this._data, J = E.words, V = 8 * this._nDataBytes, A = 8 * E.sigBytes;
+    J[A >>> 5] |= 128 << 24 - A % 32;
+    var P = Q.floor(V / 4294967296);
+    J[(A + 64 >>> 9 << 4) + 15] = (P << 8 | P >>> 24) & 16711935 | (P << 24 | P >>> 8) & 4278255360, J[(A + 64 >>> 9 << 4) + 14] = (V << 8 | V >>> 24) & 16711935 | (V << 24 | V >>> 8) & 4278255360, E.sigBytes = 4 * (J.length + 1), this._process(), E = this._hash, J = E.words;
+    for (V = 0;4 > V; V++)
+      A = J[V], J[V] = (A << 8 | A >>> 24) & 16711935 | (A << 24 | A >>> 8) & 4278255360;
+    return E;
   }, clone: function() {
-    var G = W.clone.call(this);
-    return G._hash = this._hash.clone(), G;
-  } }), M.MD5 = W._createHelper(L), M.HmacMD5 = W._createHmacHelper(L);
+    var E = I.clone.call(this);
+    return E._hash = this._hash.clone(), E;
+  } }), Y.MD5 = I._createHelper(T), Y.HmacMD5 = I._createHmacHelper(T);
 })(Math);
 (function() {
-  var O = j, Q = O.lib, K = Q.Base, V = Q.WordArray, Q = O.algo, Z = Q.EvpKDF = K.extend({ cfg: K.extend({ keySize: 4, hasher: Q.MD5, iterations: 1 }), init: function(M) {
-    this.cfg = this.cfg.extend(M);
-  }, compute: function(M, Y) {
-    for (var G = this.cfg, W = G.hasher.create(), L = V.create(), P = L.words, J = G.keySize, G = G.iterations;P.length < J; ) {
-      T && W.update(T);
-      var T = W.update(M).finalize(Y);
-      W.reset();
-      for (var I = 1;I < G; I++)
-        T = W.finalize(T), W.reset();
-      L.concat(T);
+  var Q = j, X = Q.lib, K = X.Base, Z = X.WordArray, X = Q.algo, H = X.EvpKDF = K.extend({ cfg: K.extend({ keySize: 4, hasher: X.MD5, iterations: 1 }), init: function(Y) {
+    this.cfg = this.cfg.extend(Y);
+  }, compute: function(Y, O) {
+    for (var E = this.cfg, I = E.hasher.create(), T = Z.create(), W = T.words, z = E.keySize, E = E.iterations;W.length < z; ) {
+      J && I.update(J);
+      var J = I.update(Y).finalize(O);
+      I.reset();
+      for (var V = 1;V < E; V++)
+        J = I.finalize(J), I.reset();
+      T.concat(J);
     }
-    return L.sigBytes = 4 * J, L;
+    return T.sigBytes = 4 * z, T;
   } });
-  O.EvpKDF = function(M, Y, W) {
-    return Z.create(W).compute(M, Y);
+  Q.EvpKDF = function(Y, O, I) {
+    return H.create(I).compute(Y, O);
   };
 })();
-j.lib.Cipher || function(O) {
-  var I = j, K = I.lib, V = K.Base, Q = K.WordArray, Z = K.BufferedBlockAlgorithm, M = I.enc.Base64, Y = I.algo.EvpKDF, W = K.Cipher = Z.extend({ cfg: V.extend(), createEncryptor: function(H, $) {
-    return this.create(this._ENC_XFORM_MODE, H, $);
-  }, createDecryptor: function(H, $) {
-    return this.create(this._DEC_XFORM_MODE, H, $);
-  }, init: function(H, $, R) {
-    this.cfg = this.cfg.extend(R), this._xformMode = H, this._key = $, this.reset();
+j.lib.Cipher || function(Q) {
+  var V = j, K = V.lib, Z = K.Base, X = K.WordArray, H = K.BufferedBlockAlgorithm, Y = V.enc.Base64, O = V.algo.EvpKDF, I = K.Cipher = H.extend({ cfg: Z.extend(), createEncryptor: function(P, M) {
+    return this.create(this._ENC_XFORM_MODE, P, M);
+  }, createDecryptor: function(P, M) {
+    return this.create(this._DEC_XFORM_MODE, P, M);
+  }, init: function(P, M, R) {
+    this.cfg = this.cfg.extend(R), this._xformMode = P, this._key = M, this.reset();
   }, reset: function() {
-    Z.reset.call(this), this._doReset();
-  }, process: function(H) {
-    return this._append(H), this._process();
-  }, finalize: function(H) {
-    return H && this._append(H), this._doFinalize();
-  }, keySize: 4, ivSize: 4, _ENC_XFORM_MODE: 1, _DEC_XFORM_MODE: 2, _createHelper: function(H) {
-    return { encrypt: function($, R, z) {
-      return (typeof R == "string" ? F : T).encrypt(H, $, R, z);
-    }, decrypt: function($, R, z) {
-      return (typeof R == "string" ? F : T).decrypt(H, $, R, z);
+    H.reset.call(this), this._doReset();
+  }, process: function(P) {
+    return this._append(P), this._process();
+  }, finalize: function(P) {
+    return P && this._append(P), this._doFinalize();
+  }, keySize: 4, ivSize: 4, _ENC_XFORM_MODE: 1, _DEC_XFORM_MODE: 2, _createHelper: function(P) {
+    return { encrypt: function(M, R, L) {
+      return (typeof R == "string" ? A : J).encrypt(P, M, R, L);
+    }, decrypt: function(M, R, L) {
+      return (typeof R == "string" ? A : J).decrypt(P, M, R, L);
     } };
   } });
-  K.StreamCipher = W.extend({ _doFinalize: function() {
+  K.StreamCipher = I.extend({ _doFinalize: function() {
     return this._process(true);
   }, blockSize: 1 });
-  var G = I.mode = {}, L = function(H, $, R) {
-    var z = this._iv;
-    z ? this._iv = O : z = this._prevBlock;
+  var E = V.mode = {}, T = function(P, M, R) {
+    var L = this._iv;
+    L ? this._iv = Q : L = this._prevBlock;
     for (var S = 0;S < R; S++)
-      H[$ + S] ^= z[S];
-  }, P = (K.BlockCipherMode = V.extend({ createEncryptor: function(H, $) {
-    return this.Encryptor.create(H, $);
-  }, createDecryptor: function(H, $) {
-    return this.Decryptor.create(H, $);
-  }, init: function(H, $) {
-    this._cipher = H, this._iv = $;
+      P[M + S] ^= L[S];
+  }, W = (K.BlockCipherMode = Z.extend({ createEncryptor: function(P, M) {
+    return this.Encryptor.create(P, M);
+  }, createDecryptor: function(P, M) {
+    return this.Decryptor.create(P, M);
+  }, init: function(P, M) {
+    this._cipher = P, this._iv = M;
   } })).extend();
-  P.Encryptor = P.extend({ processBlock: function(H, $) {
-    var R = this._cipher, z = R.blockSize;
-    L.call(this, H, $, z), R.encryptBlock(H, $), this._prevBlock = H.slice($, $ + z);
-  } }), P.Decryptor = P.extend({ processBlock: function(H, $) {
-    var R = this._cipher, z = R.blockSize, S = H.slice($, $ + z);
-    R.decryptBlock(H, $), L.call(this, H, $, z), this._prevBlock = S;
-  } }), G = G.CBC = P, P = (I.pad = {}).Pkcs7 = { pad: function(H, $) {
-    for (var R = 4 * $, R = R - H.sigBytes % R, z = R << 24 | R << 16 | R << 8 | R, S = [], y = 0;y < R; y += 4)
-      S.push(z);
-    R = Q.create(S, R), H.concat(R);
-  }, unpad: function(H) {
-    H.sigBytes -= H.words[H.sigBytes - 1 >>> 2] & 255;
-  } }, K.BlockCipher = W.extend({ cfg: W.cfg.extend({ mode: G, padding: P }), reset: function() {
-    W.reset.call(this);
-    var $ = this.cfg, H = $.iv, $ = $.mode;
+  W.Encryptor = W.extend({ processBlock: function(P, M) {
+    var R = this._cipher, L = R.blockSize;
+    T.call(this, P, M, L), R.encryptBlock(P, M), this._prevBlock = P.slice(M, M + L);
+  } }), W.Decryptor = W.extend({ processBlock: function(P, M) {
+    var R = this._cipher, L = R.blockSize, S = P.slice(M, M + L);
+    R.decryptBlock(P, M), T.call(this, P, M, L), this._prevBlock = S;
+  } }), E = E.CBC = W, W = (V.pad = {}).Pkcs7 = { pad: function(P, M) {
+    for (var R = 4 * M, R = R - P.sigBytes % R, L = R << 24 | R << 16 | R << 8 | R, S = [], y = 0;y < R; y += 4)
+      S.push(L);
+    R = X.create(S, R), P.concat(R);
+  }, unpad: function(P) {
+    P.sigBytes -= P.words[P.sigBytes - 1 >>> 2] & 255;
+  } }, K.BlockCipher = I.extend({ cfg: I.cfg.extend({ mode: E, padding: W }), reset: function() {
+    I.reset.call(this);
+    var M = this.cfg, P = M.iv, M = M.mode;
     if (this._xformMode == this._ENC_XFORM_MODE)
-      var R = $.createEncryptor;
+      var R = M.createEncryptor;
     else
-      R = $.createDecryptor, this._minBufferSize = 1;
-    this._mode = R.call($, this, H && H.words);
-  }, _doProcessBlock: function(H, $) {
-    this._mode.processBlock(H, $);
+      R = M.createDecryptor, this._minBufferSize = 1;
+    this._mode = R.call(M, this, P && P.words);
+  }, _doProcessBlock: function(P, M) {
+    this._mode.processBlock(P, M);
   }, _doFinalize: function() {
-    var H = this.cfg.padding;
+    var P = this.cfg.padding;
     if (this._xformMode == this._ENC_XFORM_MODE) {
-      H.pad(this._data, this.blockSize);
-      var $ = this._process(true);
+      P.pad(this._data, this.blockSize);
+      var M = this._process(true);
     } else
-      $ = this._process(true), H.unpad($);
-    return $;
+      M = this._process(true), P.unpad(M);
+    return M;
   }, blockSize: 4 });
-  var J = K.CipherParams = V.extend({ init: function(H) {
-    this.mixIn(H);
-  }, toString: function(H) {
-    return (H || this.formatter).stringify(this);
-  } }), G = (I.format = {}).OpenSSL = { stringify: function(H) {
-    var $ = H.ciphertext;
-    return H = H.salt, (H ? Q.create([1398893684, 1701076831]).concat(H).concat($) : $).toString(M);
-  }, parse: function(H) {
-    H = M.parse(H);
-    var $ = H.words;
-    if ($[0] == 1398893684 && $[1] == 1701076831) {
-      var R = Q.create($.slice(2, 4));
-      $.splice(0, 4), H.sigBytes -= 16;
+  var z = K.CipherParams = Z.extend({ init: function(P) {
+    this.mixIn(P);
+  }, toString: function(P) {
+    return (P || this.formatter).stringify(this);
+  } }), E = (V.format = {}).OpenSSL = { stringify: function(P) {
+    var M = P.ciphertext;
+    return P = P.salt, (P ? X.create([1398893684, 1701076831]).concat(P).concat(M) : M).toString(Y);
+  }, parse: function(P) {
+    P = Y.parse(P);
+    var M = P.words;
+    if (M[0] == 1398893684 && M[1] == 1701076831) {
+      var R = X.create(M.slice(2, 4));
+      M.splice(0, 4), P.sigBytes -= 16;
     }
-    return J.create({ ciphertext: H, salt: R });
-  } }, T = K.SerializableCipher = V.extend({ cfg: V.extend({ format: G }), encrypt: function(H, $, R, z) {
-    z = this.cfg.extend(z);
-    var S = H.createEncryptor(R, z);
-    return $ = S.finalize($), S = S.cfg, J.create({ ciphertext: $, key: R, iv: S.iv, algorithm: H, mode: S.mode, padding: S.padding, blockSize: H.blockSize, formatter: z.format });
-  }, decrypt: function(H, $, R, z) {
-    return z = this.cfg.extend(z), $ = this._parse($, z.format), H.createDecryptor(R, z).finalize($.ciphertext);
-  }, _parse: function(H, $) {
-    return typeof H == "string" ? $.parse(H, this) : H;
-  } }), I = (I.kdf = {}).OpenSSL = { execute: function(H, $, R, z) {
-    return z || (z = Q.random(8)), H = Y.create({ keySize: $ + R }).compute(H, z), R = Q.create(H.words.slice($), 4 * R), H.sigBytes = 4 * $, J.create({ key: H, iv: R, salt: z });
-  } }, F = K.PasswordBasedCipher = T.extend({ cfg: T.cfg.extend({ kdf: I }), encrypt: function(H, $, R, z) {
-    return z = this.cfg.extend(z), R = z.kdf.execute(R, H.keySize, H.ivSize), z.iv = R.iv, H = T.encrypt.call(this, H, $, R.key, z), H.mixIn(R), H;
-  }, decrypt: function(H, $, R, z) {
-    return z = this.cfg.extend(z), $ = this._parse($, z.format), R = z.kdf.execute(R, H.keySize, H.ivSize, $.salt), z.iv = R.iv, T.decrypt.call(this, H, $, R.key, z);
+    return z.create({ ciphertext: P, salt: R });
+  } }, J = K.SerializableCipher = Z.extend({ cfg: Z.extend({ format: E }), encrypt: function(P, M, R, L) {
+    L = this.cfg.extend(L);
+    var S = P.createEncryptor(R, L);
+    return M = S.finalize(M), S = S.cfg, z.create({ ciphertext: M, key: R, iv: S.iv, algorithm: P, mode: S.mode, padding: S.padding, blockSize: P.blockSize, formatter: L.format });
+  }, decrypt: function(P, M, R, L) {
+    return L = this.cfg.extend(L), M = this._parse(M, L.format), P.createDecryptor(R, L).finalize(M.ciphertext);
+  }, _parse: function(P, M) {
+    return typeof P == "string" ? M.parse(P, this) : P;
+  } }), V = (V.kdf = {}).OpenSSL = { execute: function(P, M, R, L) {
+    return L || (L = X.random(8)), P = O.create({ keySize: M + R }).compute(P, L), R = X.create(P.words.slice(M), 4 * R), P.sigBytes = 4 * M, z.create({ key: P, iv: R, salt: L });
+  } }, A = K.PasswordBasedCipher = J.extend({ cfg: J.cfg.extend({ kdf: V }), encrypt: function(P, M, R, L) {
+    return L = this.cfg.extend(L), R = L.kdf.execute(R, P.keySize, P.ivSize), L.iv = R.iv, P = J.encrypt.call(this, P, M, R.key, L), P.mixIn(R), P;
+  }, decrypt: function(P, M, R, L) {
+    return L = this.cfg.extend(L), M = this._parse(M, L.format), R = L.kdf.execute(R, P.keySize, P.ivSize, M.salt), L.iv = R.iv, J.decrypt.call(this, P, M, R.key, L);
   } });
 }();
 (function() {
-  for (var O = j, K = O.lib.BlockCipher, m = O.algo, V = [], Q = [], Z = [], M = [], Y = [], W = [], L = [], P = [], J = [], G = [], T = [], I = 0;256 > I; I++)
-    T[I] = 128 > I ? I << 1 : I << 1 ^ 283;
-  for (var F = 0, H = 0, I = 0;256 > I; I++) {
-    var $ = H ^ H << 1 ^ H << 2 ^ H << 3 ^ H << 4, $ = $ >>> 8 ^ $ & 255 ^ 99;
-    V[F] = $, Q[$] = F;
-    var R = T[F], z = T[R], S = T[z], y = 257 * T[$] ^ 16843008 * $;
-    Z[F] = y << 24 | y >>> 8, M[F] = y << 16 | y >>> 16, Y[F] = y << 8 | y >>> 24, W[F] = y, y = 16843009 * S ^ 65537 * z ^ 257 * R ^ 16843008 * F, L[$] = y << 24 | y >>> 8, P[$] = y << 16 | y >>> 16, J[$] = y << 8 | y >>> 24, G[$] = y, F ? (F = R ^ T[T[T[S ^ R]]], H ^= T[T[H]]) : F = H = 1;
+  for (var Q = j, K = Q.lib.BlockCipher, g = Q.algo, Z = [], X = [], H = [], Y = [], O = [], I = [], T = [], W = [], z = [], E = [], J = [], V = 0;256 > V; V++)
+    J[V] = 128 > V ? V << 1 : V << 1 ^ 283;
+  for (var A = 0, P = 0, V = 0;256 > V; V++) {
+    var M = P ^ P << 1 ^ P << 2 ^ P << 3 ^ P << 4, M = M >>> 8 ^ M & 255 ^ 99;
+    Z[A] = M, X[M] = A;
+    var R = J[A], L = J[R], S = J[L], y = 257 * J[M] ^ 16843008 * M;
+    H[A] = y << 24 | y >>> 8, Y[A] = y << 16 | y >>> 16, O[A] = y << 8 | y >>> 24, I[A] = y, y = 16843009 * S ^ 65537 * L ^ 257 * R ^ 16843008 * A, T[M] = y << 24 | y >>> 8, W[M] = y << 16 | y >>> 16, z[M] = y << 8 | y >>> 24, E[M] = y, A ? (A = R ^ J[J[J[S ^ R]]], P ^= J[J[P]]) : A = P = 1;
   }
-  var u = [0, 1, 2, 4, 8, 16, 32, 64, 128, 27, 54], m = m.AES = K.extend({ _doReset: function() {
+  var u = [0, 1, 2, 4, 8, 16, 32, 64, 128, 27, 54], g = g.AES = K.extend({ _doReset: function() {
     for (var q = this._key, x = q.words, C = q.sigBytes / 4, q = 4 * ((this._nRounds = C + 6) + 1), f = this._keySchedule = [], h = 0;h < q; h++)
       if (h < C)
         f[h] = x[h];
       else {
         var D = f[h - 1];
-        h % C ? 6 < C && h % C == 4 && (D = V[D >>> 24] << 24 | V[D >>> 16 & 255] << 16 | V[D >>> 8 & 255] << 8 | V[D & 255]) : (D = D << 8 | D >>> 24, D = V[D >>> 24] << 24 | V[D >>> 16 & 255] << 16 | V[D >>> 8 & 255] << 8 | V[D & 255], D ^= u[h / C | 0] << 24), f[h] = f[h - C] ^ D;
+        h % C ? 6 < C && h % C == 4 && (D = Z[D >>> 24] << 24 | Z[D >>> 16 & 255] << 16 | Z[D >>> 8 & 255] << 8 | Z[D & 255]) : (D = D << 8 | D >>> 24, D = Z[D >>> 24] << 24 | Z[D >>> 16 & 255] << 16 | Z[D >>> 8 & 255] << 8 | Z[D & 255], D ^= u[h / C | 0] << 24), f[h] = f[h - C] ^ D;
       }
     x = this._invKeySchedule = [];
     for (C = 0;C < q; C++)
-      h = q - C, D = C % 4 ? f[h] : f[h - 4], x[C] = 4 > C || 4 >= h ? D : L[V[D >>> 24]] ^ P[V[D >>> 16 & 255]] ^ J[V[D >>> 8 & 255]] ^ G[V[D & 255]];
+      h = q - C, D = C % 4 ? f[h] : f[h - 4], x[C] = 4 > C || 4 >= h ? D : T[Z[D >>> 24]] ^ W[Z[D >>> 16 & 255]] ^ z[Z[D >>> 8 & 255]] ^ E[Z[D & 255]];
   }, encryptBlock: function(x, C) {
-    this._doCryptBlock(x, C, this._keySchedule, Z, M, Y, W, V);
+    this._doCryptBlock(x, C, this._keySchedule, H, Y, O, I, Z);
   }, decryptBlock: function(x, C) {
     var q = x[C + 1];
-    x[C + 1] = x[C + 3], x[C + 3] = q, this._doCryptBlock(x, C, this._invKeySchedule, L, P, J, G, Q), q = x[C + 1], x[C + 1] = x[C + 3], x[C + 3] = q;
+    x[C + 1] = x[C + 3], x[C + 3] = q, this._doCryptBlock(x, C, this._invKeySchedule, T, W, z, E, X), q = x[C + 1], x[C + 1] = x[C + 3], x[C + 3] = q;
   }, _doCryptBlock: function(x, C, q, f, h, D, k, U) {
-    for (var B = this._nRounds, w = x[C] ^ q[0], p = x[C + 1] ^ q[1], g = x[C + 2] ^ q[2], N = x[C + 3] ^ q[3], E = 4, A = 1;A < B; A++)
-      var v = f[w >>> 24] ^ h[p >>> 16 & 255] ^ D[g >>> 8 & 255] ^ k[N & 255] ^ q[E++], s = f[p >>> 24] ^ h[g >>> 16 & 255] ^ D[N >>> 8 & 255] ^ k[w & 255] ^ q[E++], t = f[g >>> 24] ^ h[N >>> 16 & 255] ^ D[w >>> 8 & 255] ^ k[p & 255] ^ q[E++], N = f[N >>> 24] ^ h[w >>> 16 & 255] ^ D[p >>> 8 & 255] ^ k[g & 255] ^ q[E++], w = v, p = s, g = t;
-    v = (U[w >>> 24] << 24 | U[p >>> 16 & 255] << 16 | U[g >>> 8 & 255] << 8 | U[N & 255]) ^ q[E++], s = (U[p >>> 24] << 24 | U[g >>> 16 & 255] << 16 | U[N >>> 8 & 255] << 8 | U[w & 255]) ^ q[E++], t = (U[g >>> 24] << 24 | U[N >>> 16 & 255] << 16 | U[w >>> 8 & 255] << 8 | U[p & 255]) ^ q[E++], N = (U[N >>> 24] << 24 | U[w >>> 16 & 255] << 16 | U[p >>> 8 & 255] << 8 | U[g & 255]) ^ q[E++], x[C] = v, x[C + 1] = s, x[C + 2] = t, x[C + 3] = N;
+    for (var B = this._nRounds, w = x[C] ^ q[0], p = x[C + 1] ^ q[1], m = x[C + 2] ^ q[2], N = x[C + 3] ^ q[3], F = 4, G = 1;G < B; G++)
+      var t = f[w >>> 24] ^ h[p >>> 16 & 255] ^ D[m >>> 8 & 255] ^ k[N & 255] ^ q[F++], c = f[p >>> 24] ^ h[m >>> 16 & 255] ^ D[N >>> 8 & 255] ^ k[w & 255] ^ q[F++], s = f[m >>> 24] ^ h[N >>> 16 & 255] ^ D[w >>> 8 & 255] ^ k[p & 255] ^ q[F++], N = f[N >>> 24] ^ h[w >>> 16 & 255] ^ D[p >>> 8 & 255] ^ k[m & 255] ^ q[F++], w = t, p = c, m = s;
+    t = (U[w >>> 24] << 24 | U[p >>> 16 & 255] << 16 | U[m >>> 8 & 255] << 8 | U[N & 255]) ^ q[F++], c = (U[p >>> 24] << 24 | U[m >>> 16 & 255] << 16 | U[N >>> 8 & 255] << 8 | U[w & 255]) ^ q[F++], s = (U[m >>> 24] << 24 | U[N >>> 16 & 255] << 16 | U[w >>> 8 & 255] << 8 | U[p & 255]) ^ q[F++], N = (U[N >>> 24] << 24 | U[w >>> 16 & 255] << 16 | U[p >>> 8 & 255] << 8 | U[m & 255]) ^ q[F++], x[C] = t, x[C + 1] = c, x[C + 2] = s, x[C + 3] = N;
   }, keySize: 8 });
-  O.AES = K._createHelper(m);
+  Q.AES = K._createHelper(g);
 })();
-var c = { game: "Divine Techno Run", url: "https://www.newgrounds.com/portal/view/628667", key: "34685:cxZQ5a1E", skey: "aBuRcFJLqDmPe3Gb0uultA==" };
+var v = { game: "Divine Techno Run", url: "https://www.newgrounds.com/portal/view/628667", key: "34685:cxZQ5a1E", skey: "aBuRcFJLqDmPe3Gb0uultA==" };
 
 class b {
   #K;
   config;
-  #Y = {};
-  #O;
+  #O = {};
   #Q;
-  #P;
-  #V;
   #X;
-  #$ = new Set;
-  #H = new Set;
-  #I = new Set;
+  #W;
+  #Z;
+  #$;
+  #M = new Set;
+  #P = new Set;
+  #V = new Set;
   audio;
   audioOut;
   gameUrl;
-  static async validateSession(O, K = c) {
-    const V = new X.io.core(K.key, K.skey);
-    return V.session_id = O, new Promise((Q) => {
-      V.callComponent("App.checkSession", {}, (Z) => {
-        Q(Z?.success ? Z.session?.user?.name : undefined);
+  static async validateSession(Q, K = v) {
+    let Z = new $.io.core(K.key, K.skey);
+    return Z.session_id = Q, new Promise((X) => {
+      Z.callComponent("App.checkSession", {}, (H) => {
+        X(H?.success ? H.session?.user?.name : undefined);
       });
     });
   }
-  validateSession(O) {
-    return b.validateSession(O, this.config);
+  static async saveData(Q, K, Z = v) {
+    let X = new $.io.core(Z.key, Z.skey);
+    return X.session_id = K, new Promise((H) => {
+      X.callComponent("CloudSave.setData", { id: 1, data: JSON.stringify(Q) }, (Y) => {
+        H(Y);
+      });
+    });
   }
-  addLoginListener(O) {
-    this.#$.add(O);
+  validateSession(Q) {
+    return b.validateSession(Q, this.config);
   }
-  addLogoutListener(O) {
-    this.#H.add(O);
+  addLoginListener(Q) {
+    this.#M.add(Q);
   }
-  addUnlockListener(O) {
-    this.#I.add(O);
+  addLogoutListener(Q) {
+    this.#P.add(Q);
   }
-  removeLoginListener(O) {
-    this.#$.delete(O);
+  addUnlockListener(Q) {
+    this.#V.add(Q);
   }
-  removeLogoutListener(O) {
-    this.#H.delete(O);
+  removeLoginListener(Q) {
+    this.#M.delete(Q);
   }
-  removeUnlockListener(O) {
-    this.#I.delete(O);
+  removeLogoutListener(Q) {
+    this.#P.delete(Q);
+  }
+  removeUnlockListener(Q) {
+    this.#V.delete(Q);
   }
   get ngio() {
     return this.#K;
   }
-  constructor(O = c) {
-    this.config = O, this.#K = new X.io.core(O.key, O.skey), this.#P = O.debug, this.initSession(), this.audio = O.noAudio ? undefined : new Audio(O.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = O.noAudio ? undefined : new Audio(O.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg"), this.gameUrl = O.url;
+  constructor(Q = v) {
+    this.config = Q, this.#K = new $.io.core(Q.key, Q.skey), this.#W = Q.debug, this.initSession(), this.audio = Q.noAudio ? undefined : new Audio(Q.audioIn ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound.ogg"), this.audioOut = Q.noAudio ? undefined : new Audio(Q.audioOut ?? "https://jacklehamster.github.io/medal-popup/example/sounds/ng-sound-out.ogg"), this.gameUrl = Q.url;
   }
   get key() {
     return this.config.key;
@@ -1499,150 +1510,188 @@ class b {
     return this.#K.session_id;
   }
   async getScoreboards() {
-    return new Promise((O) => {
-      if (this.#V)
-        O?.(this.#V);
-      else if (this.#X)
-        this.#X.push(O);
+    return new Promise((Q) => {
+      if (this.#Z)
+        Q?.(this.#Z);
+      else if (this.#$)
+        this.#$.push(Q);
       else
-        this.#X = [O], this.#K.callComponent("ScoreBoard.getBoards", {}, (K) => {
+        this.#$ = [Q], this.#K.callComponent("ScoreBoard.getBoards", {}, (K) => {
           if (K.success) {
-            this.#V = K.scoreboards;
-            const V = {};
-            this.#V.forEach((Q) => V[Q.id] = Q.name), this.#X?.forEach((Q) => Q?.(this.#V ?? [])), this.#X = undefined;
+            this.#Z = K.scoreboards;
+            let Z = {};
+            this.#Z.forEach((X) => Z[X.id] = X.name), this.#$?.forEach((X) => X?.(this.#Z ?? [])), this.#$ = undefined;
           }
         });
     });
   }
   async getMedals() {
-    return new Promise((O) => {
-      if (this.#O)
-        O(this.#O);
-      else if (this.#Q)
-        this.#Q.push(O);
+    return new Promise((Q) => {
+      if (this.#Q)
+        Q(this.#Q);
+      else if (this.#X)
+        this.#X.push(Q);
       else
-        this.#Q = [O], this.#K.callComponent("Medal.getList", {}, (K) => {
+        this.#X = [Q], this.#K.callComponent("Medal.getList", {}, (K) => {
           if (K.success) {
-            this.#O = K.medals;
-            const V = "font-weight: bold;";
-            console.log("%c Unlocked:", V, this.#O?.filter(({ unlocked: Q }) => Q).map(({ name: Q }) => Q).join(", ")), console.log("%c Locked:", V, this.#O?.filter(({ unlocked: Q }) => !Q).map(({ name: Q }) => Q).join(", ")), this.#Q?.forEach((Q) => Q?.(this.#O ?? [])), this.#Q = undefined;
+            this.#Q = K.medals;
+            let Z = "font-weight: bold;";
+            console.log("%c Unlocked:", Z, this.#Q?.filter(({ unlocked: X }) => X).map(({ name: X }) => X).join(", ")), console.log("%c Locked:", Z, this.#Q?.filter(({ unlocked: X }) => !X).map(({ name: X }) => X).join(", ")), this.#X?.forEach((X) => X?.(this.#Q ?? [])), this.#X = undefined;
           }
         });
     });
   }
-  async unlockMedal(O) {
+  async unlockMedal(Q) {
     if (!this.#K.user)
       return;
-    console.log("unlocking", O, "for", this.#K.user.name);
-    const K = await this.getMedals(), V = K.filter((Q) => Q.name === O)[0];
-    if (V)
-      return new Promise((Q) => {
-        if (!V.unlocked && !this.#Y[V.id])
-          this.#K.callComponent("Medal.unlock", { id: V.id }, (Z) => {
-            const M = Z.medal;
-            if (M) {
-              for (let Y = 0;Y < K.length; Y++)
-                if (K[Y].id === M.id)
-                  K[Y] = M;
-              this.#Y[M.id] = true, this.#I.forEach((Y) => Y(M)), this.showReceivedMedal(M), Q(Z.medal);
+    console.log("unlocking", Q, "for", this.#K.user.name);
+    let K = await this.getMedals(), Z = K.filter((X) => X.name === Q)[0];
+    if (Z)
+      return new Promise((X) => {
+        if (!Z.unlocked && !this.#O[Z.id])
+          this.#K.callComponent("Medal.unlock", { id: Z.id }, (H) => {
+            let Y = H.medal;
+            if (Y) {
+              for (let O = 0;O < K.length; O++)
+                if (K[O].id === Y.id)
+                  K[O] = Y;
+              this.#O[Y.id] = true, this.#V.forEach((O) => O(Y)), this.showReceivedMedal(Y), X(H.medal);
             }
           });
         else
-          Q(V);
+          X(Z);
       });
     else
-      console.warn(`Medal doesn't exist: ${O}`);
+      console.warn(`Medal doesn't exist: ${Q}`);
   }
   requestLogin() {
     this.#K.requestLogin(() => this.onLoggedIn(), () => this.onLoginFailed(), () => this.onLoginCancelled());
-    const O = document.getElementById("newgrounds-login");
-    if (O)
-      O.style.display = "none";
+    let Q = document.getElementById("newgrounds-login");
+    if (Q)
+      Q.style.display = "none";
   }
   requestLogout() {
-    return new Promise((O) => {
+    return new Promise((Q) => {
       console.log(`Logging out ${this.#K.user?.name}...`), this.#K.logOut(() => {
-        this.#H.forEach((K) => K()), O();
+        this.#P.forEach((K) => K()), Q();
       });
     });
   }
   onLoginFailed() {
     console.log("There was a problem logging in: ", this.#K.login_error?.message);
-    const O = document.getElementById("newgrounds-login");
-    if (O)
-      O.style.display = "";
+    let Q = document.getElementById("newgrounds-login");
+    if (Q)
+      Q.style.display = "";
   }
   onLoginCancelled() {
     console.log("The user cancelled the login.");
-    const O = document.getElementById("newgrounds-login");
-    if (O)
-      O.style.display = "";
+    let Q = document.getElementById("newgrounds-login");
+    if (Q)
+      Q.style.display = "";
   }
   initSession() {
     this.#K.getValidSession(() => {
       this.validateSession(this.#K.session_id);
-      const O = !this.#P ? undefined : document.body.appendChild(document.createElement("button"));
-      if (O)
-        O.id = "newgrounds-login", O.style.position = "absolute", O.style.top = "5px", O.style.right = "5px", O.style.height = "24px", O.style.fontSize = "10pt", O.style.zIndex = "1000", O.classList.add("button"), O.innerText = "login newgrounds", O.addEventListener("click", (K) => {
+      let Q = !this.#W ? undefined : document.body.appendChild(document.createElement("button"));
+      if (Q)
+        Q.id = "newgrounds-login", Q.style.position = "absolute", Q.style.top = "5px", Q.style.right = "5px", Q.style.height = "24px", Q.style.fontSize = "10pt", Q.style.zIndex = "1000", Q.classList.add("button"), Q.innerText = "login newgrounds", Q.addEventListener("click", (K) => {
           this.requestLogin(), K.stopPropagation();
         });
       if (this.#K.user)
-        O?.parentElement?.removeChild(O), this.onLoggedIn();
+        Q?.parentElement?.removeChild(Q), this.onLoggedIn();
     });
   }
   onLoggedIn() {
-    console.log("Welcome ", this.#K.user?.name + "!"), this.#$.forEach((O) => O()), this.getMedals(), this.getScoreboards();
+    console.log("Welcome ", this.#K.user?.name + "!"), this.#M.forEach((Q) => Q()), this.getMedals(), this.getScoreboards(), this.#R();
   }
-  #M;
-  #W() {
-    if (!this.#M) {
-      const O = document.body.appendChild(document.createElement("div"));
-      O.style.display = "none", O.style.position = "absolute", O.style.right = "10px", O.style.top = "10px", O.style.padding = "5px 10px", O.style.border = "2px solid #880", O.style.borderRadius = "5px", O.style.background = "linear-gradient(#884, #553)", O.style.boxShadow = "2px 2px black", O.style.flexDirection = "row", O.style.transition = "opacity .5s, margin-right .3s", O.style.opacity = "0", O.style.marginRight = "-300px", O.style.zIndex = "3000", O.style.fontFamily = "Papyrus, fantasy", this.#M = O;
+  #Y;
+  #I() {
+    if (!this.#Y) {
+      let Q = document.body.appendChild(document.createElement("div"));
+      Q.style.display = "none", Q.style.position = "absolute", Q.style.right = "10px", Q.style.top = "10px", Q.style.padding = "5px 10px", Q.style.border = "2px solid #880", Q.style.borderRadius = "5px", Q.style.background = "linear-gradient(#884, #553)", Q.style.boxShadow = "2px 2px black", Q.style.flexDirection = "row", Q.style.transition = "opacity .5s, margin-right .3s", Q.style.opacity = "0", Q.style.marginRight = "-300px", Q.style.zIndex = "3000", Q.style.fontFamily = "Papyrus, fantasy", this.#Y = Q;
     }
-    return this.#M;
+    return this.#Y;
   }
-  #Z;
-  showReceivedMedal(O) {
-    clearTimeout(this.#Z);
-    const K = this.#W();
+  #H;
+  showReceivedMedal(Q) {
+    clearTimeout(this.#H);
+    let K = this.#I();
     K.style.display = "flex", K.innerText = "";
-    const V = K.appendChild(document.createElement("img"));
-    V.addEventListener("load", () => {
+    let Z = K.appendChild(document.createElement("img"));
+    Z.addEventListener("load", () => {
       if (K.style.display = "flex", K.style.opacity = "1", K.style.marginRight = "0", !globalThis.mute)
         this.audio?.play();
-      this.#Z = setTimeout(() => {
+      this.#H = setTimeout(() => {
         if (!globalThis.mute)
           this.audioOut?.play();
-        K.style.opacity = "0", this.#Z = setTimeout(() => {
-          K.style.display = "none", K.style.marginRight = "-300px", this.#Z = undefined;
+        K.style.opacity = "0", this.#H = setTimeout(() => {
+          K.style.display = "none", K.style.marginRight = "-300px", this.#H = undefined;
         }, 1000);
       }, 5000);
-    }), V.style.width = "50px", V.style.height = "50px", V.style.backgroundColor = "black", V.style.borderRadius = "3px", V.src = O.icon;
-    const Q = K.appendChild(document.createElement("div"));
-    Q.style.marginLeft = "10px";
-    const Z = Q.appendChild(document.createElement("div"));
-    Z.style.fontWeight = "bold", Z.style.fontSize = "12pt", Z.style.color = "gold", Z.style.margin = "5px", Z.innerText = `\uD83C\uDFC6 ${O.name}`;
-    const M = Q.appendChild(document.createElement("div"));
-    M.style.fontSize = "10pt", M.style.color = "silver", M.innerText = O.description;
+    }), Z.style.width = "50px", Z.style.height = "50px", Z.style.backgroundColor = "black", Z.style.borderRadius = "3px", Z.src = Q.icon;
+    let X = K.appendChild(document.createElement("div"));
+    X.style.marginLeft = "10px";
+    let H = X.appendChild(document.createElement("div"));
+    H.style.fontWeight = "bold", H.style.fontSize = "12pt", H.style.color = "gold", H.style.margin = "5px", H.innerText = `\uD83C\uDFC6 ${Q.name}`;
+    let Y = X.appendChild(document.createElement("div"));
+    Y.style.fontSize = "10pt", Y.style.color = "silver", Y.innerText = Q.description;
   }
-  async postScore(O, K) {
-    const V = await this.getScoreboards(), Q = K ? V.find((Z) => Z.name === K) : V[0];
-    if (Q)
-      return new Promise((Z) => {
-        this.#K.callComponent("ScoreBoard.postScore", { id: Q.id, value: O }, (M) => {
-          Z(M.success);
+  async postScore(Q, K) {
+    let Z = await this.getScoreboards(), X = K ? Z.find((H) => H.name === K) : Z[0];
+    if (X)
+      return new Promise((H) => {
+        this.#K.callComponent("ScoreBoard.postScore", { id: X.id, value: Q }, (Y) => {
+          H(Y.success);
         });
       });
   }
-  async logView() {
-    this.#K.callComponent("App.logView", { host: location.host }, (O) => {
-      console.log(O);
+  async#R() {
+    return new Promise((Q) => {
+      this.#K.callComponent("App.logView", { host: location.host }, (K) => {
+        Q(K);
+      });
     });
   }
-  async logEvent(O) {
-    this.#K.callComponent("Event.logEvent", { event_name: O, host: location.host }, (K) => {
-      console.log(K);
+  async logEvent(Q) {
+    return new Promise((K) => {
+      this.#K.callComponent("Event.logEvent", { event_name: Q, host: location.host }, (Z) => {
+        K(Z);
+      });
     });
+  }
+  async loadSlots() {
+    let Q = await new Promise((K) => {
+      this.#K.callComponent("CloudSave.loadSlots", {}, (Z) => {
+        K(Z);
+      });
+    });
+    if (!Q.success || !Q.slots)
+      return [];
+    return await Promise.all(Q.slots.map(async (K) => {
+      let { url: Z } = K, X = Z ? await fetch(Z).then((H) => H.json()) : undefined;
+      return { ...K, data: X };
+    }));
+  }
+  async loadSlot(Q) {
+    let K = await new Promise((H) => {
+      this.#K.callComponent("CloudSave.loadSlot", { id: Q }, (Y) => {
+        H(Y);
+      });
+    });
+    if (!K.success || !K.slot)
+      return;
+    let { url: Z } = K.slot, X = Z ? await fetch(Z).then((H) => H.json()) : undefined;
+    return { ...K.slot, data: X };
+  }
+  async saveData(Q, K) {
+    let Z = await new Promise((X) => {
+      this.#K.callComponent("CloudSave.setData", { id: Q, data: JSON.stringify(K) }, (H) => {
+        X(H);
+      });
+    });
+    if (!Z.success || !Z.slot)
+      return;
+    return Z.slot;
   }
 }
 export {

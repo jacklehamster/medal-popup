@@ -45,7 +45,9 @@
     "dist"
   ],
   "devDependencies": {
-    "@dobuki/dev-dependencies": "^1.0.16"
+    "@dobuki/dev-dependencies": "latest"
   },
-  "dependencies": {}
+  "dependencies": {
+    "newgrounds.js": "^4.1.1"
+  }
 }
